@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>GoogleForms</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+    <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+    <%= javascript_pack_tag "#{params['controller']}_#{params['action']}", 'data-turbolinks-track': 'reload' %>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj" crossorigin="anonymous"></script>
+    <script src="https://kit.fontawesome.com/929adf1879.js" crossorigin="anonymous"></script>
+  </head>
+
+  <body>
+    <% if request.env['PATH_INFO'] != "/" && request.env['PATH_INFO'] != "/signup" %>
+      <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+        <div class="container">
+          <a class="navbar-brand fw-bold text-success" href="/dashboard"><i class="fas fa-list-ol"></i> GoogleForms</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+          </button>
+          <% if current_user %>
+            <div class="collapse navbar-collapse" id="navbarNav">
+              <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                  <a class="nav-link" aria-current="page" href="/secrets">Secrets</a>
+                </li>
+              </ul>
+              <div class="ms-auto">
+                <form action="/sessions/<%= current_user.id %>" method="post">
+                  <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
+                  <input type="hidden" name="_method" value="delete">
+                  <input type="submit" class="btn btn-sm btn-outline-danger ms-3" value="Log Out">
+                </form>
+              </div>
+            </div>
+          <% end %>
+          </div>
+        </div>
+      </nav> 
+    <% end %>
+    <%= yield %>
+  </body>
+</html>
