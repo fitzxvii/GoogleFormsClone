@@ -1,0 +1,27 @@
+<form class="w-75 mx-auto" method="POST">
+    <div class="mt-4 bg-light rounded p-3 mx-auto border border-success">
+        <h2 class="text-success">Untitled Form</h2>
+        <h5 class="text-success">Form Description</h5>
+        <hr class="text-success">
+        <p class="text-success"> user@email.com <a href="#" class="text-success d-inline-block ms-5">Switch Account</a> </p>
+    </div>
+    <div class="mt-4 bg-light rounded p-3 mx-auto border border-success">
+        <h4 class="text-success">Question</h4>
+        <div> <input type="radio" name="Option1" value="Option 1" <%= disabled="disabled" if params['action'] == "view" %>> <label> Option 1 </label> </div>
+        <div> <input type="radio" name="Option2" value="Option 2" <%= disabled="disabled" if params['action'] == "view" %>> <label> Option 2 </label> </div>
+    </div>
+    <div class="mt-4 bg-light rounded p-3 mx-auto border border-success">
+        <h4 class="text-success">Question</h4>
+        <textarea class="form-control rounded-0" rows="5" <%= "readonly" if params['action'] == "view" %>> </textarea>
+    </div>
+    <div class="mt-4 bg-light rounded p-3 mx-auto border border-success">
+        <h4 class="text-success">Question</h4>
+        <input type="text" placeholder="Short text answer" class="w-50" <%= "readonly" if params['action'] == "view" %>>
+    </div>
+    <div class="mt-4 bg-light rounded p-3 mx-auto border border-success">
+        <h4 class="text-success">Question</h4>
+        <div> <input type="checkbox" name="Option1" value="Option 1" <%= disabled="disabled" if params['action'] == "view" %>> <label> Option 1 </label> </div>
+        <div> <input type="checkbox" name="Option2" value="Option 2" <%= disabled="disabled" if params['action'] == "view" %>> <label> Option 2 </label> </div>
+    </div>
+    <input type="submit" class="d-block btn btn-success my-4" value="Submit" <%= disabled="disabled" if params['action'] == "view" %>>
+</form>

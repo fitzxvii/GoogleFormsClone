@@ -4,4 +4,14 @@ class FormsController < ApplicationController
 
     def create
     end
+
+    def view
+    end
+
+    def result
+    end
+
+    def answer
+        render "view"
+    end
 end
