@@ -7,28 +7,30 @@
             <div class="mb-3">
                 <textarea class="form-control" name="form[description]" rows="3" placeholder="Form Description"></textarea>
             </div>
-            <div id="form_question_1_div" class="mb-3">
-                <div class="row">
-                    <div class="col-lg-9">
-                        <div id="form_question_1_question_div" class="input-group mb-3">
-                            <input type="text" id="form_question_1" name="form[form_question_1]" class="form-control form-control-lg" placeholder="Question Text">
-                            <button class="delete_question btn btn-sm btn-outline-danger" data-delete-id="1"><i class="far fa-trash-alt"></i> Delete</button>
+            <div id="sortable">
+                <div id="form_question_1_div" class="mb-3 p-4 border border-success rounded">
+                    <div class="row">
+                        <div class="col-lg-9">
+                            <div id="form_question_1_question_div" class="input-group mb-3">
+                                <input type="text" id="form_question_1" name="form[form_question_1]" class="form-control form-control-lg" placeholder="Question Text">
+                                <button class="delete_question btn btn-sm btn-outline-danger" data-delete-id="1"><i class="far fa-trash-alt"></i> Delete</button>
+                            </div>
+                            <div id="form_question_1_choice_div" class="input-group mb-3">
+                                <input type="text" id="form_question_1_choice_1" name="form[form_question_1_choice_1]" class="form-control" placeholder="Choice Text">
+                                <button class="delete_choice btn btn-sm btn-outline-danger" data-delete-id="1"><i class="far fa-trash-alt"></i> Delete</button>
+                            </div>
+                            <div id="form_question_1_add_choice_other_div">
+                                <a id="form_question_1_add_choice" class="add_choice text-decoration-none text-success" data-add-choice-id="1">Add Choice</a> <span id="form_question_1_add_other_div">or <a id="form_question_1_add_other" class="add_other text-decoration-none text-success" data-add-other-id="1">"Other"</a></span>
+                            </div>
                         </div>
-                        <div id="form_question_1_choice_div" class="input-group mb-3">
-                            <input type="text" id="form_question_1_choice_1" name="form[form_question_1_choice_1]" class="form-control" placeholder="Choice Text">
-                            <button class="delete_choice btn btn-sm btn-outline-danger" data-delete-id="1"><i class="far fa-trash-alt"></i> Delete</button>
+                        <div class="col-lg-3">
+                            <select id="form_question_1_type" name="form[question_type]" class="form-select form_question_type" data-question-type-id="1">
+                                <option value="1">Multiple Choice</option>
+                                <option value="2">Checkboxes</option>
+                                <option value="3">Short Answer</option>
+                                <option value="4">Paragraph</option>
+                            </select>
                         </div>
-                        <div id="form_question_1_add_choice_other_div">
-                            <a id="form_question_1_add_choice" class="add_choice text-decoration-none text-success" data-add-choice-id="1">Add Choice</a> <span id="form_question_1_add_other_div">or <a id="form_question_1_add_other" class="add_other text-decoration-none text-success" data-add-other-id="1">"Other"</a></span>
-                        </div>
-                    </div>
-                    <div class="col-lg-3">
-                        <select id="form_question_1_type" name="form[question_type]" class="form-select form_question_type" data-question-type-id="1">
-                            <option value="1">Multiple Choice</option>
-                            <option value="2">Checkboxes</option>
-                            <option value="3">Short Answer</option>
-                            <option value="4">Paragraph</option>
-                        </select>
                     </div>
                 </div>
             </div>
