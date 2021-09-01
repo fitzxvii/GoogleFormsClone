@@ -4,6 +4,7 @@ $(document).ready(function(){
 
     $("#sortable").sortable();
     $("#sortable").disableSelection();
+
     $("#create_form").submit(function(e){
         e.preventDefault();
     });
