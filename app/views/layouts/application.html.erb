@@ -13,7 +13,9 @@
     <%= javascript_pack_tag "#{params['controller']}_#{params['action']}", 'data-turbolinks-track': 'reload' %>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
     <script src="https://kit.fontawesome.com/929adf1879.js" crossorigin="anonymous"></script>
   </head>
 
@@ -23,17 +25,19 @@
         <div class="container">
           <a class="navbar-brand fw-bold text-success" href="/dashboard"><i class="fas fa-list-ol"></i> GoogleForms</a>
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-              <span class="navbar-toggler-icon"></span>
+            <span class="navbar-toggler-icon"></span>
           </button>
           <% if current_user %>
             <div class="collapse navbar-collapse" id="navbarNav">
-              <ul class="navbar-nav me-auto">
-                <li class="nav-item">
-                  <a class="nav-link" aria-current="page" href="/secrets">Secrets</a>
-                </li>
-              </ul>
+              <% if request.env['PATH_INFO'] === "/dashboard/create" %>
+                <div class="form-check form-switch me-2">
+                  <input class="form-check-input" type="checkbox" id="quiz_mode_toggle">
+                  <label class="form-check-label small" for="quiz_mode_toggle">Quiz Mode</label>
+                </div>
+                <a href="#" class="text-decoration-none btn btn-sm"><i class="far fa-eye"></i> Preview</a>
+              <% end %>
               <div class="ms-auto">
-                <form action="/sessions/<%= current_user.id %>" method="post">
+                <form action="/sessions/<%= current_user["id"] %>" method="post">
                   <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
                   <input type="hidden" name="_method" value="delete">
                   <input type="submit" class="btn btn-sm btn-outline-danger ms-3" value="Log Out">
