@@ -100,8 +100,6 @@ $(document).ready(function(){
         question_counter += 1;
 
         if($(this).val() === "1"){
-            console.log(`form_question_${$(this).data("question-type-id")}_div`);
-
             $(`#form_question_${$(this).data("question-type-id")}_div`).html(`
                 <div class="row">
                     <div class="col-lg-9">
