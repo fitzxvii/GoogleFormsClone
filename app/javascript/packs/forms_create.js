@@ -2,6 +2,7 @@ $(document).ready(function(){
     let is_quiz_mode;
     let question_counter = 1;
     let choice_counter = 1;
+    let quiz_counter = 1;
 
     $("#sortable").sortable();
     $("#sortable").disableSelection();
