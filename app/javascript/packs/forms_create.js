@@ -16,10 +16,10 @@ $(document).ready(function(){
         var counter = 1;
         is_quiz_mode = $(this).prop("checked")
 
-        if(is_quiz_mode){
-            $(".form_question").each(function(){
-                var question_id = $(this).attr("id").match(/\d+/)[0];
+        $(".form_question").each(function(){
+            var question_id = $(this).attr("id").match(/\d+/g)[0];           
 
+            if(is_quiz_mode){ 
                 if($(this).attr("data-question-type") === "1"){
                     class_type = "multiple_choice"
                 }
@@ -28,11 +28,18 @@ $(document).ready(function(){
                 }
                 
                 if($(`.form_question .row .type_${class_type} .form_question_choice_answer`).length === 0){
-                    $(`.form_question .row .type_${class_type}`).prepend(`
-                        <div class="input-group-text form_question_choice_answer">
-                            <input name="form_question_${question_id}_choice_${counter}_quiz" class="form-check-input mt-0" type="checkbox">
-                        </div>
-                    `);
+                    //console.log($(`.form_question .row .type_${class_type} .form-control`).attr('id').match(/\d+/g))
+
+                    $(`.form_question .row .type_${class_type}`).each(function() {
+                        var choice_question_id = $(this).find('.form-control').attr('id').match(/\d+/g)[0];
+                        var choice_id = $(this).find('.form-control').attr('id').match(/\d+/g)[1];
+
+                        $(this).prepend(`
+                            <div class="input-group-text form_question_choice_answer">
+                                <input name="form_question_${choice_question_id}_choice_${choice_id}_quiz" class="form-check-input mt-0" type="checkbox">
+                            </div>
+                        `);
+                    });
                 }
 
                 $(this).append(
@@ -40,20 +47,17 @@ $(document).ready(function(){
                         <input type="text" placeholder="Score" name="form[form_question_${question_id}_score] class="form-control form-control-lg"">
                     </div>`
                   );
-                counter += 1;        
-            });
-        }
-        else{
-            $(".form_question").each(function(){
-                var question_id = $(this).attr("id").match(/\d+/)[0]
 
+                counter += 1;        
+            }
+            else{
                 if($(this).attr("data-question-type") === "1" || $(this).attr("data-question-type") === "2"){
                     $(".form_question .row .form_question_choice_answer").remove();
                 }
 
                 $(`#form_question_${question_id}_score_div`).remove();
-            });
-        }
+            }
+        });
     });
 
     // ADD QUESTION
@@ -94,6 +98,12 @@ $(document).ready(function(){
                     <input name="form_question_${question_counter}_choice_1_quiz" class="form-check-input mt-0" type="checkbox">
                 </div>
             `);
+
+            $(`#form_question_${question_counter}_div`).append(
+                `<div id="form_question_${question_counter}_score_div" class="input-group my-2">
+                    <input type="text" placeholder="Score" name="form[form_question_${question_counter}_score] class="form-control form-control-lg"">
+                </div>`
+            );
         }
     });
 
