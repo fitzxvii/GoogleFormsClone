@@ -8,14 +8,14 @@
                 <textarea class="form-control" name="form[description]" rows="3" placeholder="Form Description"></textarea>
             </div>
             <div id="sortable">
-                <div id="form_question_1_div" class="mb-3 p-4 border border-success rounded">
+                <div id="form_question_1_div" class="mb-3 p-4 border border-success rounded form_question" data-question-type="1">
                     <div class="row">
                         <div class="col-lg-9">
                             <div id="form_question_1_question_div" class="input-group mb-3">
                                 <input type="text" id="form_question_1" name="form[form_question_1]" class="form-control form-control-lg" placeholder="Question Text">
                                 <button class="delete_question btn btn-sm btn-outline-danger" data-delete-id="1"><i class="far fa-trash-alt"></i> Delete</button>
                             </div>
-                            <div id="form_question_1_choice_div" class="input-group mb-3">
+                            <div id="form_question_1_choice_div" class="input-group mb-3 type_multiple_choice">
                                 <input type="text" id="form_question_1_choice_1" name="form[form_question_1_choice_1]" class="form-control" placeholder="Choice Text">
                                 <button class="delete_choice btn btn-sm btn-outline-danger" data-delete-id="1"><i class="far fa-trash-alt"></i> Delete</button>
                             </div>
