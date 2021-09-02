@@ -1,4 +1,4 @@
-<form class="w-75 mx-auto" method="POST">
+<form class="w-75 mx-auto" action="#">
     <div class="mt-4 bg-light rounded p-3 mx-auto border border-success">
         <h2 class="text-success">Untitled Form</h2>
         <h5 class="text-success">Form Description</h5>
@@ -23,5 +23,22 @@
         <div> <input type="checkbox" name="Option1" value="Option 1" <%= disabled="disabled" if params['action'] == "view" %>> <label> Option 1 </label> </div>
         <div> <input type="checkbox" name="Option2" value="Option 2" <%= disabled="disabled" if params['action'] == "view" %>> <label> Option 2 </label> </div>
     </div>
-    <input type="submit" class="d-block btn btn-success my-4" value="Submit" <%= disabled="disabled" if params['action'] == "view" %>>
+    <input type="submit" class="d-block btn btn-success my-4" data-bs-toggle="modal" data-bs-target="#staticBackdrop" value="Submit" <%= disabled="disabled" if params['action'] == "view" %>>
 </form>
+<% if params['action'] == "answer" %>
+    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-success fw-bold">GoogleForms</h5>
+                </div>
+                <div class="modal-body">
+                    <h5 class="text-success text-center mb-3">Your submission has been confirmed.</h5>
+                    <p class="text-success text-left">Thank you for answering the survey!</p>
+                    <p class="text-success text-left">Your Score: 10/10</p>
+                    <p class="text-success text-center fst-italic">Click <a href="#" class="text-success">here</a> to view your submission.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+<% end %>
