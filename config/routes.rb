@@ -16,4 +16,6 @@ Rails.application.routes.draw do
   get "/form" => "forms#view"
   get "/form/result" => "forms#result"
   get "/form/answer" => "forms#answer"
+
+  get "/create_form" => "forms#create_form"
 end
