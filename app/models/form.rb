@@ -6,13 +6,13 @@ class Form < ApplicationRecord
     # Require: user_id
     # Returns: status and new form id
     # Owner: Fitz 
-    def self.create_form
+    def self.create_form(current_user)
         response = { :status => false }
         code = self.generate_form_code
 
         new_form = insert_record([
             "INSERT INTO forms (user_id, code, form_type, title, description, status, created_at, updated_at)
-            VALUES(1, ?, 0, 'Untitled Form', 'Form Description', 0, NOW(), NOW());", code
+            VALUES(?, ?, 0, 'Untitled Form', 'Form Description', 0, NOW(), NOW());", current_user, code
         ])
 
         if new_form.present?

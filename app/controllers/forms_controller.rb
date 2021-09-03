@@ -6,7 +6,7 @@ class FormsController < ApplicationController
     end
 
     def create_form
-        new_form = Form.create_form
+        new_form = Form.create_form(current_user["id"])
 
         if new_form[:status] 
             return redirect_to "/dashboard/create"
