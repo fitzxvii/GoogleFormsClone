@@ -8,7 +8,7 @@ class Question < ApplicationRecord
 
         new_question = insert_record([
             'INSERT INTO questions (form_id, question_type, content, created_at, updated_at)
-            VALUES(?, 0, "Question", NOW(), NOW());', form_id
+            VALUES(?, 1, "Question", NOW(), NOW());', form_id
         ])
 
         if new_question.present?

@@ -2,8 +2,14 @@ class Form < ApplicationRecord
     #belongs_to :user
     include :: QueryHelper
 
+    validates :title, :description, presence: true
+
     def self.get_forms(current_user)
         query_records(["SELECT * FROM forms WHERE user_id = ? ORDER BY updated_at DESC", current_user])
+    end
+
+    def self.get_form(id)
+        query_record(["SELECT * FROM forms WHERE id = ?", id])
     end
 
     # Insert a new default form 
@@ -43,6 +49,29 @@ class Form < ApplicationRecord
         end
 
         return response
+    end
+
+    def self.validate_rename(id, form_data)
+        get_form = self.get_form(id)
+
+        new_form_data = Form.new(
+            :title       => form_data[:title],
+            :description => get_form["description"]
+        )
+
+        status = new_form_data.valid?
+
+        if status
+            update_form = update_record(["UPDATE forms SET title = ?, updated_at = NOW() WHERE id = ?", form_data[:title], id])
+
+            status = true if update_form
+            return_form_data = self.get_form(id)
+            return_form_data["updated_at"] = return_form_data["updated_at"].strftime("%B %d, %Y | %I:%M %p")
+        else
+            errors = new_form_data.errors.messages
+        end
+
+        return { :status => status, :errors => errors, :form_data => return_form_data }
     end
 
     private

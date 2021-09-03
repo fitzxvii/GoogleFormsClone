@@ -21,6 +21,14 @@ class FormsController < ApplicationController
         end     
     end
 
+    def rename_form
+        form_data = params.require(:form).permit(:title)
+
+        validate_rename = Form.validate_rename(params["id"], form_data)
+
+        render json: validate_rename
+    end
+
     def view
     end
 
