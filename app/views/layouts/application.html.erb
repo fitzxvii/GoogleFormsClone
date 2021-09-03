@@ -34,7 +34,7 @@
           </ul>
           <% if current_user %>
             <div class="collapse navbar-collapse" id="navbarNav">
-              <% if request.env['PATH_INFO'] === "/dashboard/create" %>
+              <% if params['action'] == 'create' %>
                 <div class="form-check form-switch me-2">
                   <input class="form-check-input bg-success" type="checkbox" id="quiz_mode_toggle">
                   <label class="form-check-label small" for="quiz_mode_toggle">Quiz Mode</label>

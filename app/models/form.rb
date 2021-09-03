@@ -28,6 +28,7 @@ class Form < ApplicationRecord
 
         if new_form.present?
             response[:form_id] = new_form
+            response[:form_code] = code
 
             new_question = Question.create_default_question new_form
 
@@ -51,6 +52,16 @@ class Form < ApplicationRecord
         return response
     end
 
+    # It returns the form data by code
+    # Owner: Fitz
+    def self.get_form_by_code user_id, code
+        return query_record([
+            'SELECT id, user_id, form_type, title, description, status, question_order
+            FROM forms
+            WHERE user_id = ? AND code = ?;', user_id, code
+        ])
+    end
+    
     def self.validate_rename(id, form_data)
         get_form = self.get_form(id)
 
@@ -73,7 +84,7 @@ class Form < ApplicationRecord
 
         return { :status => status, :errors => errors, :form_data => return_form_data }
     end
-
+  
     private
         # Generate code of form with length of 10
         # Owner: Fitz

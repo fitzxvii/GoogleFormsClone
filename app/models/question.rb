@@ -3,6 +3,7 @@ class Question < ApplicationRecord
     include :: QueryHelper
     
     # To add a new default question
+    # Owner: Fitz
     def self.create_default_question form_id
         response = { :status => false }
 
@@ -17,5 +18,13 @@ class Question < ApplicationRecord
         end
 
         return response
+    end
+
+    # To get all questions inside question ids 
+    def self.get_questions_by_ids form_id, question_ids
+        return query_records([
+            'SELECT * FROM questions 
+            WHERE form_id = ? AND id IN (?);', form_id, question_ids
+        ])
     end
 end
