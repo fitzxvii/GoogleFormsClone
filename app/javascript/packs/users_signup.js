@@ -1,17 +1,16 @@
 $(document).ready(function(){
     $("input[type=text], input[type=email], input[type=password]").on("keypress", function(){
         $(this).removeClass("is-invalid");
-        $(this).next(".signup_error").remove();
+        $(this).next(".form_error").remove();
     });
     
     $("#signup_form").submit(function(e){
         e.preventDefault();
 
         $.post($(this).attr("action"), $(this).serialize(), function(result){
-            $(".signup_error").remove();
+            $(".form_error").remove();
 
             if(result.status){
-                console.log(result);
                 window.location.href = "http://localhost:3000/dashboard";
             }
             else{
@@ -21,7 +20,7 @@ $(document).ready(function(){
 
                     $(`#${key}`).addClass("is-invalid");
                     $(`#${key}`).after(`
-                        <p class="signup_error fst-italic text-danger">${capitalized_key} ${value[0]}</p>
+                        <p class="form_error fst-italic text-danger">${capitalized_key} ${value[0]}</p>
                     `);
                 }
             }

@@ -27,6 +27,11 @@
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
           </button>
+          <ul class="navbar-nav me-auto">
+            <li class="nav-item">
+              <a class="nav-link" aria-current="page">Welcome, <%= current_user["first_name"] %>!</a>
+            </li>
+          </ul>
           <% if current_user %>
             <div class="collapse navbar-collapse" id="navbarNav">
               <% if request.env['PATH_INFO'] === "/dashboard/create" %>
@@ -36,6 +41,7 @@
                 </div>
                 <a href="#" class="text-decoration-none btn btn-sm"><i class="far fa-eye"></i> Preview</a>
               <% end %>
+              
               <div class="ms-auto">
                 <form action="/sessions/<%= current_user["id"] %>" method="post">
                   <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">

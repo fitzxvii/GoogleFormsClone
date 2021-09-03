@@ -1,13 +1,14 @@
-<div class="col-lg-4 offset-4 mt-5 bg-light rounded p-3">
+<div class="col-lg-4 offset-lg-4 mt-5 bg-light rounded p-3">
     <h2 class="text-success text-center"><i class="fas fa-list-ol"></i> Login</h2>
-    <form>
+    <form id="signin_form" action="/login" method="POST">
+        <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
         <div class="form-floating m-3">
-            <input type="email" class="form-control" id="login[email_address]" placeholder="email address">
-            <label for="login[email_address]">Email Address</label>
+            <input type="email" class="form-control" id="email" name="login[email]" placeholder="email address">
+            <label for="email">Email Address</label>
         </div>
         <div class="form-floating m-3">
-            <input type="password" class="form-control" id="login[password]" placeholder="password">
-            <label for="login[password]">Password</label>
+            <input type="password" class="form-control" id="password" name="login[password]" placeholder="password">
+            <label for="password">Password</label>
         </div>
         <div class="m-3">
             <button type="submit" class="btn btn-success w-100">Sign In</button>
