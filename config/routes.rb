@@ -12,10 +12,11 @@ Rails.application.routes.draw do
 
   # FORMS ROUTES
   get "/dashboard" => "forms#dashboard"
-  get "/dashboard/create" => "forms#create"
+  #get "/dashboard/create" => "forms#create"
   get "/form" => "forms#view"
   get "/form/result" => "forms#result"
   get "/form/answer" => "forms#answer"
 
   get "/create_form" => "forms#create_form"
+  get "/f/:code" => "forms#create"
 end

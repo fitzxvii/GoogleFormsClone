@@ -2,29 +2,34 @@
     <div class="mt-3 col-lg-8 offset-lg-2">
         <form id="create_form">
             <div class="mb-3">
-                <input type="text" name="form[title]" class="form-control" placeholder="Form Title" autofocus>
+                <input type="text" name="form[title]" class="form-control" placeholder="Form Title" value="<%= @form_data['title'] if @form_data.present? %>" autofocus>
             </div>
             <div class="mb-3">
-                <textarea class="form-control" name="form[description]" rows="3" placeholder="Form Description"></textarea>
+                <textarea class="form-control" name="form[description]" rows="3" placeholder="Form Description"> <%= @form_data['description'] if @form_data.present? %> </textarea>
             </div>
             <div id="sortable">
-                <div id="form_question_1_div" class="mb-3 p-4 border border-success rounded form_question" data-question-type="1">
+                <% @questions.each do |question|%>
+                <div id="form_question_<%= question['id'] %>_div" class="mb-3 p-4 border border-success rounded form_question" data-question-type="<%= question['question_type'] %>">
                     <div class="row">
                         <div class="col-lg-9">
-                            <div id="form_question_1_question_div" class="input-group mb-3">
-                                <input type="text" id="form_question_1" name="form[form_question_1]" class="form-control form-control-lg" placeholder="Question Text">
-                                <button class="delete_question btn btn-sm btn-outline-danger" data-delete-id="1"><i class="far fa-trash-alt"></i> Delete</button>
+                            <div id="form_question_<%= question['id'] %>_question_div" class="input-group mb-3">
+                                <input type="text" id="form_question_<%= question['id'] %>" name="form[form_question_<%= question['id'] %>]" class="form-control form-control-lg" placeholder="Question Text" value="<%= question['content'] %>">
+                                <button class="delete_question btn btn-sm btn-outline-danger" data-delete-id="<%= question['id'] %>"><i class="far fa-trash-alt"></i> Delete</button>
                             </div>
-                            <div id="form_question_1_choice_div" class="input-group mb-3 type_multiple_choice">
-                                <input type="text" id="form_question_1_choice_1" name="form[form_question_1_choice_1]" class="form-control" placeholder="Choice Text" data-choice-id=1>
-                                <button class="delete_choice btn btn-sm btn-outline-danger" data-delete-id="1"><i class="far fa-trash-alt"></i> Delete</button>
+                            <% @all_options.each do |option|%>
+                            <div id="form_question_<%= question['id'] %>_choice_div" class="input-group mb-3 type_multiple_choice">         
+                                    <% if question['id'] == option["question_id"] %>
+                                    <input type="text" id="form_question_<%= question['id'] %>_choice_<%= option['id'] %>" name="form[form_question_<%= question['id'] %>_choice_<%= option['id'] %>]" class="form-control" placeholder="Choice Text" data-choice-id="<%= option['id'] %>" value="<%= option['content'] %>">
+                                    <button class="delete_choice btn btn-sm btn-outline-danger" data-delete-id="<%= option['id'] %>"><i class="far fa-trash-alt"></i> Delete</button>
+                                    <% end %>
                             </div>
-                            <div id="form_question_1_add_choice_other_div">
-                                <a id="form_question_1_add_choice" class="add_choice text-decoration-none text-success" data-add-choice-id="1">Add Choice</a> <span id="form_question_1_add_other_div">or <a id="form_question_1_add_other" class="add_other text-decoration-none text-success" data-add-other-id="1">"Other"</a></span>
+                            <% end %>
+                            <div id="form_question_<%= question['id'] %>_add_choice_other_div">
+                                <a id="form_question_<%= question['id'] %>_add_choice" class="add_choice text-decoration-none text-success" data-add-choice-id="<%= question['id'] %>">Add Choice</a> <span id="form_question_<%= question['id'] %>_add_other_div">or <a id="form_question_<%= question['id'] %>_add_other" class="add_other text-decoration-none text-success" data-add-other-id="<%= question['id'] %>">"Other"</a></span>
                             </div>
                         </div>
                         <div class="col-lg-3">
-                            <select id="form_question_1_type" name="form[question_type]" class="form-select form_question_type" data-question-type-id="1">
+                            <select id="form_question_<%= question['id'] %>_type" name="form[question_type]" class="form-select form_question_type" data-question-type-id="<%= question['id'] %>">
                                 <option value="1">Multiple Choice</option>
                                 <option value="2">Checkboxes</option>
                                 <option value="3">Short Answer</option>
@@ -33,6 +38,7 @@
                         </div>
                     </div>
                 </div>
+                <% end %>
             </div>
             <div class="mb-3">
                 <button id="add_question_btn" class="btn btn-sm btn-outline-success w-100 p-2"><i class="fas fa-plus"></i> Add Question</button>

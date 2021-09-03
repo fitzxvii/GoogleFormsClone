@@ -21,7 +21,7 @@ module QueryHelper
             if !connection.nil?
                 active_connection.exec_query(
                     ActiveRecord::Base.send(:sanitize_sql_array, sql_statement)
-                ).to_hash
+                )
             end
         ensure
             ActiveRecord::Base.clear_active_connections!
