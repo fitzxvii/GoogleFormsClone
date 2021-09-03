@@ -5,7 +5,8 @@ class Form < ApplicationRecord
     # Insert a new default form 
     # Require: user_id
     # Returns: status and new form id
-    # Owner: Fitz 
+    # Last Updated: September 3, 2021
+    # Owner: Fitz, Updated by: Jovic Abengona
     def self.create_form(current_user)
         response = { :status => false }
         code = self.generate_form_code
