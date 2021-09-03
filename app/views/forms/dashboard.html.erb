@@ -20,7 +20,7 @@
                         <form class="rename_form" action="#" method="POST">
                             <h5 class="card-title text-success"><%= form["title"] %></h5>
                         </form>
-                        <p class="card-text text-muted small">Opened last <%= form["updated_at"].strftime("%B %d, %Y") %></p>
+                        <p class="card-text text-muted small">Opened last <%= form["updated_at"].strftime("%B %d, %Y | %I:%M %p") %></p>
                         <a href="#" class="card-text text-danger small text-decoration-none"><i class="far fa-trash-alt"></i> Remove</p></a>
                     </div>
                 </div>

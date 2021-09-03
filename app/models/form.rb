@@ -3,7 +3,7 @@ class Form < ApplicationRecord
     include :: QueryHelper
 
     def self.get_forms(current_user)
-        query_records(["SELECT * FROM forms WHERE user_id = ?", current_user])
+        query_records(["SELECT * FROM forms WHERE user_id = ? ORDER BY updated_at DESC", current_user])
     end
 
     # Insert a new default form 
