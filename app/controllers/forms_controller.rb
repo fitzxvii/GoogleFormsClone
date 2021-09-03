@@ -1,5 +1,13 @@
 class FormsController < ApplicationController
+    # DOCU: (GET) /dashboard
+	# Get forms based on current_user["id"]
+	# Triggered by: visting /dashboard
+    # Requires: current_user["id"]
+    # Returns: Hash data containing details about each form
+    # Last Updated: September 3, 2021
+    # Owner: Jovic Abengona
     def dashboard
+        @forms = Form.get_forms(current_user["id"])
     end
 
     def create

@@ -2,6 +2,10 @@ class Form < ApplicationRecord
     #belongs_to :user
     include :: QueryHelper
 
+    def self.get_forms(current_user)
+        query_records(["SELECT * FROM forms WHERE user_id = ?", current_user])
+    end
+
     # Insert a new default form 
     # Require: user_id
     # Returns: status and new form id
@@ -27,7 +31,7 @@ class Form < ApplicationRecord
                 if new_option[:status] && new_option[:option_id].present?
                     form_order_update = update_record([
                         'UPDATE forms
-                        SET question_order = ?
+                        SET question_order = ?, updated_at = NOW()
                         WHERE id = ?;', "[#{new_question[:question_id]}]", new_form
                     ])
 
