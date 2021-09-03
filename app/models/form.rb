@@ -2,10 +2,21 @@ class Form < ApplicationRecord
     #belongs_to :user
     include :: QueryHelper
 
+    validates :title, :description, presence: true
+
+    def self.get_forms(current_user)
+        query_records(["SELECT * FROM forms WHERE user_id = ? ORDER BY updated_at DESC", current_user])
+    end
+
+    def self.get_form(id)
+        query_record(["SELECT * FROM forms WHERE id = ?", id])
+    end
+
     # Insert a new default form 
     # Require: user_id
     # Returns: status and new form id
-    # Owner: Fitz 
+    # Last Updated: September 3, 2021
+    # Owner: Fitz, Updated by: Jovic Abengona
     def self.create_form(current_user)
         response = { :status => false }
         code = self.generate_form_code
@@ -27,7 +38,7 @@ class Form < ApplicationRecord
                 if new_option[:status] && new_option[:option_id].present?
                     form_order_update = update_record([
                         'UPDATE forms
-                        SET question_order = ?
+                        SET question_order = ?, updated_at = NOW()
                         WHERE id = ?;', "[#{new_question[:question_id]}]", new_form
                     ])
 
@@ -51,6 +62,29 @@ class Form < ApplicationRecord
         ])
     end
     
+    def self.validate_rename(id, form_data)
+        get_form = self.get_form(id)
+
+        new_form_data = Form.new(
+            :title       => form_data[:title],
+            :description => get_form["description"]
+        )
+
+        status = new_form_data.valid?
+
+        if status
+            update_form = update_record(["UPDATE forms SET title = ?, updated_at = NOW() WHERE id = ?", form_data[:title], id])
+
+            status = true if update_form
+            return_form_data = self.get_form(id)
+            return_form_data["updated_at"] = return_form_data["updated_at"].strftime("%B %d, %Y | %I:%M %p")
+        else
+            errors = new_form_data.errors.messages
+        end
+
+        return { :status => status, :errors => errors, :form_data => return_form_data }
+    end
+  
     private
         # Generate code of form with length of 10
         # Owner: Fitz

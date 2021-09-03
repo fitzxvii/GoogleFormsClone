@@ -7,17 +7,25 @@ class User < ApplicationRecord
   validates :email, presence: true, uniqueness: { case_sensitive: false }, format: { with: EMAIL_REGEX }
   validates :password, presence: true, length: { minimum: 8 }, confirmation: { case_sensitive: true }
 
+  # DOCU: Get User details base on user_id
+  # then returns Hash data containing user details
+  # Last Updated: September 3, 2021
+  # Owner: Jovic Abengona
   def self.get_user(user_id)
     query_record(["SELECT id, first_name, last_name, email FROM users WHERE id = ?", user_id])
   end
 
+  # DOCU: Get User details based on login_params[:email] and login_params[:password]
+  # then returns Hash data containing :status and :user_data
+  # Last Updated: September 3, 2021
+  # Owner: Jovic Abengona
   def self.login(login_params)
     user_data = query_record(["SELECT id, first_name, last_name, email 
                                 FROM users 
                                 WHERE email = ? AND password = MD5(?)", 
                                 login_params[:email].downcase, 
                                 login_params[:password]])
-                                
+
     user_data = user_data["id"] if user_data.present?
     
     if user_data
@@ -29,6 +37,12 @@ class User < ApplicationRecord
     return { :status => status, :user_data => user_data }
   end
 
+  # DOCU: Validate signup_params
+  # If valid, create new user record
+  # Else, return error messages to display in the view
+  # Returns a Hash data containing :status, :errors, and :user_data
+  # Last Updated: September 3, 2021
+  # Owner: Jovic Abengona
   def self.validate_signup(signup_params)
     errors = nil
     user_data = nil
