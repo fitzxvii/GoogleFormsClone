@@ -13,51 +13,51 @@ $(document).ready(function(){
     // CHECK QUIZ MODE TOGGLE
     $("#quiz_mode_toggle").change(function(){
         var class_type;
-        var counter = 1;
         is_quiz_mode = $(this).prop("checked")
 
-        $(".form_question").each(function(){
-            var question_id = $(this).attr("id").match(/\d+/g)[0];           
+        if(is_quiz_mode){
+            var x = 1;
+            var y = 1;
 
-            if(is_quiz_mode){ 
-                if($(this).attr("data-question-type") === "1"){
-                    class_type = "multiple_choice"
-                }
-                else if($(this).attr("data-question-type") === "2"){
-                    class_type = "checkbox"
-                }
-                
-                if($(`.form_question .row .type_${class_type} .form_question_choice_answer`).length === 0){
-                    //console.log($(`.form_question .row .type_${class_type} .form-control`).attr('id').match(/\d+/g))
+            $(".type_multiple_choice input").each(function(){
+                $(this).before(`
+                    <div class="input-group-text form_question_choice_answer">
+                        <input name="form_question_${$(this).attr("data-choice-id")}_choice_${x}_quiz" class="form-check-input mt-0" type="checkbox">
+                    </div>
+                `);
+                x++;
+            });
 
-                    $(`.form_question .row .type_${class_type}`).each(function() {
-                        var choice_question_id = $(this).find('.form-control').attr('id').match(/\d+/g)[0];
-                        var choice_id = $(this).find('.form-control').attr('id').match(/\d+/g)[1];
+            $(".type_checkbox input").each(function(){
+                $(this).before(`
+                    <div class="input-group-text form_question_choice_answer">
+                        <input name="form_question_${$(this).attr("data-choice-id")}_choice_${y}_quiz" class="form-check-input mt-0" type="checkbox">
+                    </div>
+                `);
+                y++;
+            });
+            
+            $(".form_question").each(function(){
+                var question_id = $(this).attr("id").match(/\d+/)[0]
 
-                        $(this).prepend(`
-                            <div class="input-group-text form_question_choice_answer">
-                                <input name="form_question_${choice_question_id}_choice_${choice_id}_quiz" class="form-check-input mt-0" type="checkbox">
-                            </div>
-                        `);
-                    });
-                }
-
-                $(this).append(
-                    `<div id="form_question_${question_id}_score_div" class="input-group my-2">
+                $(this).append(`
+                    <div id="form_question_${question_id}_score_div" class="input-group my-2 score_field">
                         <input type="text" placeholder="Score" name="form[form_question_${question_id}_score] class="form-control form-control-lg"">
-                    </div>`
-                  );
+                    </div>
+                `);
+            });
+            
+        }
+        else{
+            $(".form_question").each(function(){
 
-                counter += 1;        
-            }
-            else{
                 if($(this).attr("data-question-type") === "1" || $(this).attr("data-question-type") === "2"){
                     $(".form_question .row .form_question_choice_answer").remove();
                 }
 
-                $(`#form_question_${question_id}_score_div`).remove();
-            }
-        });
+                $(".score_field").remove();
+            });
+        }
     });
 
     // ADD QUESTION
@@ -73,7 +73,7 @@ $(document).ready(function(){
                             <button class="delete_question btn btn-sm btn-outline-danger" data-delete-id="${question_counter}"><i class="far fa-trash-alt"></i> Delete</button>
                         </div>
                         <div id="form_question_${question_counter}_choice_div" class="input-group mb-3 type_multiple_choice">
-                            <input type="text" id="form_question_${question_counter}_choice_1" name="form[form_question_${question_counter}_choice_1]" class="form-control" placeholder="Choice Text">
+                            <input type="text" id="form_question_${question_counter}_choice_1" name="form[form_question_${question_counter}_choice_1]" class="form-control" placeholder="Choice Text" data-choice-id=${question_counter}>
                             <button class="delete_choice btn btn-sm btn-outline-danger" data-delete-id="${question_counter}"><i class="far fa-trash-alt"></i> Delete</button>
                         </div>
                         <div id="form_question_${question_counter}_add_choice_other_div">
@@ -99,11 +99,11 @@ $(document).ready(function(){
                 </div>
             `);
 
-            $(`#form_question_${question_counter}_div`).append(
-                `<div id="form_question_${question_counter}_score_div" class="input-group my-2">
+            $(`#form_question_${question_counter}_add_choice_other_div`).after(`
+                <div id="form_question_${question_counter}_score_div" class="input-group my-2 score_field">
                     <input type="text" placeholder="Score" name="form[form_question_${question_counter}_score] class="form-control form-control-lg"">
-                </div>`
-            );
+                </div>
+            `);
         }
     });
 
@@ -148,7 +148,7 @@ $(document).ready(function(){
             $(`#form_question_${$(this).data("add-choice-id")}_${element}_div`).after(`
                 <div id="form_question_${$(this).data("add-choice-id")}_choice_div" class="input-group mb-3 type_${class_type}">
                     ${form_question_choice_answer}
-                    <input type="text" id="form_question_${$(this).data("add-choice-id")}_choice_${choice_counter}" name="form[form_question_${$(this).data("add-choice-id")}_choice_${choice_counter}]" class="form-control" placeholder="Choice Text">
+                    <input type="text" id="form_question_${$(this).data("add-choice-id")}_choice_${choice_counter}" name="form[form_question_${$(this).data("add-choice-id")}_choice_${choice_counter}]" class="form-control" placeholder="Choice Text" data-choice-id=${choice_counter}>
                     <button class="delete_choice btn btn-sm btn-outline-danger" data-delete-id="${$(this).data("add-choice-id")}"><i class="far fa-trash-alt"></i> Delete</button>
                 </div>
             `);
@@ -156,7 +156,7 @@ $(document).ready(function(){
         else{
             $(`#form_question_${$(this).data("add-choice-id")}_${element}_div`).after(`
                 <div id="form_question_${$(this).data("add-choice-id")}_choice_div" class="input-group mb-3 type_${class_type}">
-                    <input type="text" id="form_question_${$(this).data("add-choice-id")}_choice_${choice_counter}" name="form[form_question_${$(this).data("add-choice-id")}_choice_${choice_counter}]" class="form-control" placeholder="Choice Text">
+                    <input type="text" id="form_question_${$(this).data("add-choice-id")}_choice_${choice_counter}" name="form[form_question_${$(this).data("add-choice-id")}_choice_${choice_counter}]" class="form-control" placeholder="Choice Text" data-choice-id=${choice_counter}>
                     <button class="delete_choice btn btn-sm btn-outline-danger" data-delete-id="${$(this).data("add-choice-id")}"><i class="far fa-trash-alt"></i> Delete</button>
                 </div>
             `);
@@ -199,22 +199,14 @@ $(document).ready(function(){
     $(document).on("change", ".form_question_type", function(){
         var choice_content;
         var question_type_content;
+        var question_type;
         question_counter += 1;
 
         $(`#form_question_${$(this).data("question-type-id")}_div`).attr("data-question-type", `${$(this).val()}`);
 
         if($(this).val() === "1" || $(this).val() === "2"){
-            choice_content = `
-                <div id="form_question_${question_counter}_choice_div" class="input-group mb-3 type_multiple_choice">
-                    <input type="text" id="form_question_${question_counter}_choice_1" name="form[form_question_${question_counter}_choice_1]" class="form-control" placeholder="Choice Text">
-                    <button class="delete_choice btn btn-sm btn-outline-danger" data-delete-id="${question_counter}"><i class="far fa-trash-alt"></i> Delete</button>
-                </div>
-                <div id="form_question_${question_counter}_add_choice_other_div">
-                    <a id="form_question_${question_counter}_add_choice" class="add_choice text-decoration-none text-success" data-add-choice-id="${question_counter}">Add Choice</a> <span id="form_question_${question_counter}_add_other_div">or <a id="form_question_${question_counter}_add_other" class="add_other text-decoration-none text-success" data-add-other-id="${question_counter}">"Other"</a></span>
-                </div>
-            `;
-
             if($(this).val() === "1"){
+                question_type = "multiple_choice";
                 question_type_content = `
                     <div class="col-lg-3">
                         <select id="form_question_${question_counter}_type" name="form[question_type]" class="form-select form_question_type" data-question-type-id="${question_counter}">
@@ -227,6 +219,7 @@ $(document).ready(function(){
                 `;
             }
             else{
+                question_type = "checkbox";
                 question_type_content = `
                     <div class="col-lg-3">
                         <select id="form_question_${question_counter}_type" name="form[question_type]" class="form-select form_question_type" data-question-type-id="${question_counter}">
@@ -238,6 +231,16 @@ $(document).ready(function(){
                     </div>
                 `;
             }
+
+            choice_content = `
+                <div id="form_question_${question_counter}_choice_div" class="input-group mb-3 type_${question_type}">
+                    <input type="text" id="form_question_${question_counter}_choice_1" name="form[form_question_${question_counter}_choice_1]" class="form-control" placeholder="Choice Text" data-choice-id=1>
+                    <button class="delete_choice btn btn-sm btn-outline-danger" data-delete-id="${question_counter}"><i class="far fa-trash-alt"></i> Delete</button>
+                </div>
+                <div id="form_question_${question_counter}_add_choice_other_div">
+                    <a id="form_question_${question_counter}_add_choice" class="add_choice text-decoration-none text-success" data-add-choice-id="${question_counter}">Add Choice</a> <span id="form_question_${question_counter}_add_other_div">or <a id="form_question_${question_counter}_add_other" class="add_other text-decoration-none text-success" data-add-other-id="${question_counter}">"Other"</a></span>
+                </div>
+            `;
         }
         else if($(this).val() === "3" || $(this).val() === "4"){
             choice_content = `
@@ -289,6 +292,19 @@ $(document).ready(function(){
             $(`#form_question_${question_counter}_choice_div`).prepend(`
                 <div class="input-group-text form_question_choice_answer">
                     <input name="form_question_${question_counter}_choice_${choice_counter}_quiz" class="form-check-input mt-0" type="checkbox">
+                </div>
+            `);
+
+            $(`#form_question_${question_counter}_add_choice_other_div`).after(`
+                <div id="form_question_${question_counter}_score_div" class="input-group my-2 score_field">
+                    <input type="text" placeholder="Score" name="form[form_question_${question_counter}_score] class="form-control form-control-lg"">
+                </div>
+            `);
+        }
+        else if(is_quiz_mode && ($(this).val() === "3" || $(this).val() === "4")){
+            $(`#form_question_${question_counter}_choice_div`).after(`
+                <div id="form_question_${question_counter}_score_div" class="input-group my-2 score_field">
+                    <input type="text" placeholder="Score" name="form[form_question_${question_counter}_score] class="form-control form-control-lg"">
                 </div>
             `);
         }
