@@ -13,3 +13,6 @@
  *= require_tree .
  *= require_self
  */
+.signup_error{
+    font-size: 12px;
+}

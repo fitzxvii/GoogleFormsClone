@@ -1,25 +1,26 @@
 <div class="col-lg-4 offset-lg-4 mt-5 bg-light rounded p-3">
     <h2 class="text-success text-center"><i class="fas fa-list-ol"></i> Registration</h2>
-    <form action="#">
+    <form id="signup_form" action="/register" method="POST">
+        <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
         <div class="form-floating m-3">
-            <input type="text" class="form-control" id="signup[first_name]" placeholder="first name">
-            <label for="signup[first_name]">First Name</label>
+            <input type="text" class="form-control" id="first_name" name="signup[first_name]" placeholder="first name">
+            <label for="first_name">First Name</label>
         </div>
         <div class="form-floating m-3">
-            <input type="text" class="form-control" id="signup[last_name]" placeholder="last name">
-            <label for="signup[last_name]">Last Name</label>
+            <input type="text" class="form-control" id="last_name" name="signup[last_name]" placeholder="last name">
+            <label for="last_name">Last Name</label>
         </div>
         <div class="form-floating m-3">
-            <input type="email" class="form-control" id="signup[email_address]" placeholder="email address">
-            <label for="signup[email_address]">Email Address</label>
+            <input type="email" class="form-control" id="email" name="signup[email]" placeholder="email address">
+            <label for="email">Email Address</label>
         </div>
         <div class="form-floating m-3">
-            <input type="password" class="form-control" id="signup[password]" placeholder="password">
-            <label for="signup[password]">Password</label>
+            <input type="password" class="form-control" id="password" name="signup[password]" placeholder="password">
+            <label for="password">Password</label>
         </div>
         <div class="form-floating m-3">
-            <input type="password" class="form-control" id="signup[confirm_password]" placeholder="confirm password">
-            <label for="signup[confirm_password]">Confirm Password</label>
+            <input type="password" class="form-control" id="password_confirmation" name="signup[password_confirmation]" placeholder="confirm password">
+            <label for="password_confirmation">Password Confirmation</label>
         </div>
         <div class="m-3">
             <button type="submit" class="btn btn-success w-100">Sign Up</button>

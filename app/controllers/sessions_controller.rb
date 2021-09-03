@@ -1,7 +1,7 @@
 class SessionsController < ApplicationController
     def new
         if current_user
-            @msg = "YOWN"
+            redirect_to "/dashboard"
         end
     end
 

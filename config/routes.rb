@@ -10,4 +10,7 @@ Rails.application.routes.draw do
   get "/form" => "forms#view"
   get "/form/result" => "forms#result"
   get "/form/answer" => "forms#answer"
+
+  # USER ROUTES
+  post "/register" => "users#register"
 end
