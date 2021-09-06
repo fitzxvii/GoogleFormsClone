@@ -15,7 +15,7 @@ class Form < ApplicationRecord
     # Insert a new default form 
     # Require: user_id
     # Returns: status and new form id
-    # Last Updated: September 3, 2021
+    # Last Updated: September 6, 2021
     # Owner: Fitz, Updated by: Jovic Abengona
     def self.create_form(current_user)
         response = { :status => false }
@@ -42,9 +42,7 @@ class Form < ApplicationRecord
                         WHERE id = ?;', "[#{new_question[:question_id]}]", new_form
                     ])
 
-                    if form_order_update == 1
-                        response[:status] = true
-                    end
+                    response[:status] = true if form_order_update == 1
                 end
             end
         end
@@ -55,7 +53,7 @@ class Form < ApplicationRecord
     # It returns the form data by code
     # Owner: Fitz
     def self.get_form_by_code user_id, code
-        return query_record([
+        query_record([
             'SELECT id, user_id, form_type, title, description, status, question_order
             FROM forms
             WHERE user_id = ? AND code = ?;', user_id, code
@@ -83,6 +81,33 @@ class Form < ApplicationRecord
         end
 
         return { :status => status, :errors => errors, :form_data => return_form_data }
+    end
+
+    # It returns the response if the update of question order is successful or not
+    # Owner: Fitz
+    def self.update_form_question_order form_id, question_id
+        response = { :status => false }
+
+        form_question_order = query_record([
+            'SELECT question_order 
+            FROM forms 
+            WHERE id = ?', form_id
+        ])
+
+        if form_question_order.present?
+            parsed_question_order = JSON.parse(form_question_order["question_order"])
+            parsed_question_order.push(question_id)
+
+            update_question_order = update_record([
+                'UPDATE forms
+                SET question_order = ?, updated_at = NOW()
+                WHERE id = ?;', "#{parsed_question_order}", form_id
+            ])
+
+            response[:status] = true if update_question_order == 1
+        end
+
+        return response
     end
   
     private
