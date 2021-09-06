@@ -114,6 +114,7 @@ class Form < ApplicationRecord
         end
 
         return response
+    end
       
     def self.publish_form(id, user_id)
         publish_form = update_record(["UPDATE forms SET status = 1, updated_at = NOW() WHERE id = ? AND user_id = ?", id, user_id])
