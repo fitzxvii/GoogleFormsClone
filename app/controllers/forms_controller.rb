@@ -27,9 +27,21 @@ class FormsController < ApplicationController
     def rename_form
         form_data = params.require(:form).permit(:title)
 
-        validate_rename = Form.validate_rename(params["id"], form_data)
+        validate_rename = Form.validate_rename(params[:id], current_user["id"], form_data)
 
         render json: validate_rename
+    end
+
+    def delete
+        status = Form.delete_form(params[:id], current_user["id"])
+
+        if status
+            flash[:delete_message] = { :alert_type => "success", :message => "Form has been deleted!", :icon => "check" }
+        else
+            flash[:delete_message] = { :alert_type => "danger", :message => "Unable to delete form!", :icon => "times" }
+        end
+
+        redirect_to "/"
     end
 
     def view

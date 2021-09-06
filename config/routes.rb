@@ -17,8 +17,9 @@ Rails.application.routes.draw do
   get "/form/result" => "forms#result"
   get "/form/answer" => "forms#answer"
 
-  patch "/form/rename/:id" => "forms#rename_form"
-
   get "/create_form" => "forms#create_form"
   get "/f/:code" => "forms#create"
+
+  patch "/form/rename/:id" => "forms#rename_form"
+  delete "/form/delete/:id" => "forms#delete"
 end
