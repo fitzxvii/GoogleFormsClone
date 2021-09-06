@@ -28,6 +28,19 @@ class FormsController < ApplicationController
         end
     end
 
+    # DOCU: (GET) /f/:code/preview
+	# Get form data including questions and options
+	# Triggered by: visting /f/:code/preview
+    # Requires: current_user["id"], params[:code]
+    # Returns: Instance variables for forms data, questions, and options
+    # Last Updated: September 6, 2021
+    # Owner: Jovic Abengona
+    def preview
+        @form_data = Form.get_form_by_code(current_user["id"], params[:code])
+        @questions = Question.get_questions_by_ids(@form_data['id'], JSON.parse(@form_data['question_order']))
+        @all_options = Option.collect_options_per_quetions(JSON.parse(@form_data['question_order']))
+    end
+
     # DOCU: (GET) /create_form
     # Create a new form with question and a option in default format
     # Triggered by: Clicking create new form 

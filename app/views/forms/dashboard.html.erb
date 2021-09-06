@@ -1,4 +1,9 @@
 <div class="container mt-3">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item active" aria-current="page">Dashboard</li>
+        </ol>
+    </nav>
     <% if flash[:delete_message] %>
         <div class="alert alert-<%= flash[:delete_message]["alert_type"] %>" role="alert">
             <i class="fas fa-<%= flash[:delete_message]["icon"] %>-circle"></i> <%= flash[:delete_message]["message"] %>

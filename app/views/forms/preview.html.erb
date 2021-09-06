@@ -1,0 +1,53 @@
+<div class="container">
+    <div class="mt-3 col-lg-8 offset-lg-2">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/" class="text-success text-decoration-none">Dashboard</a></li>
+                <li class="breadcrumb-item"><a href="/f/<%= @form_data['code'] %>" class="text-success text-decoration-none">Create Form</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Form Preview</li>
+            </ol>
+        </nav>
+        <div class="mt-4">
+            <div class="mb-3">
+                <h1 class="text-success"><%= @form_data['title'] %></h1>
+            </div>
+            <div class="mb-3">
+                <p class="text-muted fs-6"><%= @form_data['description'] %></p>
+            </div>
+            <div id="sortable">
+                <% @questions.each_with_index do |question, index| %>
+                    <div id="form_question_<%= question['id'] %>_div" class="mb-3 p-4 border border-success rounded form_question" data-question-type="<%= question['question_type'] %>">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div id="form_question_<%= question['id'] %>_question_div" class="mb-3">
+                                    <h4><%= index + 1 %>. <%= question['content'] %></h4>
+                                </div>
+                                <% if question['question_type'] === 1 || question['question_type'] === 2 %>
+                                <%
+                                    if question['question_type'] === 1
+                                        input_type = "radio"
+                                    elsif question['question_type'] === 2
+                                        input_type = "checkbox"
+                                    end
+                                %>
+                                    <% @all_options.each do |option| %>
+                                        <% if question['id'] === option["question_id"] %>
+                                                <div class="form-check">
+                                                    <input type="<%= input_type %>" id="form_option_<%= option['id'] %>" class="form-check-input" name="form_question_<%= question['id'] %>_answer" value="<%= option['id'] %>">
+                                                    <label class="form-check-label" for="form_option_<%= option['id'] %>">
+                                                        <%= option['content'] %>
+                                                    </label>
+                                                </div>
+                                        <% end %>
+                                    <% end %>
+                                <% elsif question['question_type'] === 3 || question['question_type'] === 4%>
+                                    <textarea class="form-control" rows="3"></textarea>
+                                <% end %>
+                            </div>
+                        </div>
+                    </div>
+                <% end %>
+            </div>
+        </div>
+    </div>
+</div>

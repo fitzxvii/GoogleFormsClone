@@ -19,27 +19,27 @@
                 <textarea class="form-control" name="form[description]" rows="3" placeholder="Form Description" <% if @form_data['status'] === 1 %> readonly <% end %>><%= @form_data['description'] if @form_data.present? %></textarea>
             </div>
             <div id="sortable">
-                <% @questions.each do |question|%>
+                <% @questions.each do |question| %>
                 <div id="form_question_<%= question['id'] %>_div" class="mb-3 p-4 border border-success rounded form_question" data-question-type="<%= question['question_type'] %>">
                     <div class="row">
                         <div class="col-lg-<% if @form_data['status'] === 0 %>9<% elsif @form_data['status'] === 1%>12<% end %>">
                             <div id="form_question_<%= question['id'] %>_question_div" class="input-group mb-3">
                                 <input type="text" id="form_question_<%= question['id'] %>" name="form[form_question_<%= question['id'] %>]" class="form-control form-control-lg" placeholder="Question Text" value="<%= question['content'] %>" <% if @form_data['status'] === 1 %> readonly <% end %>>
                                 <% if @form_data['status'] === 0 %>
-                                    <button class="delete_question btn btn-sm btn-outline-danger" data-delete-id="<%= question['id'] %>"><i class="far fa-trash-alt"></i> Delete</button>
+                                    <button type="button" class="delete_question btn btn-sm btn-outline-danger" data-delete-id="<%= question['id'] %>"><i class="far fa-trash-alt"></i> Delete</button>
                                 <% end %>
                             </div>
-                            <% @all_options.each do |option|%>
+                            <% @all_options.each do |option| %>
                               <% if question['id'] == option["question_id"] %>
                                 <div id="form_question_<%= question['id'] %>_choice_div" class="input-group mb-3 type_multiple_choice">
                                     <input type="text" id="form_question_<%= question['id'] %>_choice_<%= option['id'] %>" name="form[form_question_<%= question['id'] %>_choice_<%= option['id'] %>]" class="form-control" placeholder="Choice Text" data-choice-id="<%= option['id'] %>" value="<%= option['content'] %>" <% if @form_data['status'] === 1 %> readonly <% end %>>
                                     <% if @form_data['status'] === 0 %>
-                                        <button class="delete_choice btn btn-sm btn-outline-danger" data-delete-id="<%= option['id'] %>"><i class="far fa-trash-alt"></i> Delete</button>
+                                        <button type="button" class="delete_choice btn btn-sm btn-outline-danger" data-delete-id="<%= option['id'] %>"><i class="far fa-trash-alt"></i> Delete</button>
                                     <% end %>
                                 </div>
                               <% end %>
                             <% end %>
-                            <% if @form_data['status'] === 0 %>
+                            <% if @form_data['status'] === 0 && (question['question_type'] === 1 || question['question_type'] === 2) %>
                                 <div id="form_question_<%= question['id'] %>_add_choice_other_div">
                                     <a id="form_question_<%= question['id'] %>_add_choice" class="add_choice text-decoration-none text-success" data-add-choice-id="<%= question['id'] %>">Add Choice</a> <span id="form_question_<%= question['id'] %>_add_other_div">or <a id="form_question_<%= question['id'] %>_add_other" class="add_other text-decoration-none text-success" data-add-other-id="<%= question['id'] %>">"Other"</a></span>
                                 </div>
@@ -48,10 +48,10 @@
                         <% if @form_data['status'] === 0 %>
                             <div class="col-lg-3">
                                 <select id="form_question_<%= question['id'] %>_type" name="form[question_type]" class="form-select form_question_type" data-question-type-id="<%= question['id'] %>">
-                                    <option value="1">Multiple Choice</option>
-                                    <option value="2">Checkboxes</option>
-                                    <option value="3">Short Answer</option>
-                                    <option value="4">Paragraph</option>
+                                    <option value="1" <% if question['question_type'] === 1 %> selected <% end %>>Multiple Choice</option>
+                                    <option value="2" <% if question['question_type'] === 2 %> selected <% end %>>Checkboxes</option>
+                                    <option value="3" <% if question['question_type'] === 3 %> selected <% end %>>Short Answer</option>
+                                    <option value="4" <% if question['question_type'] === 4 %> selected <% end %>>Paragraph</option>
                                 </select>
                             </div>
                         <% end %>
@@ -61,7 +61,7 @@
             </div>
             <% if @form_data['status'] === 0 %>
                 <div class="mb-3">
-                    <button id="add_question_btn" class="btn btn-sm btn-outline-success w-100 p-2" data-form-id=<%= @form_data['id'] if @form_data.present? %>><i class="fas fa-plus"></i> Add Question</button>
+                    <button type="button" id="add_question_btn" class="btn btn-sm btn-outline-success w-100 p-2" data-form-id=<%= @form_data['id'] if @form_data.present? %>><i class="fas fa-plus"></i> Add Question</button>
                 </div>
             <% end %>
         </form>
@@ -80,7 +80,7 @@
         </form>
         <% if @form_data['status'] === 0 %>
             <div class="mb-3">
-                <button id="add_question_btn" class="btn btn-sm btn-outline-danger w-100 p-2" data-bs-toggle="modal" data-bs-target="#delete_modal"><i class="far fa-trash-alt"></i> Delete Form</button>
+                <button type="button" id="add_question_btn" class="btn btn-sm btn-outline-danger w-100 p-2" data-bs-toggle="modal" data-bs-target="#delete_modal"><i class="far fa-trash-alt"></i> Delete Form</button>
             </div>
         <% end %>
     </div>
