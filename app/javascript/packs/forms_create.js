@@ -111,16 +111,16 @@ $(document).ready(function(){
 
     // ADD CHOICE
     $(document).on("click", ".add_choice", function(){
-        choice_counter += 1;
         var element;
         var class_type;
         var form_question_choice_answer;
-
-        $.get(`/add_option/${$(this).data("add-choice-id")}`, function(result) {
+        var question_number = $(this).data("add-choice-id")
+        
+        $.get(`/add_option/${question_number}`, function(result) {
             if(is_quiz_mode){
                 form_question_choice_answer = `
                     <div class="input-group-text form_question_choice_answer">
-                        <input name="form_question_${$(this).data("add-choice-id")}_choice_${result["option_id"]}_quiz" class="form-check-input mt-0" type="checkbox">
+                        <input name="form_question_${question_number}_choice_${result["option_id"]}_quiz" class="form-check-input mt-0" type="checkbox">
                     </div>
                 `;
             }
@@ -128,43 +128,45 @@ $(document).ready(function(){
                 form_question_choice_answer = undefined;
             }
     
-            if($(`#form_question_${$(this).data("add-choice-id")}_choice_div`).length > 0){
+            if($(`#form_question_${question_number}_choice_div`).length > 0){
                 element = "choice"
-                if($(`#form_question_${$(this).data("add-choice-id")}_div`).attr("data-question-type") === "1"){
+                if($(`#form_question_${question_number}_div`).attr("data-question-type") === "1"){
                     class_type = "multiple_choice"
                 }
-                else if($(`#form_question_${$(this).data("add-choice-id")}_div`).attr("data-question-type") === "2"){
+                else if($(`#form_question_${question_number}_div`).attr("data-question-type") === "2"){
                     class_type = "checkbox"
                 }
             }
             else{
                 element = "question"
-                if($(`#form_question_${$(this).data("add-choice-id")}_div`).attr("data-question-type") === "1"){
+                if($(`#form_question_${question_number}_div`).attr("data-question-type") === "1"){
                     class_type = "multiple_choice"
                 }
-                else if($(`#form_question_${$(this).data("add-choice-id")}_div`).attr("data-question-type") === "2"){
+                else if($(`#form_question_${question_number}_div`).attr("data-question-type") === "2"){
                     class_type = "checkbox"
                 }
             }
             
             if(form_question_choice_answer != undefined){
-                $(`#form_question_${$(this).data("add-choice-id")}_${element}_div`).after(`
-                    <div id="form_question_${$(this).data("add-choice-id")}_choice_div" class="input-group mb-3 type_${class_type}">
+                $(`#form_question_${question_number}_${element}_div`).after(`
+                    <div id="form_question_${question_number}_choice_div" class="input-group mb-3 type_${class_type}">
                         ${form_question_choice_answer}
-                        <input type="text" id="form_question_${$(this).data("add-choice-id")}_choice_${result["option_id"]}" name="form[form_question_${$(this).data("add-choice-id")}_choice_${result["option_id"]}]" class="form-control" placeholder="Choice Text" data-choice-id="${result["option_id"]}">
-                        <button class="delete_choice btn btn-sm btn-outline-danger" data-delete-id="${$(this).data("add-choice-id")}"><i class="far fa-trash-alt"></i> Delete</button>
+                        <input type="text" id="form_question_${question_number}_choice_${result["option_id"]}" name="form[form_question_${question_number}_choice_${result["option_id"]}]" class="form-control" placeholder="Choice Text" data-choice-id="${result["option_id"]}">
+                        <button class="delete_choice btn btn-sm btn-outline-danger" data-delete-id="${question_number}"><i class="far fa-trash-alt"></i> Delete</button>
                     </div>
                 `);
             }
             else{
-                $(`#form_question_${$(this).data("add-choice-id")}_${element}_div`).after(`
-                    <div id="form_question_${$(this).data("add-choice-id")}_choice_div" class="input-group mb-3 type_${class_type}">
-                        <input type="text" id="form_question_${$(this).data("add-choice-id")}_choice_${result["option_id"]}" name="form[form_question_${$(this).data("add-choice-id")}_choice_${result["option_id"]}]" class="form-control" placeholder="Choice Text" data-choice-id="${result["option_id"]}">
-                        <button class="delete_choice btn btn-sm btn-outline-danger" data-delete-id="${$(this).data("add-choice-id")}"><i class="far fa-trash-alt"></i> Delete</button>
+                $(`#form_question_${question_number}_${element}_div`).after(`
+                    <div id="form_question_${question_number}_choice_div" class="input-group mb-3 type_${class_type}">
+                        <input type="text" id="form_question_${question_number}_choice_${result["option_id"]}" name="form[form_question_${question_number}_choice_${result["option_id"]}]" class="form-control" placeholder="Choice Text" data-choice-id="${result["option_id"]}">
+                        <button class="delete_choice btn btn-sm btn-outline-danger" data-delete-id="${question_number}"><i class="far fa-trash-alt"></i> Delete</button>
                     </div>
                 `);
             }
-        });
+        }, 'json');
+
+        return false;
     });
 
     // ADD OTHER
