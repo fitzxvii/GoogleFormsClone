@@ -21,5 +21,6 @@ Rails.application.routes.draw do
   get "/f/:code" => "forms#create"
 
   patch "/form/rename/:id" => "forms#rename_form"
+  patch "/form/publish/:id/:code" => "forms#publish_form"
   delete "/form/delete/:id" => "forms#delete"
 end

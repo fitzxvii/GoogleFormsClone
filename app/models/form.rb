@@ -5,7 +5,7 @@ class Form < ApplicationRecord
     validates :title, :description, presence: true
 
     def self.get_forms(current_user)
-        query_records(["SELECT * FROM forms WHERE user_id = ? ORDER BY updated_at DESC", current_user])
+        query_records(["SELECT * FROM forms WHERE user_id = ? ORDER BY status DESC, updated_at DESC", current_user])
     end
 
     def self.get_form(id)
@@ -56,7 +56,7 @@ class Form < ApplicationRecord
     # Owner: Fitz
     def self.get_form_by_code user_id, code
         return query_record([
-            'SELECT id, user_id, form_type, title, description, status, question_order
+            'SELECT id, user_id, code, form_type, title, description, status, question_order
             FROM forms
             WHERE user_id = ? AND code = ?;', user_id, code
         ])
@@ -90,9 +90,29 @@ class Form < ApplicationRecord
 
         return { :status => status, :errors => errors, :form_data => return_form_data }
     end
+
+    def self.publish_form(id, user_id)
+        publish_form = update_record(["UPDATE forms SET status = 1, updated_at = NOW() WHERE id = ? AND user_id = ?", id, user_id])
+        
+        if publish_form > 0
+            status = true
+        else
+            status = false
+        end
+
+        return status
+    end
     
     def self.delete_form(id, user_id)
-        status = delete_record(["DELETE FROM forms WHERE id = ? AND user_id = ?", id, user_id])
+        delete_form = delete_record(["DELETE FROM forms WHERE id = ? AND user_id = ?", id, user_id])
+        
+        if delete_form > 0
+            status = true
+        else
+            status = false
+        end
+
+        return status
     end
   
     private
