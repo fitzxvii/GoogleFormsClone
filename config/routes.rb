@@ -19,6 +19,8 @@ Rails.application.routes.draw do
 
   get "/create_form" => "forms#create_form"
   get "/f/:code" => "forms#create"
+  get "/add_question/:form_id" => "forms#add_question"
+  get "/add_option/:question_id" => "forms#add_option"
 
   patch "/form/rename/:id" => "forms#rename_form"
   patch "/form/publish/:id/:code" => "forms#publish_form"

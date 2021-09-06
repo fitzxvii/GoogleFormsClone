@@ -30,14 +30,14 @@
                                 <% end %>
                             </div>
                             <% @all_options.each do |option|%>
-                            <div id="form_question_<%= question['id'] %>_choice_div" class="input-group mb-3 type_multiple_choice">         
-                                    <% if question['id'] == option["question_id"] %>
-                                        <input type="text" id="form_question_<%= question['id'] %>_choice_<%= option['id'] %>" name="form[form_question_<%= question['id'] %>_choice_<%= option['id'] %>]" class="form-control" placeholder="Choice Text" data-choice-id="<%= option['id'] %>" value="<%= option['content'] %>" <% if @form_data['status'] === 1 %> readonly <% end %>>
-                                        <% if @form_data['status'] === 0 %>
-                                            <button class="delete_choice btn btn-sm btn-outline-danger" data-delete-id="<%= option['id'] %>"><i class="far fa-trash-alt"></i> Delete</button>
-                                        <% end %>
+                              <% if question['id'] == option["question_id"] %>
+                                <div id="form_question_<%= question['id'] %>_choice_div" class="input-group mb-3 type_multiple_choice">
+                                    <input type="text" id="form_question_<%= question['id'] %>_choice_<%= option['id'] %>" name="form[form_question_<%= question['id'] %>_choice_<%= option['id'] %>]" class="form-control" placeholder="Choice Text" data-choice-id="<%= option['id'] %>" value="<%= option['content'] %>" <% if @form_data['status'] === 1 %> readonly <% end %>>
+                                    <% if @form_data['status'] === 0 %>
+                                        <button class="delete_choice btn btn-sm btn-outline-danger" data-delete-id="<%= option['id'] %>"><i class="far fa-trash-alt"></i> Delete</button>
                                     <% end %>
-                            </div>
+                                </div>
+                              <% end %>
                             <% end %>
                             <% if @form_data['status'] === 0 %>
                                 <div id="form_question_<%= question['id'] %>_add_choice_other_div">
@@ -61,7 +61,7 @@
             </div>
             <% if @form_data['status'] === 0 %>
                 <div class="mb-3">
-                    <button id="add_question_btn" class="btn btn-sm btn-outline-success w-100 p-2"><i class="fas fa-plus"></i> Add Question</button>
+                    <button id="add_question_btn" class="btn btn-sm btn-outline-success w-100 p-2" data-form-id=<%= @form_data['id'] if @form_data.present? %>><i class="fas fa-plus"></i> Add Question</button>
                 </div>
             <% end %>
         </form>
