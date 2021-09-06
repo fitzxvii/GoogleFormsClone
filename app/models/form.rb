@@ -5,7 +5,7 @@ class Form < ApplicationRecord
     validates :title, :description, presence: true
 
     def self.get_forms(current_user)
-        query_records(["SELECT * FROM forms WHERE user_id = ? ORDER BY updated_at DESC", current_user])
+        query_records(["SELECT * FROM forms WHERE user_id = ? ORDER BY status DESC, updated_at DESC", current_user])
     end
 
     def self.get_form(id)
@@ -53,14 +53,20 @@ class Form < ApplicationRecord
     # It returns the form data by code
     # Owner: Fitz
     def self.get_form_by_code user_id, code
-        query_record([
-            'SELECT id, user_id, form_type, title, description, status, question_order
+        return query_record([
+            'SELECT id, user_id, code, form_type, title, description, status, question_order
             FROM forms
             WHERE user_id = ? AND code = ?;', user_id, code
         ])
     end
     
-    def self.validate_rename(id, form_data)
+    # Check if title is present
+    # then Update form title 
+    # Require: id, form_data[:title]
+    # Returns: a Hash data containing :status, :errors, and :form_data
+    # Last Updated: September 3, 2021
+    # Owner:  Jovic Abengona
+    def self.validate_rename(id, user_id, form_data)
         get_form = self.get_form(id)
 
         new_form_data = Form.new(
@@ -71,7 +77,7 @@ class Form < ApplicationRecord
         status = new_form_data.valid?
 
         if status
-            update_form = update_record(["UPDATE forms SET title = ?, updated_at = NOW() WHERE id = ?", form_data[:title], id])
+            update_form = update_record(["UPDATE forms SET title = ?, updated_at = NOW() WHERE id = ? AND user_id = ?", form_data[:title], id, user_id])
 
             status = true if update_form
             return_form_data = self.get_form(id)
@@ -108,6 +114,29 @@ class Form < ApplicationRecord
         end
 
         return response
+      
+    def self.publish_form(id, user_id)
+        publish_form = update_record(["UPDATE forms SET status = 1, updated_at = NOW() WHERE id = ? AND user_id = ?", id, user_id])
+        
+        if publish_form > 0
+            status = true
+        else
+            status = false
+        end
+
+        return status
+    end
+    
+    def self.delete_form(id, user_id)
+        delete_form = delete_record(["DELETE FROM forms WHERE id = ? AND user_id = ?", id, user_id])
+        
+        if delete_form > 0
+            status = true
+        else
+            status = false
+        end
+
+        return status
     end
   
     private

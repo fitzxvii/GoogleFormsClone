@@ -10,9 +10,7 @@ $(document).ready(function(){
         $(this).next(".form_error").remove();
     });
 
-    $(".rename_form").change(function(e){
-        e.preventDefault();
-
+    $(document).on("blur", ".rename_form", function(){
         $.post($(this).attr("action"), $(this).serialize(), function(result){
             $(".form_error").remove();
 

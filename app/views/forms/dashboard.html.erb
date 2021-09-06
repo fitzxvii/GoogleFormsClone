@@ -1,4 +1,9 @@
 <div class="container mt-3">
+    <% if flash[:delete_message] %>
+        <div class="alert alert-<%= flash[:delete_message]["alert_type"] %>" role="alert">
+            <i class="fas fa-<%= flash[:delete_message]["icon"] %>-circle"></i> <%= flash[:delete_message]["message"] %>
+        </div>
+    <% end %>
     <h5 class="text-success">Create New Form</h5>
     <div class="row mb-3">
         <div class="col-lg-3">
@@ -15,15 +20,14 @@
         <% @forms.each do |form| %>
             <div class="col-lg-3 mb-4">
                 <div class="card">
-                    <div class="text-center text-success fs-1 p-5 bg-light"><i class="fas fa-list-ol"></i></div>
+                    <a href="/f/<%= form["code"] %>"><div class="text-center text-success fs-1 p-5 bg-light"><i class="fas fa-list-ol"></i></div></a>
                     <div class="card-body">
-                        <form action="/form/rename/<%= form["id"] %>" method="POST" class="rename_form" >
+                        <form action="/form/rename/<%= form["id"] %>" method="POST" class="rename_form">
                             <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
                             <input type="hidden" name="_method" value="patch">
-                            <h5 id="form_title_<%= form["id"] %>" class="card-title text-success"><%= form["title"] %></h5>
+                            <h5 id="form_title_<%= form["id"] %>" class="<% if form["status"] === 0 %>card-title<% end %> text-success"><%= form["title"] %><% if form["status"] === 1 %><span class="badge rounded-pill bg-success float-end">Published</span><% end %></h5>
                         </form>
                         <p id="form_details_<%= form["id"] %>" class="card-text text-muted small">Opened last <%= form["updated_at"].strftime("%B %d, %Y | %I:%M %p") %></p>
-                        <a href="#" class="card-text text-danger small text-decoration-none"><i class="far fa-trash-alt"></i> Remove</p></a>
                     </div>
                 </div>
             </div>
