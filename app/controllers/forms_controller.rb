@@ -15,8 +15,8 @@ class FormsController < ApplicationController
     # Triggered by: create_form method or updating a form
     # Requires: current user logged in and the form code
     # Returns: Form data, question data by form id and question order, and options per question
-    # Owner: Fitz
-    # Last Update date: September 3, 2021
+    # Last Update date: September 6, 2021
+    # Owner: Fitz, Updated By: Jovic Abengoa
     def create
         @form_action = "publish"
         @form_data = Form.get_form_by_code current_user["id"], params[:code]
@@ -59,6 +59,13 @@ class FormsController < ApplicationController
         render json: Option.create_default_option(params[:question_id])
     end
 
+    # DOCU: (POST) /form/rename/:id
+	# Validate form_data then rename form title
+	# Triggered by: Sending POST request to /form/rename/:id
+    # Requires: params[:id], current_user["id"], form_data
+    # Returns: Hash data containing :status, :errors, and :form_data
+    # Last Updated: September 3, 2021
+    # Owner: Jovic Abengona
     def rename_form
         form_data = params.require(:form).permit(:title)
 
@@ -67,6 +74,13 @@ class FormsController < ApplicationController
         render json: validate_rename
     end
 
+    # DOCU: (POST) /form/publish/:id/:code
+	# Update form status then return a flash data
+	# Triggered by: Sending POST request to /form/publish/:id/:code
+    # Requires: params[:id], current_user["id"]
+    # Returns: Flash data containing :alert_type, :message, and :icon
+    # Last Updated: September 6, 2021
+    # Owner: Jovic Abengona
     def publish_form
         status = Form.publish_form(params[:id], current_user["id"])
 
@@ -79,6 +93,13 @@ class FormsController < ApplicationController
         redirect_to "/f/#{params[:code]}"
     end
 
+    # DOCU: (POST) /form/delete/:id
+	# Delete form then return a flash data
+	# Triggered by: Sending POST request to /form/delete/:id
+    # Requires: params[:id], current_user["id"]
+    # Returns: Flash data containing :alert_type, :message, and :icon
+    # Last Updated: September 6, 2021
+    # Owner: Jovic Abengona
     def delete
         status = Form.delete_form(params[:id], current_user["id"])
 

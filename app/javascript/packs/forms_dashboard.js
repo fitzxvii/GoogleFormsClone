@@ -1,15 +1,35 @@
 $(document).ready(function(){
+    /**
+    *   DOCU: This will hide the current element and add an input text for the user to type
+    *   Triggered: .on("click", ".card-title", function()
+    *   Last Updated Date: September 3, 2021
+    *   @author Jovic Abengona
+    */
     $(document).on("click", ".card-title", function(){
         let form_title = ($(this).text());
         $(this).after(`<input type="text" id="title" class="form-control" name="form[title]" value="${form_title}">`);
         $(this).hide();
     });
 
+    /**
+    *   DOCU: This will remove is-invalid class and .form_error elements
+    *   Triggered: .on("keypress", "#title", function()
+    *   Last Updated Date: September 3, 2021
+    *   @author Jovic Abengona
+    */
     $(document).on("keypress", "#title", function(){
         $(this).removeClass("is-invalid");
         $(this).next(".form_error").remove();
     });
 
+    /**
+    *   DOCU: This will send a post request to update form title. 
+    *   If return is true, input text will be removed, previosly hidden element will be updated and displayed, and Opened last date will be updated as well
+    *   Else, an error message will be displayed
+    *   Triggered: .on("blur", ".rename_form", function()
+    *   Last Updated Date: September 3, 2021
+    *   @author Jovic Abengona
+    */
     $(document).on("blur", ".rename_form", function(){
         $.post($(this).attr("action"), $(this).serialize(), function(result){
             $(".form_error").remove();
@@ -32,6 +52,11 @@ $(document).ready(function(){
                 }
             }
         }, 'json');
+        
         return false;
+    });
+    
+    $(".rename_form").submit(function(e){
+        e.preventDefault(); 
     });
 });

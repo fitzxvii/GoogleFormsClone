@@ -115,7 +115,12 @@ class Form < ApplicationRecord
 
         return response
     end
-      
+
+    # Update form status
+    # Require: id, user_id
+    # Returns: status which contains a Boolean value
+    # Last Updated: September 6, 2021
+    # Owner: Updated by: Jovic Abengona
     def self.publish_form(id, user_id)
         publish_form = update_record(["UPDATE forms SET status = 1, updated_at = NOW() WHERE id = ? AND user_id = ?", id, user_id])
         
@@ -128,6 +133,11 @@ class Form < ApplicationRecord
         return status
     end
     
+    # Delete form
+    # Require: id, user_id
+    # Returns: status which contains a Boolean value
+    # Last Updated: September 6, 2021
+    # Owner: Updated by: Jovic Abengona
     def self.delete_form(id, user_id)
         delete_form = delete_record(["DELETE FROM forms WHERE id = ? AND user_id = ?", id, user_id])
         
