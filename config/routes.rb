@@ -27,6 +27,7 @@ Rails.application.routes.draw do
   post "/form/quiz_mode_toggle" => "forms#quiz_mode_toggle"
 
   patch "/form/rename/:id" => "forms#rename_form"
+  patch "/form/save/:id/:code" => "forms#save_form"
   patch "/form/publish/:id/:code" => "forms#publish_form"
   delete "/form/delete/:id" => "forms#delete"
 end

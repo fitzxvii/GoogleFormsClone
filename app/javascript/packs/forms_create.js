@@ -8,7 +8,7 @@ $(document).ready(function(){
     $("#create_form").submit(function(e){
         e.preventDefault();
     });
-
+    
     // CHECK QUIZ MODE TOGGLE
     $("#quiz_mode_toggle").change(function(){
         let is_quiz_mode = $(this).prop("checked");
@@ -42,7 +42,7 @@ $(document).ready(function(){
 
                 $(this).append(`
                     <div id="form_question_${question_id}_score_div" class="input-group my-2 score_field">
-                        <input type="text" placeholder="Score" name="form[form_question_${question_id}_score] class="form-control form-control-lg"">
+                        <input type="text" placeholder="Score" name="form[form_question_${question_id}_score]" class="form-control form-control-lg">
                     </div>
                 `);
             });

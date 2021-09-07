@@ -51,7 +51,7 @@
                             <% end %>
                             <% if @form_data["form_type"] === 1 %>
                                 <div id="form_question_<%= question['id'] %>_score_div" class="input-group my-2 score_field">
-                                    <input type="text" placeholder="Score" name="form[form_question_<%= question['id'] %>_score] class="form-control form-control-lg"">
+                                    <input type="text" placeholder="Score" name="form[form_question_<%= question['id'] %>_score]" class="form-control form-control-lg">
                                 </div>
                             <% end %>
                         </div>
@@ -100,7 +100,7 @@
 <div class="modal fade" id="delete_modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="delete_modal_label" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header bg-danger text-light">
+            <div class="modal-header text-danger alert-danger">
                 <h5 class="modal-title" id="delete_modal_label"><i class="fas fa-exclamation-triangle"></i> Warning!</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
@@ -108,7 +108,7 @@
             Are you sure you want to delete this form? This action can't be undone.
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                 <form action="/form/delete/<%= @form_data["id"] %>" method="POST">
                     <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
                     <input type="hidden" name="_method" value="delete">
