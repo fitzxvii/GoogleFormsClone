@@ -38,7 +38,7 @@
               <% if params['action'] === 'create' %>
                 <% if @form_data['status'] === 0 %>
                   <div class="form-check form-switch me-2">
-                    <input class="form-check-input bg-success" type="checkbox" id="quiz_mode_toggle">
+                    <input name="quiz_mode_toggle" class="form-check-input bg-success" type="checkbox" id="quiz_mode_toggle" data-form-id="<%= @form_data['id'] %>" <% if @form_data['form_type'] === 1 %> checked <% end %>>
                     <label class="form-check-label small" for="quiz_mode_toggle">Quiz Mode</label>
                   </div>
                 <% end %>

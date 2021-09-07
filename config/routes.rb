@@ -24,6 +24,8 @@ Rails.application.routes.draw do
   get "/add_option/:question_id" => "forms#add_option"
   get "/update_question_type/:question_id/:type_id" => "forms#update_question_type"
 
+  post "/form/quiz_mode_toggle" => "forms#quiz_mode_toggle"
+
   patch "/form/rename/:id" => "forms#rename_form"
   patch "/form/publish/:id/:code" => "forms#publish_form"
   delete "/form/delete/:id" => "forms#delete"

@@ -116,6 +116,24 @@ class Form < ApplicationRecord
         return response
     end
 
+    def self.quiz_mode_toggle(form_id, quiz_mode_toggle, user_id)
+        if quiz_mode_toggle === "true"
+            form_type = 1
+        else
+            form_type = 0
+        end
+
+        quiz_mode_toggle = update_record(["UPDATE forms SET form_type = ?, updated_at = NOW() WHERE id = ? AND user_id = ?", form_type, form_id, user_id])
+
+        if quiz_mode_toggle
+            status = true
+        else
+            status = false
+        end
+
+        return status
+    end
+
     # Update form status
     # Require: id, user_id
     # Returns: status which contains a Boolean value
@@ -124,7 +142,7 @@ class Form < ApplicationRecord
     def self.publish_form(id, user_id)
         publish_form = update_record(["UPDATE forms SET status = 1, updated_at = NOW() WHERE id = ? AND user_id = ?", id, user_id])
         
-        if publish_form > 0
+        if publish_form
             status = true
         else
             status = false

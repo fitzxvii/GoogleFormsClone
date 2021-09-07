@@ -1,5 +1,4 @@
 $(document).ready(function(){
-    let is_quiz_mode;
     let question_counter = 1;
     let choice_counter = 1;
 
@@ -12,8 +11,7 @@ $(document).ready(function(){
 
     // CHECK QUIZ MODE TOGGLE
     $("#quiz_mode_toggle").change(function(){
-        var class_type;
-        is_quiz_mode = $(this).prop("checked")
+        let is_quiz_mode = $(this).prop("checked");
 
         if(is_quiz_mode){
             var x = 1;
@@ -25,6 +23,7 @@ $(document).ready(function(){
                         <input name="form_question_${$(this).attr("data-choice-id")}_choice_${x}_quiz" class="form-check-input mt-0" type="checkbox">
                     </div>
                 `);
+
                 x++;
             });
 
@@ -34,6 +33,7 @@ $(document).ready(function(){
                         <input name="form_question_${$(this).attr("data-choice-id")}_choice_${y}_quiz" class="form-check-input mt-0" type="checkbox">
                     </div>
                 `);
+
                 y++;
             });
             
@@ -46,7 +46,10 @@ $(document).ready(function(){
                     </div>
                 `);
             });
-            
+
+            $.post("/form/quiz_mode_toggle", { form_id: $(this).data("form-id"), quiz_mode_toggle: true }, function(result){
+                console.log(result);
+            });
         }
         else{
             $(".form_question").each(function(){
@@ -56,6 +59,10 @@ $(document).ready(function(){
                 }
 
                 $(".score_field").remove();
+            });
+
+            $.post("/form/quiz_mode_toggle", { form_id: $(this).data("form-id"), quiz_mode_toggle: false }, function(result){
+                console.log(result);
             });
         }
     });
@@ -111,11 +118,12 @@ $(document).ready(function(){
 
     // ADD CHOICE
     $(document).on("click", ".add_choice", function(){
-        var element;
-        var class_type;
-        var form_question_choice_answer;
-        var question_number = $(this).data("add-choice-id");
-        
+        let is_quiz_mode = $("#quiz_mode_toggle").prop("checked");
+        let element;
+        let class_type;
+        let form_question_choice_answer;
+        let question_number = $(this).data("add-choice-id");
+
         $.get(`/add_option/${question_number}`, function(result) {
             if(is_quiz_mode){
                 form_question_choice_answer = `
