@@ -42,15 +42,15 @@
                             <% @all_options.each do |option| %>
                               <% if question['id'] == option["question_id"] %>
                                 <form action="/update_option_content" method="post">
+                                    <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
+                                    <input type="hidden" name="_method" value="patch">
+                                    <input type="hidden" name="option[id]" value="<%= option['id'] %>">
                                     <div id="form_question_<%= question['id'] %>_choice_div" class="input-group mb-3 type_multiple_choice">
                                         <% if @form_data["form_type"] === 1 %>
                                             <div class="input-group-text form_question_choice_answer">
                                                 <input name="form[form_question_<%= question['id'] %>_choice_<%= option['id'] %>_quiz]" class="form-check-input mt-0" type="checkbox">
                                             </div>
                                         <% end %>
-                                            <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
-                                            <input type="hidden" name="_method" value="patch">
-                                            <input type="hidden" name="option[id]" value="<%= option['id'] %>">
                                             <input type="text" id="form_question_<%= question['id'] %>_choice_<%= option['id'] %>" name="option[content]" class="form-control option_content_text" placeholder="Choice Text" data-choice-id="<%= option['id'] %>" value="<%= option['content'] %>" <% if @form_data['status'] === 1 %> readonly <% end %>>
                                         <% if @form_data['status'] === 0 %>
                                             <button type="button" class="delete_choice btn btn-sm btn-outline-danger" data-delete-id="<%= option['id'] %>"><i class="far fa-trash-alt"></i> Delete</button>
@@ -65,11 +65,11 @@
                                 </div>
                             <% end %>
                             <% if @form_data["form_type"] === 1 %>
-                                <div id="form_question_<%= question['id'] %>_score_div" class="my-2 score_field w-25">
-                                    <% if @form_data["status"] === 1 %>
-                                        <label for="form[form_question_<%= question['id'] %>_score]" class="form-label">Score: </label>
-                                    <% end %>
-                                    <input type="text" placeholder="Score" id="form[form_question_<%= question['id'] %>_score]" name="form[form_question_<%= question['id'] %>_score]" value="<%= question['score'] %>" class="form-control" <% if @form_data['status'] === 1 %> readonly <% end %>>
+                                <div id="form_question_<%= question['id'] %>_score_div" class="row my-2 score_field">
+                                    <label for="form[form_question_<%= question['id'] %>_score]" class="col-lg-1 col-form-label">Score: </label>
+                                    <div class="col-lg-11 w-25">
+                                        <input type="text" placeholder="Score" id="form[form_question_<%= question['id'] %>_score]" name="form[form_question_<%= question['id'] %>_score]" value="<%= question['score'] %>" class="form-control" <% if @form_data['status'] === 1 %> readonly <% end %>>
+                                    </div>
                                 </div>
                             <% end %>
                         </div>
