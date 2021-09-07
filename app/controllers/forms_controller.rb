@@ -113,6 +113,15 @@ class FormsController < ApplicationController
         render json: Option.update_option_content(option_params)
     end
 
+    # DOCU: (DELETE) /delete_option
+    # Triggered by: Clicking on the Delete Option 
+    # Owner: Fitz
+    def delete_option
+        option_param = params.permit(:id)
+
+        render json: Option.delete_option(option_param)
+    end
+
     # DOCU: (POST) /form/rename/:id
 	# Validate form_data then rename form title
 	# Triggered by: Sending POST request to /form/rename/:id

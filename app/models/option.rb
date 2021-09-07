@@ -61,4 +61,20 @@ class Option < ApplicationRecord
 
         return response
     end
+
+    # Returns a response if delete option is successful or not
+    # Requires: hash containing option id
+    # Owner: Fitz
+    def self.delete_option option_param
+        response = { :status => false,  :id => option_param[:id] }
+
+        deleted_option = delete_record([
+            'DELETE FROM options
+            WHERE id = ?;', option_param[:id]
+        ])
+
+        response[:status] = true if deleted_option == 1
+
+        return response
+    end
 end

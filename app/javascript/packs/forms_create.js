@@ -270,8 +270,24 @@ $(document).ready(function(){
     });
 
     // DELETE CHOICE
+    // Last Update date: September 7, 2021
     $(document).on("click", ".delete_choice", function(){
-        $(`#form_question_${$(this).data("delete-id")}_choice_div`).remove();
+        option_id = $(this).data("delete-id");
+        option_div = $(this).parent().parent();
+
+        $.ajax({
+            url: "/delete_option",
+            type: "delete",
+            dataType: "json",
+            data: { "id": option_id },
+            success: function(data) { 
+                option_div.remove();
+            },
+            error: function() { 
+                alert("Error!") 
+            }
+        })
+
     });
 
     // DELETE OTHER
