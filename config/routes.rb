@@ -23,13 +23,14 @@ Rails.application.routes.draw do
   get "/add_question/:form_id" => "forms#add_question"
   get "/add_option/:question_id" => "forms#add_option"
   patch "/update_question_type" => "forms#update_question_type"
+  patch "/update_form_title_and_description" => "forms#update_form_title_and_description"
+
   patch "/update_form_title" => "forms#update_form_title"
   patch "/update_form_description" => "forms#update_form_description"
 
   post "/form/quiz_mode_toggle" => "forms#quiz_mode_toggle"
 
-  patch "/form/rename/:id" => "forms#rename_form"
-  patch "/form/save/:id/:code" => "forms#save_form"
-  patch "/form/publish/:id/:code" => "forms#publish_form"
-  delete "/form/delete/:id" => "forms#delete"
+  patch "/form/rename" => "forms#rename_form"
+  patch "/form/publish" => "forms#publish_form"
+  delete "/form/delete" => "forms#delete"
 end

@@ -32,10 +32,6 @@ class FormsController < ApplicationController
         render json: Form.quiz_mode_toggle(params[:form_id], params[:quiz_mode_toggle], current_user["id"])
     end
 
-    def save_form
-        render json: params
-    end
-
     # DOCU: (GET) /f/:code/preview
 	# Get form data including questions and options
 	# Triggered by: visting /f/:code/preview
@@ -80,23 +76,33 @@ class FormsController < ApplicationController
         render json: Option.create_default_option(params[:question_id])
     end
 
-    # DOCU: (PATCH) /update_form_title
-    # Triggered by: Changing  of Form Title Input text box
-    # Owner: Fitz
-    def update_form_title
-        form_params = params.require(:form).permit(:id, :title)
+    # DOCU: (PATCH) /update_form_title_and_description
+    # Triggered by: Changing Form Title or Description Input text box
+    # Last Update date: September 7, 2021
+    # Owner: Fitz, Updated by Jovic Abengona
+    def update_form_title_and_description
+        form_params = params.require(:form).permit(:id, :title, :description)
 
-        render json: Form.update_form_title(form_params)
+        render json: Form.update_form_title_and_description(current_user["id"], form_params)
     end
 
-    # DOCU: (PATCH) /update_form_description
-    # Triggered by: Changing  of Form Description Input text area
-    # Owner: Fitz
-    def update_form_description
-        form_params = params.require(:form).permit(:id, :description)
+    # # DOCU: (PATCH) /update_form_title
+    # # Triggered by: Changing  of Form Title Input text box
+    # # Owner: Fitz
+    # def update_form_title
+    #     form_params = params.require(:form).permit(:id, :title)
 
-        render json: Form.update_form_description(form_params)
-    end
+    #     render json: Form.update_form_title(form_params)
+    # end
+
+    # # DOCU: (PATCH) /update_form_description
+    # # Triggered by: Changing  of Form Description Input text area
+    # # Owner: Fitz
+    # def update_form_description
+    #     form_params = params.require(:form).permit(:id, :description)
+
+    #     render json: Form.update_form_description(form_params)
+    # end
 
     # DOCU: (PATCH) /update_question_type
     # Triggered by: Changing drop-down menu for question type
@@ -115,11 +121,9 @@ class FormsController < ApplicationController
     # Last Updated: September 3, 2021
     # Owner: Jovic Abengona
     def rename_form
-        form_data = params.require(:form).permit(:title)
+        form_data = params.require(:form).permit(:id, :title)
 
-        validate_rename = Form.validate_rename(params[:id], current_user["id"], form_data)
-
-        render json: validate_rename
+        render json: Form.validate_rename(current_user["id"], form_data)
     end
 
     # DOCU: (POST) /form/publish/:id/:code
@@ -130,7 +134,9 @@ class FormsController < ApplicationController
     # Last Updated: September 6, 2021
     # Owner: Jovic Abengona
     def publish_form
-        status = Form.publish_form(params[:id], current_user["id"])
+        form_data = params.require(:form).permit(:id, :code)
+
+        status = Form.publish_form(form_data[:id], current_user["id"])
 
         if status
             flash[:publish_message] = { :alert_type => "success", :message => "Form has been published!", :icon => "check" }
@@ -138,7 +144,7 @@ class FormsController < ApplicationController
             flash[:publish_message] = { :alert_type => "danger", :message => "Unable to publish form!", :icon => "times" }
         end
 
-        redirect_to "/f/#{params[:code]}"
+        redirect_to "/f/#{form_data[:code]}"
     end
 
     # DOCU: (POST) /form/delete/:id
@@ -149,7 +155,9 @@ class FormsController < ApplicationController
     # Last Updated: September 6, 2021
     # Owner: Jovic Abengona
     def delete
-        status = Form.delete_form(params[:id], current_user["id"])
+        form_data = params.require(:form).permit(:id)
+
+        status = Form.delete_form(form_data[:id], current_user["id"])
 
         if status
             flash[:delete_message] = { :alert_type => "success", :message => "Form has been deleted!", :icon => "check" }

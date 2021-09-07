@@ -43,6 +43,11 @@
                                 <% elsif question['question_type'] === 3 || question['question_type'] === 4%>
                                     <textarea class="form-control" rows="3"></textarea>
                                 <% end %>
+                                <% if @form_data['form_type'] === 1 %>
+                                    <div id="form_question_<%= question['id'] %>_score_div" class="my-2 score_field">
+                                        <p><span class="fw-bold">Score:</span> <%= question['score'] %>
+                                    </div>
+                                <% end %>
                             </div>
                         </div>
                     </div>

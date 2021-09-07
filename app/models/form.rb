@@ -67,8 +67,8 @@ class Form < ApplicationRecord
     # Returns: a Hash data containing :status, :errors, and :form_data
     # Last Updated: September 3, 2021
     # Owner:  Jovic Abengona
-    def self.validate_rename(id, user_id, form_data)
-        get_form = self.get_form(id)
+    def self.validate_rename(user_id, form_data)
+        get_form = self.get_form(form_data[:id])
 
         new_form_data = Form.new(
             :title       => form_data[:title],
@@ -78,16 +78,35 @@ class Form < ApplicationRecord
         status = new_form_data.valid?
 
         if status
-            update_form = update_record(["UPDATE forms SET title = ?, updated_at = NOW() WHERE id = ? AND user_id = ?", form_data[:title], id, user_id])
+            update_form = update_record(["UPDATE forms SET title = ?, updated_at = NOW() WHERE id = ? AND user_id = ?", form_data[:title], form_data[:id], user_id])
 
             status = true if update_form
-            return_form_data = self.get_form(id)
+            return_form_data = self.get_form(form_data[:id])
             return_form_data["updated_at"] = return_form_data["updated_at"].strftime("%B %d, %Y | %I:%M %p")
         else
             errors = new_form_data.errors.messages
         end
 
         return { :status => status, :errors => errors, :form_data => return_form_data }
+    end
+
+    def self.update_form_title_and_description(user_id, form_data)
+        new_form_data = Form.new(
+            :title       => form_data[:title],
+            :description => form_data[:description]
+        )
+
+        status = new_form_data.valid?
+
+        if status
+            update_form = update_record(["UPDATE forms SET title = ?, description = ?, updated_at = NOW() WHERE id = ? AND user_id = ?", form_data[:title], form_data[:description], form_data[:id], user_id])
+
+            status = true if update_form
+        else
+            errors = new_form_data.errors.messages
+        end
+
+        return { :status => status, :errors => errors }
     end
 
     # It returns the response if the update of form title is successful or not

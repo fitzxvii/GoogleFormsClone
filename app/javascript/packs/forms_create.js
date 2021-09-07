@@ -9,27 +9,65 @@ $(document).ready(function(){
         e.preventDefault();
     });
 
-    // UPDATE FORM TITLE
-    $("#form_title_text").change(function() {
-        form_div = $(this).parent();
+    /**
+    *   DOCU: This will remove is-invalid class and .form_error elements
+    *   Triggered: .on("keypress", "#title", function()
+    *   Last Updated Date: September 3, 2021
+    *   @author Jovic Abengona
+    */
+     $(document).on("keypress", "#title, #description", function(){
+        $(this).removeClass("is-invalid");
+        $(this).next(".form_error").remove();
+    });
 
-        $.post(form_div.attr("action"), form_div.serialize(), function(result) {
-            console.log(result);
+    /**
+    *   DOCU: This will send a post request to update form title and/or description. 
+    *   If return is falsean error message will be displayed
+    *   Triggered: .on("blur", "#update_form_title_and_description", function()
+    *   Last Updated Date: September 7, 2021
+    *   @author Fitz, Updated By: Jovic Abengona
+    */
+    $(document).on("blur", "#update_form_title_and_description", function(){
+        $.post($(this).attr("action"), $(this).serialize(), function(result){
+            $(".form_error").remove();
+
+            if(!result.status){
+                for([key, value] of Object.entries(result.errors)){
+                    let capitalized_key = key.split('_').join(' ');
+                    capitalized_key = capitalized_key.charAt(0).toUpperCase() + capitalized_key.slice(1);
+
+                    $(`#${key}`).addClass("is-invalid");
+                    $(`#${key}`).after(`
+                        <p class="form_error fst-italic text-danger">${capitalized_key} ${value[0]}</p>
+                    `);
+                }
+            }
         }, 'json');
-
+        
         return false;
     });
 
-    // UPDATE FORM DESCRIPTION
-    $("#form_description_textarea").change(function() {
-        form_div = $(this).parent();
+    // // UPDATE FORM TITLE
+    // $("#form_title_text").change(function() {
+    //     form_div = $(this).parent();
 
-        $.post(form_div.attr("action"), form_div.serialize(), function(result) {
-            console.log(result);
-        }, 'json');
+    //     $.post(form_div.attr("action"), form_div.serialize(), function(result) {
+    //         console.log(result);
+    //     }, 'json');
 
-        return false;
-    });
+    //     return false;
+    // });
+
+    // // UPDATE FORM DESCRIPTION
+    // $("#form_description_textarea").change(function() {
+    //     form_div = $(this).parent();
+
+    //     $.post(form_div.attr("action"), form_div.serialize(), function(result) {
+    //         console.log(result);
+    //     }, 'json');
+
+    //     return false;
+    // });
 
     // CHECK QUIZ MODE TOGGLE
     $("#quiz_mode_toggle").change(function(){
@@ -63,8 +101,8 @@ $(document).ready(function(){
                 var question_id = $(this).attr("id").match(/\d+/)[0]
 
                 $(this).append(`
-                    <div id="form_question_${question_id}_score_div" class="input-group my-2 score_field">
-                        <input type="text" placeholder="Score" name="form[form_question_${question_id}_score]" class="form-control form-control-lg">
+                    <div id="form_question_${question_id}_score_div" class="input-group my-2 score_field w-25">
+                        <input type="text" placeholder="Score" name="form[form_question_${question_id}_score]" class="form-control">
                     </div>
                 `);
             });
