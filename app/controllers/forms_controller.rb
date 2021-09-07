@@ -32,6 +32,10 @@ class FormsController < ApplicationController
         render json: Form.quiz_mode_toggle(params[:form_id], params[:quiz_mode_toggle], current_user["id"])
     end
 
+    def save_form
+        render json: params
+    end
+
     # DOCU: (GET) /f/:code/preview
 	# Get form data including questions and options
 	# Triggered by: visting /f/:code/preview
