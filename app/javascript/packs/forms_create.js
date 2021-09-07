@@ -50,9 +50,9 @@ $(document).ready(function(){
     // UPDATE QUESTION
     $(".question_content_text").change(function() {
         question_content_input = $(this);
-        form_div = $(this).parent();
+        question_id = $(this).attr("data-question-id");
         
-        $.post(form_div.attr("action"), form_div.serialize(), function(result) {
+        $.post($(`#question_${question_id}_form`).attr("action"), $(`#question_${question_id}_form`).serialize(), function(result) {
             if(result["status"] == false) {
                 question_content_input.addClass('is-invalid');
             }
