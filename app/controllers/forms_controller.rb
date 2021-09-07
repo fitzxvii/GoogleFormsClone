@@ -104,6 +104,15 @@ class FormsController < ApplicationController
         render json: Question.update_question_type(form_params)
     end
 
+    # DOCU: (PATCH) /update_option_content
+    # Triggered by: Changing Option content input text box
+    # Owner: Fitz
+    def update_option_content
+        option_params = params.require(:option).permit(:id, :content)
+
+        render json: Option.update_option_content(option_params)
+    end
+
     # DOCU: (POST) /form/rename/:id
 	# Validate form_data then rename form title
 	# Triggered by: Sending POST request to /form/rename/:id
