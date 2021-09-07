@@ -29,7 +29,12 @@
                     <div class="row">
                         <div class="col-lg-<% if @form_data['status'] === 0 %>9<% elsif @form_data['status'] === 1%>12<% end %>">
                             <div id="form_question_<%= question['id'] %>_question_div" class="input-group mb-3">
-                                <input type="text" id="form_question_<%= question['id'] %>" name="form[form_question_<%= question['id'] %>]" class="form-control form-control-lg" placeholder="Question Text" value="<%= question['content'] %>" <% if @form_data['status'] === 1 %> readonly <% end %>>
+                                <form action="/update_question_content" method="post">
+                                    <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
+                                    <input type="hidden" name="_method" value="patch">
+                                    <input type="hidden" name="question[id]" value="<%= question['id'] %>">
+                                    <input type="text" id="form_question_<%= question['id'] %>" name="question[content]" class="form-control form-control-lg question_content_text" placeholder="Question Text" value="<%= question['content'] %>" <% if @form_data['status'] === 1 %> readonly <% end %>>
+                                </form>                   
                                 <% if @form_data['status'] === 0 %>
                                     <button type="button" class="delete_question btn btn-sm btn-outline-danger" data-delete-id="<%= question['id'] %>"><i class="far fa-trash-alt"></i> Delete</button>
                                 <% end %>

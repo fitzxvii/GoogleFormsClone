@@ -27,6 +27,7 @@ Rails.application.routes.draw do
 
   patch "/update_form_title" => "forms#update_form_title"
   patch "/update_form_description" => "forms#update_form_description"
+  patch "update_question_content" => "forms#update_question_content"
 
   post "/form/quiz_mode_toggle" => "forms#quiz_mode_toggle"
 
