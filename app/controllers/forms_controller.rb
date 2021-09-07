@@ -98,6 +98,15 @@ class FormsController < ApplicationController
         render json: Form.update_form_description(form_params)
     end
 
+    # DOCU: (PATCH) /update_question_content
+    # Triggered by: Changing of Question content Input text box
+    # Owner: Fitz
+    def update_question_content
+        question_params = params.require(:question).permit(:id, :content)
+
+        render json: Question.update_question_content(question_params)
+    end
+
     # DOCU: (PATCH) /update_question_type
     # Triggered by: Changing drop-down menu for question type
     # Owner: Fitz

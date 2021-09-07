@@ -52,6 +52,24 @@ class Question < ApplicationRecord
         return response
     end
 
+    # It returns status if update of question content is successful or not
+    # Owner: Fitz
+    def self.update_question_content question_params
+        response = { :status => false }
+        
+        if question_params[:content].present?
+            updated_question_content = update_record([
+                'UPDATE questions
+                SET content = ?
+                WHERE id = ?;', question_params[:content], question_params[:id]
+            ])
+
+            response[:status] = true if updated_question_content == 1
+        end
+
+        return response
+    end
+
     # It returns status if update is successful or not
     # Owner: Fitz
     def self.update_question_type form_params

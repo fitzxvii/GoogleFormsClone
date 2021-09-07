@@ -31,6 +31,23 @@ $(document).ready(function(){
         return false;
     });
 
+    // UPDATE QUESTION
+    $(".question_content_text").change(function() {
+        question_content_input = $(this);
+        form_div = $(this).parent();
+        
+        $.post(form_div.attr("action"), form_div.serialize(), function(result) {
+            if(result["status"] == false) {
+                question_content_input.addClass('is-invalid');
+            }
+            else {
+                question_content_input.removeClass('is-invalid');
+            }
+        }, 'json');
+
+        return false;
+    });
+
     // CHECK QUIZ MODE TOGGLE
     $("#quiz_mode_toggle").change(function(){
         let is_quiz_mode = $(this).prop("checked");
