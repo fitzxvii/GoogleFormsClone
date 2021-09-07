@@ -90,6 +90,12 @@ class Form < ApplicationRecord
         return { :status => status, :errors => errors, :form_data => return_form_data }
     end
 
+    # Check if title and description is present
+    # then Update form title and/or description
+    # Require: user_id, and form_data containing :id, :title, and :description
+    # Returns: a Hash data containing :status, and :errors
+    # Last Updated: September 7, 2021
+    # Owner:  Fitz, Updated By: Jovic Abengona
     def self.update_form_title_and_description(user_id, form_data)
         new_form_data = Form.new(
             :title       => form_data[:title],
@@ -99,7 +105,9 @@ class Form < ApplicationRecord
         status = new_form_data.valid?
 
         if status
-            update_form = update_record(["UPDATE forms SET title = ?, description = ?, updated_at = NOW() WHERE id = ? AND user_id = ?", form_data[:title], form_data[:description], form_data[:id], user_id])
+            update_form = update_record(["UPDATE forms 
+                                            SET title = ?, description = ?, updated_at = NOW() WHERE id = ? AND user_id = ?", 
+                                            form_data[:title], form_data[:description], form_data[:id], user_id])
 
             status = true if update_form
         else
@@ -107,38 +115,6 @@ class Form < ApplicationRecord
         end
 
         return { :status => status, :errors => errors }
-    end
-
-    # It returns the response if the update of form title is successful or not
-    # Requires: hash data containing form id and form title
-    # Owner: Fitz
-    def self.update_form_title form_params
-        response = { :status => false }
-        updated_form_title = update_record([
-            'UPDATE forms 
-            SET title = ?
-            WHERE id = ?;', form_params[:title], form_params[:id]
-        ])
-
-        response[:status] =  true if updated_form_title == 1
-        
-        return response
-    end
-
-    # It returns the response if the update of form description is successful or not
-    # Requires: hash data containing form id and form description
-    # Owner: Fitz
-    def self.update_form_description form_params
-        response = { :status => false }
-        updated_form_description = update_record([
-            'UPDATE forms 
-            SET description = ?
-            WHERE id = ?;', form_params[:description], form_params[:id]
-        ])
-
-        response[:status] =  true if updated_form_description == 1
-        
-        return response
     end
 
     # It returns the response if the update of question order is successful or not

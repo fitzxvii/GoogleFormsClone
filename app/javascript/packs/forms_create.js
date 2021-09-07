@@ -47,28 +47,6 @@ $(document).ready(function(){
         return false;
     });
 
-    // // UPDATE FORM TITLE
-    // $("#form_title_text").change(function() {
-    //     form_div = $(this).parent();
-
-    //     $.post(form_div.attr("action"), form_div.serialize(), function(result) {
-    //         console.log(result);
-    //     }, 'json');
-
-    //     return false;
-    // });
-
-    // // UPDATE FORM DESCRIPTION
-    // $("#form_description_textarea").change(function() {
-    //     form_div = $(this).parent();
-
-    //     $.post(form_div.attr("action"), form_div.serialize(), function(result) {
-    //         console.log(result);
-    //     }, 'json');
-
-    //     return false;
-    // });
-
     // CHECK QUIZ MODE TOGGLE
     $("#quiz_mode_toggle").change(function(){
         let is_quiz_mode = $(this).prop("checked");
