@@ -42,4 +42,23 @@ class Option < ApplicationRecord
 
         return response
     end
+
+    # Returns a response if update option content is successful or not
+    # Requires: hash containing option id and new option content
+    # Owner: Fitz
+    def self.update_option_content option_params
+        response = { :status => false }
+
+        if option_params[:content].present?
+            updated_option_content = update_record([
+                'UPDATE options
+                SET content = ?
+                WHERE id = ?;', option_params[:content], option_params[:id]
+            ])
+
+            response[:status] = true if updated_option_content == 1
+        end
+
+        return response
+    end
 end
