@@ -72,11 +72,31 @@ class FormsController < ApplicationController
         render json: Option.create_default_option(params[:question_id])
     end
 
-    # DOCU: (PATCH) /update_question_type/:question_id/:type_id
+    # DOCU: (PATCH) /update_form_title
+    # Triggered by: Changing  of Form Title Input text box
+    # Owner: Fitz
+    def update_form_title
+        form_params = params.require(:form).permit(:id, :title)
+
+        render json: Form.update_form_title(form_params)
+    end
+
+    # DOCU: (PATCH) /update_form_description
+    # Triggered by: Changing  of Form Description Input text area
+    # Owner: Fitz
+    def update_form_description
+        form_params = params.require(:form).permit(:id, :description)
+
+        render json: Form.update_form_description(form_params)
+    end
+
+    # DOCU: (PATCH) /update_question_type
     # Triggered by: Changing drop-down menu for question type
     # Owner: Fitz
     def update_question_type
-        render json: Question.update_question_type(params[:question_id], params[:type_id])
+        form_params = params.require(:form).permit(:question_id, :question_type)
+
+        render json: Question.update_question_type(form_params)
     end
 
     # DOCU: (POST) /form/rename/:id

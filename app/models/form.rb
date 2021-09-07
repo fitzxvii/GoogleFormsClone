@@ -51,6 +51,7 @@ class Form < ApplicationRecord
     end
 
     # It returns the form data by code
+    # Requires: user id, form code
     # Owner: Fitz
     def self.get_form_by_code user_id, code
         return query_record([
@@ -89,7 +90,40 @@ class Form < ApplicationRecord
         return { :status => status, :errors => errors, :form_data => return_form_data }
     end
 
+    # It returns the response if the update of form title is successful or not
+    # Requires: hash data containing form id and form title
+    # Owner: Fitz
+    def self.update_form_title form_params
+        response = { :status => false }
+        updated_form_title = update_record([
+            'UPDATE forms 
+            SET title = ?
+            WHERE id = ?;', form_params[:title], form_params[:id]
+        ])
+
+        response[:status] =  true if updated_form_title == 1
+        
+        return response
+    end
+
+    # It returns the response if the update of form description is successful or not
+    # Requires: hash data containing form id and form description
+    # Owner: Fitz
+    def self.update_form_description form_params
+        response = { :status => false }
+        updated_form_description = update_record([
+            'UPDATE forms 
+            SET description = ?
+            WHERE id = ?;', form_params[:description], form_params[:id]
+        ])
+
+        response[:status] =  true if updated_form_description == 1
+        
+        return response
+    end
+
     # It returns the response if the update of question order is successful or not
+    # Requires: form id and question id
     # Owner: Fitz
     def self.update_form_question_order form_id, question_id
         response = { :status => false }
