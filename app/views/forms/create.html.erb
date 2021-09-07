@@ -11,15 +11,25 @@
                 <i class="fas fa-<%= flash[:publish_message]["icon"] %>-circle"></i> <%= flash[:publish_message]["message"] %>
             </div>
         <% end %>
-        <form id="create_form" class="mt-4">
-            <div class="mb-3">
-                <input type="text" name="form[title]" class="form-control" placeholder="Form Title" value="<%= @form_data['title'] if @form_data.present? %>" <% if @form_data['status'] === 0 %> autofocus <% elsif @form_data['status'] === 1 %> readonly <% end %>>
-            </div>
-            <div class="mb-3">
-                <textarea class="form-control" name="form[description]" rows="3" placeholder="Form Description" <% if @form_data['status'] === 1 %> readonly <% end %>><%= @form_data['description'] if @form_data.present? %></textarea>
-            </div>
-            <div id="sortable">
-                <% @questions.each do |question| %>
+
+        <div class="mb-3">
+            <form action="/update_form_title" method="post">
+                <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
+                <input type="hidden" name="_method" value="patch">
+                <input type="hidden" name="form[id]" value="<%= @form_data['id'] %>">
+                <input type="text" name="form[title]" id="form_title_text" class="form-control" placeholder="Form Title" value="<%= @form_data['title'] if @form_data.present? %>" <% if @form_data['status'] === 0 %> autofocus <% elsif @form_data['status'] === 1 %> readonly <% end %>>
+            </form>
+        </div>
+        <div class="mb-3">
+            <form action="/update_form_description" method="post">
+                <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
+                <input type="hidden" name="_method" value="patch">
+                <input type="hidden" name="form[id]" value="<%= @form_data['id'] %>">
+                <textarea id="form_description_textarea" class="form-control" name="form[description]" rows="3" placeholder="Form Description" <% if @form_data['status'] === 1 %> readonly <% end %>><%= @form_data['description'] if @form_data.present? %></textarea>
+            </form>
+        </div>
+        <div id="sortable">
+            <% @questions.each do |question| %>
                 <div id="form_question_<%= question['id'] %>_div" class="mb-3 p-4 border border-success rounded form_question" data-question-type="<%= question['question_type'] %>">
                     <div class="row">
                         <div class="col-lg-<% if @form_data['status'] === 0 %>9<% elsif @form_data['status'] === 1%>12<% end %>">
@@ -56,25 +66,30 @@
                             <% end %>
                         </div>
                         <% if @form_data['status'] === 0 %>
-                            <div class="col-lg-3">
-                                <select id="form_question_<%= question['id'] %>_type" name="form[question_type]" class="form-select form_question_type" data-question-type-id="<%= question['id'] %>">
-                                    <option value="1" <% if question['question_type'] === 1 %> selected <% end %>>Multiple Choice</option>
-                                    <option value="2" <% if question['question_type'] === 2 %> selected <% end %>>Checkboxes</option>
-                                    <option value="3" <% if question['question_type'] === 3 %> selected <% end %>>Short Answer</option>
-                                    <option value="4" <% if question['question_type'] === 4 %> selected <% end %>>Paragraph</option>
-                                </select>
-                            </div>
+                            <form id="form_question_<%= question['id'] %>_change_type" action="/update_question_type" method="patch">
+                                <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
+                                <input type="hidden" name="_method" value="patch">
+                                <input type="hidden" name="form[question_id]" value="<%= question['id'] %>">
+                                <div class="col-lg-3">
+                                    <select id="form_question_<%= question['id'] %>_type" name="form[question_type]" class="form-select form_question_type" data-question-type-id="<%= question['id'] %>">
+                                        <option value="1" <% if question['question_type'] === 1 %> selected <% end %>>Multiple Choice</option>
+                                        <option value="2" <% if question['question_type'] === 2 %> selected <% end %>>Checkboxes</option>
+                                        <option value="3" <% if question['question_type'] === 3 %> selected <% end %>>Short Answer</option>
+                                        <option value="4" <% if question['question_type'] === 4 %> selected <% end %>>Paragraph</option>
+                                    </select>
+                                </div>
+                            </form>
                         <% end %>
                     </div>
                 </div>
-                <% end %>
-            </div>
-            <% if @form_data['status'] === 0 %>
-                <div class="mb-3">
-                    <button type="button" id="add_question_btn" class="btn btn-sm btn-outline-success w-100 p-2" data-form-id=<%= @form_data['id'] if @form_data.present? %>><i class="fas fa-plus"></i> Add Question</button>
-                </div>
             <% end %>
-        </form>
+        </div>
+        <% if @form_data['status'] === 0 %>
+            <div class="mb-3">
+                 <button type="button" id="add_question_btn" class="btn btn-sm btn-outline-success w-100 p-2" data-form-id=<%= @form_data['id'] if @form_data.present? %>><i class="fas fa-plus"></i> Add Question</button>
+            </div>
+        <% end %>
+
         <form action="/form/<%= @form_action %>/<%= @form_data['id'] %>/<%= @form_data['code'] %>" id="publish_form" method="POST">
             <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
             <input type="hidden" name="_method" value="patch">
