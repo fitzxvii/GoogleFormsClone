@@ -52,6 +52,25 @@ class Question < ApplicationRecord
         return response
     end
 
+    # It returns status if update is successful or not
+    # Owner: Fitz
+    def self.update_question_type question_id, type_id
+        response = { :status => false}
+        update_question_type = update_record([
+            'UPDATE questions 
+            SET question_type = ?
+            WHERE id = ?;', type_id, question_id
+        ])
+        
+        if update_question_type == 1
+            delete_options = Option.delete_options_by_question_id question_id
+
+            response[:status] = true if delete_options[:status]   
+        end
+
+        return response
+    end
+
     private
         # To insert new question in the database
         # Owner: Fitz 
