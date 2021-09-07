@@ -40,18 +40,28 @@
                                 <% end %>
                             </div>
                             <% @all_options.each do |option| %>
-                                <% if question['id'] == option["question_id"] %>
-                                    <div id="form_question_<%= question['id'] %>_choice_div" class="input-group mb-3 type_multiple_choice">
-                                        <input type="text" id="form_question_<%= question['id'] %>_choice_<%= option['id'] %>" name="form[form_question_<%= question['id'] %>_choice_<%= option['id'] %>]" class="form-control" placeholder="Choice Text" data-choice-id="<%= option['id'] %>" value="<%= option['content'] %>" <% if @form_data['status'] === 1 %> readonly <% end %>>
-                                        <% if @form_data['status'] === 0 %>
-                                            <button type="button" class="delete_choice btn btn-sm btn-outline-danger" data-delete-id="<%= option['id'] %>"><i class="far fa-trash-alt"></i> Delete</button>
-                                        <% end %>
-                                    </div>
-                                <% end %>
+                              <% if question['id'] == option["question_id"] %>
+                                <div id="form_question_<%= question['id'] %>_choice_div" class="input-group mb-3 type_multiple_choice">
+                                    <% if @form_data["form_type"] === 1 %>
+                                        <div class="input-group-text form_question_choice_answer">
+                                            <input name="form[form_question_<%= question['id'] %>_choice_<%= option['id'] %>_quiz]" class="form-check-input mt-0" type="checkbox">
+                                        </div>
+                                    <% end %>
+                                    <input type="text" id="form_question_<%= question['id'] %>_choice_<%= option['id'] %>" name="form[form_question_<%= question['id'] %>_choice_<%= option['id'] %>]" class="form-control" placeholder="Choice Text" data-choice-id="<%= option['id'] %>" value="<%= option['content'] %>" <% if @form_data['status'] === 1 %> readonly <% end %>>
+                                    <% if @form_data['status'] === 0 %>
+                                        <button type="button" class="delete_choice btn btn-sm btn-outline-danger" data-delete-id="<%= option['id'] %>"><i class="far fa-trash-alt"></i> Delete</button>
+                                    <% end %>
+                                </div>
+                              <% end %>
                             <% end %>
                             <% if @form_data['status'] === 0 && (question['question_type'] === 1 || question['question_type'] === 2) %>
                                 <div id="form_question_<%= question['id'] %>_add_choice_other_div">
                                     <a id="form_question_<%= question['id'] %>_add_choice" class="add_choice text-decoration-none text-success" data-add-choice-id="<%= question['id'] %>">Add Choice</a> <span id="form_question_<%= question['id'] %>_add_other_div">or <a id="form_question_<%= question['id'] %>_add_other" class="add_other text-decoration-none text-success" data-add-other-id="<%= question['id'] %>">"Other"</a></span>
+                                </div>
+                            <% end %>
+                            <% if @form_data["form_type"] === 1 %>
+                                <div id="form_question_<%= question['id'] %>_score_div" class="input-group my-2 score_field">
+                                    <input type="text" placeholder="Score" name="form[form_question_<%= question['id'] %>_score] class="form-control form-control-lg"">
                                 </div>
                             <% end %>
                         </div>
