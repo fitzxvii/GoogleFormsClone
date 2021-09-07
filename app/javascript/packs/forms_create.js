@@ -114,7 +114,7 @@ $(document).ready(function(){
         var element;
         var class_type;
         var form_question_choice_answer;
-        var question_number = $(this).data("add-choice-id")
+        var question_number = $(this).data("add-choice-id");
         
         $.get(`/add_option/${question_number}`, function(result) {
             if(is_quiz_mode){
@@ -206,8 +206,13 @@ $(document).ready(function(){
         var question_type_content;
         var question_type;
         question_counter += 1;
+        question_div = $(this);
 
         $(`#form_question_${$(this).data("question-type-id")}_div`).attr("data-question-type", `${$(this).val()}`);
+        
+        $.get(`/update_question_type/${$(this).data("question-type-id")}/${$(this).val()}`, function(result) {
+            console.log(result)
+        });
 
         if($(this).val() === "1" || $(this).val() === "2"){
             if($(this).val() === "1"){

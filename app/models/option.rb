@@ -27,4 +27,19 @@ class Option < ApplicationRecord
             'SELECT * FROM options WHERE question_id IN (?);', question_ids
         ])
     end
+
+    # Delete options by question id after changing question type
+    # Owner: Fitz
+    def self.delete_options_by_question_id question_id
+        response = { :status => false }
+
+        deleted_record_count = delete_record([
+            'DELETE FROM options
+            WHERE question_id = ?', question_id
+        ])
+
+        response[:status] = true if deleted_record_count.present?
+
+        return response
+    end
 end
