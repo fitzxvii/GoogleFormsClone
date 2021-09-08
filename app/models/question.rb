@@ -53,14 +53,15 @@ class Question < ApplicationRecord
     end
 
     # It returns status if update of question content is successful or not
-    # Owner: Fitz
+    # Last Updated: September 8, 2021
+    # Owner: Fitz, Updated By: Jovic Abengona
     def self.update_question_content question_params
         response = { :status => false }
         
         if question_params[:content].present?
             updated_question_content = update_record([
                 'UPDATE questions
-                SET content = ?
+                SET content = ?, updated_at = NOW()
                 WHERE id = ?;', question_params[:content], question_params[:id]
             ])
 
@@ -71,19 +72,23 @@ class Question < ApplicationRecord
     end
 
     # It returns status if update is successful or not
-    # Owner: Fitz
+    # Last Updated: September 8, 2021
+    # Owner: Fitz, Updated By: Jovic Abengona
     def self.update_question_type form_params
-        response = { :status => false }
+        response = { :status => false, :question_id => form_params[:question_id] }
         update_question_type = update_record([
             'UPDATE questions 
-            SET question_type = ?
+            SET question_type = ?, updated_at = NOW()
             WHERE id = ?;', form_params[:question_type], form_params[:question_id]
         ])
-        
+
         if update_question_type == 1
+            get_question_content = query_record(["SELECT content FROM questions WHERE id = ?", form_params[:question_id]])
+
             delete_options = Option.delete_options_by_question_id form_params[:question_id]
 
-            response[:status] = true if delete_options[:status]   
+            response[:content] = get_question_content["content"] if get_question_content
+            response[:status] = true if delete_options[:status]
         end
 
         return response
