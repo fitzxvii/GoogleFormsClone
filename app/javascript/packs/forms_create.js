@@ -1,5 +1,6 @@
 $(document).ready(function(){
     const auth_token = $("#auth_token").val();
+    let is_quiz_mode
     let question_counter = 1;
     let choice_counter = 1;
 
@@ -23,7 +24,7 @@ $(document).ready(function(){
 
     /**
     *   DOCU: This will send a post request to update form title and/or description. 
-    *   If return is falsean error message will be displayed
+    *   If return is false, an error message will be displayed
     *   Triggered: .on("blur", "#update_form_title_and_description", function()
     *   Last Updated Date: September 7, 2021
     *   @author Fitz, Updated By: Jovic Abengona
@@ -48,13 +49,19 @@ $(document).ready(function(){
         return false;
     });
 
-    // UPDATE QUESTION
+    /**
+    *   DOCU: This will send a post request to update question. 
+    *   If return is false, input field will have a style to indicate an error
+    *   Triggered: .on("change", ".question_content_text", function()
+    *   Last Updated Date: September 8, 2021
+    *   @author Fitz, Updated By: Jovic Abengona
+    */
     $(document).on("change", ".question_content_text", function(){
         question_content_input = $(this);
         question_id = $(this).attr("data-question-id");
         
         $.post($(`#question_${question_id}_form`).attr("action"), $(`#question_${question_id}_form`).serialize(), function(result) {
-            if(result["status"] == false) {
+            if(!result["status"]) {
                 question_content_input.addClass('is-invalid');
             }
             else {
@@ -65,13 +72,19 @@ $(document).ready(function(){
         return false;
     });
 
-    // UPDATE OPTION CONTENT
+    /**
+    *   DOCU: This will send a post request to update option. 
+    *   If return is false, input field will have a style to indicate an error
+    *   Triggered: .on("change", ".option_content_text", function()
+    *   Last Updated Date: September 8, 2021
+    *   @author Fitz, Updated By: Jovic Abengona
+    */
     $(document).on("change", ".option_content_text", function(){
         option_content_input = $(this);
         form_div = $(this).parent().parent();
         
         $.post(form_div.attr("action"), form_div.serialize(), function(result) {
-            if(result["status"] == false) {
+            if(!result["status"]) {
                option_content_input.addClass('is-invalid');
             }
             else {
@@ -82,85 +95,111 @@ $(document).ready(function(){
         return false;
     });
 
-    // CHECK QUIZ MODE TOGGLE
+    /**
+    *   DOCU: This will update the frontend and prepend checkboxes for input fields
+    *   then send a post request to update form_type. 
+    *   If return is false, input field will have a style to indicate an error
+    *   Triggered: $("#quiz_mode_toggle").change(function()
+    *   Last Updated Date: September 8, 2021
+    *   @author Jovic Abengona
+    */
     $("#quiz_mode_toggle").change(function(){
-        let is_quiz_mode = $(this).prop("checked");
+        is_quiz_mode = $(this).prop("checked");
+        let modal_header_remove_class;
+        let modal_header_add_class;
+        let modal_title;
+        let modal_body;
+        let modal_footer;
 
-        if(is_quiz_mode){
-            var x = 1;
-            var y = 1;
+        $("#quiz_mode_toggle_error").remove();
 
-            $(".type_multiple_choice input").each(function(){
-                $(this).before(`
-                    <div class="input-group-text form_question_choice_answer">
-                        <input name="form_question_${$(this).attr("data-choice-id")}_choice_${x}_quiz" class="form-check-input mt-0" type="checkbox">
-                    </div>
-                `);
+        $.post("/form/quiz_mode_toggle", { form_id: $(this).data("form-id"), quiz_mode_toggle: is_quiz_mode }, function(result){
+            if(result["status"]){
+                if(JSON.parse(result["is_quiz_mode"])){
+                    modal_header_remove_class = "alert-warning";
+                    modal_header_add_class = "text-success alert-success";
+                    modal_title = "<i class='fas fa-check'></i> Success!";
+                    modal_body = `
+                        <p class="fw-bold">This form is now a quiz!</p>
+                        <p>You can now set which option/s will serve as an answer for each question. You can also set the equivalent score for each question.</p>
+                    `;
+                    modal_footer = "<button type='button' class='btn btn-success' data-bs-dismiss='modal'>Okay</button>";
 
-                x++;
-            });
+                    var x = 1;
+                    var y = 1;
 
-            $(".type_checkbox input").each(function(){
-                $(this).before(`
-                    <div class="input-group-text form_question_choice_answer">
-                        <input name="form_question_${$(this).attr("data-choice-id")}_choice_${y}_quiz" class="form-check-input mt-0" type="checkbox">
-                    </div>
-                `);
+                    $(".type_multiple_choice input").each(function(){
+                        $(this).before(`
+                            <div class="input-group-text form_question_choice_answer">
+                                <input name="form_question_${$(this).attr("data-choice-id")}_choice_${x}_quiz" class="form-check-input mt-0" type="checkbox">
+                            </div>
+                        `);
 
-                y++;
-            });
-            
-            $(".form_question").each(function(){
-                var question_id = $(this).attr("id").match(/\d+/)[0]
+                        x++;
+                    });
 
-                $(this).append(`
-                    <div id="form_question_${question_id}_score_div" class="row my-2 score_field">
-                        <label for="form[form_question_${question_id}_score]" class="col-lg-1 col-form-label">Score: </label>
-                        <div class="col-lg-11 w-25">
-                            <input type="text" id="form[form_question_${question_id}_score]" name="form[form_question_${question_id}_score]" class="form-control">
-                        </div>
-                    </div>
-                `);
-            });
+                    $(".type_checkbox input").each(function(){
+                        $(this).before(`
+                            <div class="input-group-text form_question_choice_answer">
+                                <input name="form_question_${$(this).attr("data-choice-id")}_choice_${y}_quiz" class="form-check-input mt-0" type="checkbox">
+                            </div>
+                        `);
 
-            $.post("/form/quiz_mode_toggle", { form_id: $(this).data("form-id"), quiz_mode_toggle: true }, function(result){
-                $("#quiz_toggle_modal .modal-header").removeClass("alert-warning");
-                $("#quiz_toggle_modal .modal-header").addClass("text-success alert-success");
-                $("#quiz_toggle_modal .modal-title").html("<i class='fas fa-check'></i> Success!");
-                $("#quiz_toggle_modal .modal-body").html(`
-                    <p class="fw-bold">This form is now a quiz!</p>
-                    <p>You can now set which option/s will serve as an answer for each question. You can also set the equivalent score for each question.</p>
-                `);
-                $("#quiz_toggle_modal .modal-footer").html("<button type='button' class='btn btn-success' data-bs-dismiss='modal'>Okay</button>");
-                $("#quiz_toggle_modal").modal("show");
-            });
-        }
-        else{
-            $(".form_question").each(function(){
+                        y++;
+                    });
+                    
+                    $(".form_question").each(function(){
+                        var question_id = $(this).attr("id").match(/\d+/)[0]
 
-                if($(this).attr("data-question-type") === "1" || $(this).attr("data-question-type") === "2"){
-                    $(".form_question .row .form_question_choice_answer").remove();
+                        $(this).append(`
+                            <div id="form_question_${question_id}_score_div" class="row my-2 score_field">
+                                <label for="form[form_question_${question_id}_score]" class="col-lg-1 col-form-label">Score: </label>
+                                <div class="col-lg-11 w-25">
+                                    <input type="text" id="form[form_question_${question_id}_score]" name="form[form_question_${question_id}_score]" class="form-control">
+                                </div>
+                            </div>
+                        `);
+                    });
+                }
+                else{
+                    modal_header_remove_class = "text-success alert-success";
+                    modal_header_add_class = "alert-warning";
+                    modal_title = "<i class='fas fa-exclamation-triangle'></i> Attention!";
+                    modal_body = "<p class='fw-bold'>This form is no longer a quiz!</p>";
+                    modal_footer = "<button type='button' class='btn btn-warning' data-bs-dismiss='modal'>Okay</button>";
+
+                    $(".form_question").each(function(){
+
+                        if($(this).attr("data-question-type") === "1" || $(this).attr("data-question-type") === "2"){
+                            $(".form_question .row .form_question_choice_answer").remove();
+                        }
+        
+                        $(".score_field").remove();
+                    });
                 }
 
-                $(".score_field").remove();
-            });
-
-            $.post("/form/quiz_mode_toggle", { form_id: $(this).data("form-id"), quiz_mode_toggle: false }, function(result){
-                $("#quiz_toggle_modal .modal-header").removeClass("text-success alert-success");
-                $("#quiz_toggle_modal .modal-header").addClass("alert-warning");
-                $("#quiz_toggle_modal .modal-title").html("<i class='fas fa-exclamation-triangle'></i> Attention!");
-                $("#quiz_toggle_modal .modal-body").html("<p class='fw-bold'>This form is no longer a quiz!</p>");
-                $("#quiz_toggle_modal .modal-footer").html("<button type='button' class='btn btn-warning' data-bs-dismiss='modal'>Okay</button>");
+                $("#quiz_toggle_modal .modal-header").removeClass(modal_header_remove_class);
+                $("#quiz_toggle_modal .modal-header").addClass(modal_header_add_class);
+                $("#quiz_toggle_modal .modal-title").html(modal_title);
+                $("#quiz_toggle_modal .modal-body").html(modal_body);
+                $("#quiz_toggle_modal .modal-footer").html(modal_footer);
                 $("#quiz_toggle_modal").modal("show");
-            });
-        }
+            }
+            else{
+                $("#breadcrumbs").after(`
+                    <div id="quiz_mode_toggle_error" class="alert alert-danger" role="alert">
+                        <i class="fas fa-times-circle"></i> An Error Occured!
+                    </div>
+                `);
+            }
+        });
 
         return false;
     });
 
     // ADD QUESTION
     $("#add_question_btn").click(function(){
-        let is_quiz_mode = $("#quiz_mode_toggle").prop("checked");
+        is_quiz_mode = $("#quiz_mode_toggle").prop("checked");
 
         $.get(`/add_question/${$(this).data("form-id")}`, function(result) {
             $("#sortable").append(`
@@ -223,7 +262,7 @@ $(document).ready(function(){
 
     // ADD CHOICE
     $(document).on("click", ".add_choice", function(){
-        let is_quiz_mode = $("#quiz_mode_toggle").prop("checked");
+        is_quiz_mode = $("#quiz_mode_toggle").prop("checked");
         let element;
         let class_type;
         let form_question_choice = "";
@@ -334,7 +373,7 @@ $(document).ready(function(){
 
     // CHANGE QUESTION TYPE
     $(document).on("change", ".form_question_type", function(){
-        let is_quiz_mode = $("#quiz_mode_toggle").prop("checked");
+        is_quiz_mode = $("#quiz_mode_toggle").prop("checked");
         let add_choice_other_content;
         let question_type_content;
         let question_type;

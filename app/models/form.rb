@@ -1,6 +1,7 @@
 class Form < ApplicationRecord
     #belongs_to :user
-    include :: QueryHelper
+    include ::QueryHelper
+    require 'json'
 
     validates :title, :description, presence: true
 
@@ -146,21 +147,21 @@ class Form < ApplicationRecord
     end
 
     def self.quiz_mode_toggle(form_id, quiz_mode_toggle, user_id)
-        if quiz_mode_toggle === "true"
+        if JSON.parse(quiz_mode_toggle)
             form_type = 1
         else
             form_type = 0
         end
 
-        quiz_mode_toggle = update_record(["UPDATE forms SET form_type = ?, updated_at = NOW() WHERE id = ? AND user_id = ?", form_type, form_id, user_id])
+        update_form_type = update_record(["UPDATE forms SET form_type = ?, updated_at = NOW() WHERE id = ? AND user_id = ?", form_type, form_id, user_id])
 
-        if quiz_mode_toggle
+        if update_form_type
             status = true
         else
             status = false
         end
 
-        return status
+        return { :status => status, :is_quiz_mode => quiz_mode_toggle }
     end
 
     # Update form status
