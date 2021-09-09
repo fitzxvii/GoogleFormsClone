@@ -148,6 +148,11 @@ class Form < ApplicationRecord
         return response
     end
 
+    # Update form type 
+    # Require: form_id, quiz_mode_toggle, user_id
+    # Returns: status and quiz mode toggle value
+    # Last Updated: September 9, 2021
+    # Owner: Jovic Abengona, Updated by: Fitz
     def self.quiz_mode_toggle(form_id, quiz_mode_toggle, user_id)
         if JSON.parse(quiz_mode_toggle)
             form_type = 1
@@ -158,7 +163,13 @@ class Form < ApplicationRecord
         update_form_type = update_record(["UPDATE forms SET form_type = ?, updated_at = NOW() WHERE id = ? AND user_id = ?", form_type, form_id, user_id])
 
         if update_form_type
-            status = true
+            if form_type = 0 
+                reset_question_score = update_record(["UPDATE questions SET score = 0 WHERE form_id = ?;", form_id])
+
+                status = true if reset_question_score.present?
+            else
+                status = true
+            end
         else
             status = false
         end
@@ -170,7 +181,7 @@ class Form < ApplicationRecord
     # Require: id, user_id
     # Returns: status which contains a Boolean value
     # Last Updated: September 6, 2021
-    # Owner: Updated by: Jovic Abengona
+    # Owner: Jovic Abengona
     def self.publish_form(id, user_id)
         publish_form = update_record(["UPDATE forms SET status = 1, updated_at = NOW() WHERE id = ? AND user_id = ?", id, user_id])
         

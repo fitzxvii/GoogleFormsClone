@@ -119,6 +119,24 @@ class Question < ApplicationRecord
         return response
     end
 
+    # It returns status if update question is successful or not
+    # Owner: Fitz
+    def self.update_score question_params
+        response = { :status => false }
+
+        if question_params[:score].match(/^(\d)+$/)
+            updated_score = update_record([
+                'UPDATE questions 
+                SET score = ?
+                WHERE id = ?;', question_params[:score], question_params[:id]
+            ])
+        
+            response[:status] = true if updated_score == 1
+        end
+
+        return response
+    end 
+
     private
         # To insert new question in the database
         # Owner: Fitz 
