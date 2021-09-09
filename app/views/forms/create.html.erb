@@ -71,9 +71,14 @@
                             <% if @form_data["form_type"] === 1 %>
                                 <div id="form_question_<%= question['id'] %>_score_div" class="row my-2 score_field">
                                     <label for="form[form_question_<%= question['id'] %>_score]" class="col-lg-1 col-form-label">Score: </label>
-                                    <div class="col-lg-11 w-25">
-                                        <input type="text" id="form[form_question_<%= question['id'] %>_score]" name="form[form_question_<%= question['id'] %>_score]" value="<%= question['score'] %>" class="form-control" <% if @form_data['status'] === 1 %> readonly <% end %>>
-                                    </div>
+                                    <form action="/update_score" method="post">
+                                        <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
+                                        <input type="hidden" name="_method" value="patch">
+                                        <input type="hidden" name="question[id]" value="<%= question['id'] %>">
+                                        <div class="col-lg-11 w-25">
+                                            <input type="text" id="form[form_question_<%= question['id'] %>_score]" name="question[score]" value="<%= question['score'] %>" class="form-control score_text" <% if @form_data['status'] === 1 %> readonly <% end %>>
+                                        </div>
+                                    </form>
                                 </div>
                             <% end %>
                         </div>

@@ -100,8 +100,8 @@ $(document).ready(function(){
     *   then send a post request to update form_type. 
     *   If return is false, input field will have a style to indicate an error
     *   Triggered: $("#quiz_mode_toggle").change(function()
-    *   Last Updated Date: September 8, 2021
-    *   @author Jovic Abengona
+    *   Last Updated Date: September 9, 2021
+    *   @author Jovic Abengona | Updated by: Fitz
     */
     $("#quiz_mode_toggle").change(function(){
         is_quiz_mode = $(this).prop("checked");
@@ -154,9 +154,14 @@ $(document).ready(function(){
                         $(this).append(`
                             <div id="form_question_${question_id}_score_div" class="row my-2 score_field">
                                 <label for="form[form_question_${question_id}_score]" class="col-lg-1 col-form-label">Score: </label>
-                                <div class="col-lg-11 w-25">
-                                    <input type="text" id="form[form_question_${question_id}_score]" name="form[form_question_${question_id}_score]" class="form-control">
-                                </div>
+                                <form action="/update_score" method="post">
+                                    <input type="hidden" name="authenticity_token" value="${auth_token}">
+                                    <input type="hidden" name="_method" value="patch">
+                                    <input type="hidden" name="question[id]" value="${question_id}">
+                                    <div class="col-lg-11 w-25">
+                                        <input type="text" id="form[form_question_${question_id}_score]" name="question[score]" class="form-control score_text">
+                                    </div>
+                                </form>
                             </div>
                         `);
                     });
@@ -200,7 +205,7 @@ $(document).ready(function(){
     /**
     *   DOCU: This will send a get request to add a new question in default format
     *   If return is false, an error message will be displayed
-    *   Triggered:   $("#add_question_btn").click()
+    *   Triggered: $("#add_question_btn").click()
     *   Last Updated Date: September 9, 2021
     *   @author Jovic Abengona | Updated By: Fitz
     */
@@ -261,9 +266,14 @@ $(document).ready(function(){
                 $(`#form_question_${result["question_id"]}_add_choice_other_div`).after(`
                     <div id="form_question_${result["question_id"]}_score_div" class="row my-2 score_field">
                         <label for="form[form_question_${result["question_id"]}_score]" class="col-lg-1 col-form-label">Score: </label>
-                        <div class="col-lg-11 w-25">
-                            <input type="text" id="form[form_question_${result["question_id"]}_score]" name="form[form_question_${result["question_id"]}_score]" class="form-control">
-                        </div>
+                        <form action="/update_score" method="post">
+                            <input type="hidden" name="authenticity_token" value="${auth_token}">
+                            <input type="hidden" name="_method" value="patch">
+                            <input type="hidden" name="question[id]" value="${result["question_id"]}">
+                            <div class="col-lg-11 w-25">
+                                <input type="text" id="form[form_question_${result["question_id"]}_score]" name="question[score]" class="form-control score_text">
+                            </div>
+                        </form>
                     </div>
                 `);
             }
@@ -350,8 +360,12 @@ $(document).ready(function(){
         $(`#form_question_${$(this).data("add-other-id")}_add_other_div`).hide();
     });
 
-    // DELETE QUESTION
-    // Last Update date: September 9, 2021
+    /**
+    *   DOCU: This will delete the question selected by the user
+    *   Triggered: on("click", ".delete_choice")
+    *   Last Updated Date: September 9, 2021
+    *   @author Jovic Abengona | Updated by: Fitz
+    */
     $(document).on("click", ".delete_question", function(){
         question_id = $(this).data("delete-id");
         form_id = $("#form_id").val();
@@ -375,7 +389,7 @@ $(document).ready(function(){
     *   DOCU: This will delete the option selected by the user
     *   Triggered: on("click", ".delete_choice")
     *   Last Updated Date: September 7, 2021
-    *   @author Fitz
+    *   @author Jovic Abengona | Updated by: Fitz
     */
     $(document).on("click", ".delete_choice", function(){
         option_id = $(this).data("delete-id");
@@ -541,6 +555,29 @@ $(document).ready(function(){
         return false;
     });
 
+    /**
+     * This will send a post request to update score of a question
+     * If the result is false, input field will change style indication the input is invalid
+     * Triggered: .on("change", ".score_text")
+     * @author Fitz
+     */
+    $(document).on("change", ".score_text", function(){
+        score_text_box = $(this);
+        form_div = score_text_box.parent().parent();
+
+        $.post(form_div.attr("action"), form_div.serialize(), function(result) {
+            console.log(result);
+            if(!result["status"]) {
+                score_text_box.addClass('is-invalid');
+            }
+            else {
+                score_text_box.removeClass('is-invalid');
+            }
+        }, 'json');
+
+        return false;
+    });
+  
     $("#publish_form").submit(function(e){
         e.preventDefault();
 

@@ -135,7 +135,9 @@ class FormsController < ApplicationController
     # Triggered by: Changing Score input text box
     # Owner: Fitz
     def update_score
-        
+        question_params = params.require(:question).permit(:id, :score)
+
+        render json: Question.update_score(question_params)
     end
 
     # DOCU: (POST) /form/rename/:id
