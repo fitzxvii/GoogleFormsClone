@@ -43,7 +43,7 @@ class Question < ApplicationRecord
             if new_option[:status] && new_option[:option_id].present?
                 response[:option_id] = new_option[:option_id]
 
-                form_order_update = Form.update_form_question_order form_id, new_question
+                form_order_update = Form.update_form_question_order(form_id, new_question, 1)
 
                 response[:status] = true if form_order_update[:status] == true
             end
@@ -89,6 +89,31 @@ class Question < ApplicationRecord
 
             response[:content] = get_question_content["content"] if get_question_content
             response[:status] = true if delete_options[:status]
+        end
+
+        return response
+    end
+
+    # It returns status if delete question is successful or not
+    # Owner: Fitz
+    def self.delete_question question_params
+        response = { :status => false }
+
+        if(question_params['question_type_id'] = 1 || question_params['question_type_id'] = 2)
+            delete_options = Option.delete_options_by_question_id  question_params['id']
+
+            delete_question_query = delete_record(['DELETE FROM questions WHERE id =?;', question_params['id']]) if delete_options[:status]
+        else
+            delete_question_query = delete_record([
+                'DELETE FROM questions
+                WHERE id =?;', question_params['id']
+            ])
+        end
+
+        if delete_question_query == 1
+            form_order_update = Form.update_form_question_order(question_params['form_id'], question_params['id'], 0)
+
+            response[:status] = true if form_order_update[:status] 
         end
 
         return response
