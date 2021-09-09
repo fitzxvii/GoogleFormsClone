@@ -197,7 +197,13 @@ $(document).ready(function(){
         return false;
     });
 
-    // ADD QUESTION
+    /**
+    *   DOCU: This will send a get request to add a new question in default format
+    *   If return is false, an error message will be displayed
+    *   Triggered:   $("#add_question_btn").click()
+    *   Last Updated Date: September 9, 2021
+    *   @author Jovic Abengona | Updated By: Fitz
+    */
     $("#add_question_btn").click(function(){
         is_quiz_mode = $("#quiz_mode_toggle").prop("checked");
 
@@ -365,8 +371,12 @@ $(document).ready(function(){
         });
     });
 
-    // DELETE CHOICE
-    // Last Update date: September 7, 2021
+    /**
+    *   DOCU: This will delete the option selected by the user
+    *   Triggered: on("click", ".delete_choice")
+    *   Last Updated Date: September 7, 2021
+    *   @author Fitz
+    */
     $(document).on("click", ".delete_choice", function(){
         option_id = $(this).data("delete-id");
         option_div = $(this).parent().parent();
