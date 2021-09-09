@@ -216,7 +216,7 @@ $(document).ready(function(){
             $("#sortable").append(`
                 <div id="form_question_${result["question_id"]}_div" class="mb-3 p-4 border border-success rounded form_question" data-question-type="${result["question_id"]}">
                     <div class="row">
-                        <div class="col-lg-9">
+                        <div class="question_div col-lg-9">
                             <form id="question_${result["question_id"]}_form" action="/update_question_content" method="post">
                                 <input type="hidden" name="authenticity_token" value="${auth_token}">
                                 <input type="hidden" name="_method" value="patch">
@@ -235,11 +235,11 @@ $(document).ready(function(){
                                     <button type="button" class="delete_choice btn btn-sm btn-outline-danger" data-delete-id="${result["option_id"]}"><i class="far fa-trash-alt"></i> Delete</button>
                                 </div>
                             </form>
-                            <div id="form_question_${result["question_id"]}_add_choice_other_div">
+                            <div id="form_question_${result["question_id"]}_add_choice_other_div" class="add_choice_other_div">
                                 <a id="form_question_${result["question_id"]}_add_choice" class="add_choice text-decoration-none text-success" data-add-choice-id="${result["question_id"]}">Add Choice</a> <span id="form_question_${result["question_id"]}_add_other_div">or <a id="form_question_${result["question_id"]}_add_other" class="add_other text-decoration-none text-success" data-add-other-id="${result["question_id"]}">"Other"</a></span>
                             </div>
                         </div>
-                        <div class="col-lg-3">
+                        <div class="col-lg-3 question_type_div">
                             <form id="form_question_${result["question_id"]}_change_type" action="/update_question_type" method="patch">
                                 <input type="hidden" name="authenticity_token" value="${auth_token}">
                                 <input type="hidden" name="_method" value="patch">
@@ -448,7 +448,7 @@ $(document).ready(function(){
                 }
 
                 question_type_content = `
-                    <div class="col-lg-3">
+                    <div class="col-lg-3 question_type_div">
                         <form id="form_question_${result["question_id"]}_change_type" action="/update_question_type" method="patch">
                             <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
                             <input type="hidden" name="_method" value="patch">
@@ -463,7 +463,7 @@ $(document).ready(function(){
                 `;
                 
                 add_choice_other_content = `
-                    <div id="form_question_${result["question_id"]}_add_choice_other_div">
+                    <div id="form_question_${result["question_id"]}_add_choice_other_div" class="add_choice_other_div">
                         <a id="form_question_${result["question_id"]}_add_choice" class="add_choice text-decoration-none text-success" data-add-choice-id="${result["question_id"]}">Add Choice</a> <span id="form_question_${result["question_id"]}_add_other_div">or <a id="form_question_${result["question_id"]}_add_other" class="add_other text-decoration-none text-success" data-add-other-id="${result["question_id"]}">"Other"</a></span>
                     </div>
                 `;
@@ -489,7 +489,7 @@ $(document).ready(function(){
                 }
 
                 question_type_content = `
-                    <div class="col-lg-3">
+                    <div class="col-lg-3 question_type_div">
                         <form id="form_question_${result["question_id"]}_change_type" action="/update_question_type" method="patch">
                             <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
                             <input type="hidden" name="_method" value="patch">
@@ -581,20 +581,40 @@ $(document).ready(function(){
     $("#publish_form").submit(function(e){
         e.preventDefault();
 
+        let status;
+        let message;
+        let icon;
+
         $("#publish_form_error").remove();
         
         $.post($(this).attr("action"), $(this).serialize(), function(result){
-            console.log(result);
             if(result["status"]){
+                status  = "success";
+                message = "Form has been published!";
+                icon    = "check";
 
-            }
-            else{
-                $("#breadcrumbs").after(`
-                    <div id="publish_form_error" class="alert alert-danger" role="alert">
-                        <i class="fas fa-times-circle"></i> An Error Occured!
-                    </div>
+                $("#sortable").sortable("disable");
+                $(".question_div").removeClass("col-lg-9");
+                $(".question_div").addClass("col-lg-12");
+                $("input, textarea").prop("readonly", true);
+                $(".delete_question, .delete_choice, .add_choice_other_div, .question_type_div, #add_question_btn_div, #delete_form_btn_div").remove();
+                $("#form_publish_end_div").html(`
+                    <button type="submit" class="btn btn-sm btn-secondary w-100 p-3"><i class="fas fa-save"></i> Get Results</button>
                 `);
             }
+            else{
+                status  = "danger";
+                message = "Unable to publish form!";
+                icon    = "times";
+            }
+
+            $(window).scrollTop(0);
+
+            $("#breadcrumbs").after(`
+                <div id="publish_form_error" class="alert alert-${status}" role="alert">
+                    <i class="fas fa-${icon}-circle"></i> ${message}
+                </div>
+            `);
         });
 
         return false;

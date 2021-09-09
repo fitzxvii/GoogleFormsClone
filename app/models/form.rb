@@ -212,15 +212,11 @@ class Form < ApplicationRecord
             end
         end
 
-        response[:status] = true if validate_form && validate_question
+        if validate_form && validate_question
+            publish_form = update_record(["UPDATE forms SET status = 1, updated_at = NOW() WHERE id = ? AND user_id = ?", id, user_id])
+        end
 
-        # publish_form = update_record(["UPDATE forms SET status = 1, updated_at = NOW() WHERE id = ? AND user_id = ?", id, user_id])
-        
-        # if publish_form
-        #     status = true
-        # else
-        #     status = false
-        # end
+        response[:status] = true if validate_form && validate_question && publish_form
 
         return response
     end
