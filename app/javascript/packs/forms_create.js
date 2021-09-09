@@ -229,12 +229,17 @@ $(document).ready(function(){
                             </div>
                         </div>
                         <div class="col-lg-3">
-                            <select id="form_question_${result["question_id"]}_type" name="form[question_type]" class="form-select form_question_type" data-question-type-id="${result["question_id"]}">
-                                <option value="1" selected>Multiple Choice</option>
-                                <option value="2">Checkboxes</option>
-                                <option value="3">Short Answer</option>
-                                <option value="4">Paragraph</option>
-                            </select>
+                            <form id="form_question_${result["question_id"]}_change_type" action="/update_question_type" method="patch">
+                                <input type="hidden" name="authenticity_token" value="${auth_token}">
+                                <input type="hidden" name="_method" value="patch">
+                                <input type="hidden" name="form[question_id]" value="${result["question_id"]}">
+                                <select id="form_question_${result["question_id"]}_type" name="form[question_type]" class="form-select form_question_type" data-question-type-id="${result["question_id"]}">
+                                    <option value="1" selected>Multiple Choice</option>
+                                    <option value="2">Checkboxes</option>
+                                    <option value="3">Short Answer</option>
+                                    <option value="4">Paragraph</option>
+                                </select>
+                            </form>
                         </div>
                     </div>
                 </div>
