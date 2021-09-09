@@ -15,7 +15,7 @@
         <form action="/update_form_title_and_description" id="update_form_title_and_description" method="post">
             <input id="auth_token" type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
             <input type="hidden" name="_method" value="patch">
-            <input type="hidden" name="form[id]" value="<%= @form_data['id'] %>">
+            <input id="form_id" type="hidden" name="form[id]" value="<%= @form_data['id'] %>">
             <div class="mb-3">
                 <input type="text" name="form[title]" id="title" class="form-control" placeholder="Form Title" value="<%= @form_data['title'] if @form_data.present? %>" <% if @form_data['status'] === 0 %> autofocus <% elsif @form_data['status'] === 1 %> readonly <% end %>>
             </div>

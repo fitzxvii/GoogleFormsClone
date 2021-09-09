@@ -31,7 +31,8 @@ Rails.application.routes.draw do
   patch "/update_option_content" => "forms#update_option_content"
 
   delete "/delete_option" => "forms#delete_option"
-
+  delete "/delete_question" => "forms#delete_question"
+  
   post "/form/quiz_mode_toggle" => "forms#quiz_mode_toggle"
 
   patch "/form/rename" => "forms#rename_form"

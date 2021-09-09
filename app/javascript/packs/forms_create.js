@@ -345,8 +345,28 @@ $(document).ready(function(){
     });
 
     // DELETE QUESTION
+    // Last Update date: September 9, 2021
     $(document).on("click", ".delete_question", function(){
-        $(`#form_question_${$(this).data("delete-id")}_div`).remove();
+        question_id = $(this).data("delete-id");
+        form_id = $("#form_id").val();
+        question_type_id = $(`#form_question_${question_id}_div`).data("question-type");
+
+        console.log(question_id);
+        console.log(form_id);
+        console.log(question_type_id);
+
+        $.ajax({
+            url: "/delete_question",
+            type: "delete",
+            dataType: "json",
+            data: { "id": question_id, "form_id": form_id, "question_type_id": question_type_id },
+            success: function(data) { 
+                $(`#form_question_${question_id}_div`).remove();;
+            },
+            error: function() { 
+                alert("Error!") 
+            }
+        });
     });
 
     // DELETE CHOICE

@@ -122,6 +122,15 @@ class FormsController < ApplicationController
         render json: Option.delete_option(option_param)
     end
 
+    # DOCU: (DELETE) /delete_question
+    # Triggered by: Clicking on the Delete Question
+    # Owner: Fitz
+    def delete_question
+        question_params = params.permit(:id, :form_id, :question_type_id)
+
+        render json: Question.delete_question(question_params)
+    end
+
     # DOCU: (POST) /form/rename/:id
 	# Validate form_data then rename form title
 	# Triggered by: Sending POST request to /form/rename/:id
