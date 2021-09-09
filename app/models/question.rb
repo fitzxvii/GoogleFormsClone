@@ -43,9 +43,9 @@ class Question < ApplicationRecord
             if new_option[:status] && new_option[:option_id].present?
                 response[:option_id] = new_option[:option_id]
 
-                form_order_update = Form.update_form_question_order(form_id, new_question, 1)
+                form_order_update = Form.update_form_question_order(form_id, new_question, true)
 
-                response[:status] = true if form_order_update[:status] == true
+                response[:status] = true if form_order_update[:status]
             end
         end
 
@@ -106,14 +106,14 @@ class Question < ApplicationRecord
         else
             delete_question_query = delete_record([
                 'DELETE FROM questions
-                WHERE id =?;', question_params['id']
+                WHERE id = ?;', question_params['id']
             ])
         end
 
         if delete_question_query == 1
-            form_order_update = Form.update_form_question_order(question_params['form_id'], question_params['id'], 0)
+            form_order_update = Form.update_form_question_order(question_params['form_id'], question_params['id'], false)
 
-            response[:status] = true if form_order_update[:status] 
+            response[:status] = true if form_order_update[:status]
         end
 
         return response
