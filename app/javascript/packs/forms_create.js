@@ -577,5 +577,26 @@ $(document).ready(function(){
 
         return false;
     });
+  
+    $("#publish_form").submit(function(e){
+        e.preventDefault();
 
+        $("#publish_form_error").remove();
+        
+        $.post($(this).attr("action"), $(this).serialize(), function(result){
+            console.log(result);
+            if(result["status"]){
+
+            }
+            else{
+                $("#breadcrumbs").after(`
+                    <div id="publish_form_error" class="alert alert-danger" role="alert">
+                        <i class="fas fa-times-circle"></i> An Error Occured!
+                    </div>
+                `);
+            }
+        });
+
+        return false;
+    })
 });
