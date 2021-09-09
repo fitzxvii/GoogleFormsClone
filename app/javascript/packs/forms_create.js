@@ -218,7 +218,7 @@ $(document).ready(function(){
                                 <input type="hidden" name="question[id]" value="${result["question_id"]}">
                                 <div id="form_question_${result["question_id"]}_question_div" class="input-group mb-3">
                                     <input type="text" id="form_question_${result["question_id"]}" data-question-id="${result["question_id"]}" name="question[content]" class="form-control form-control-lg question_content_text" placeholder="Question Text">
-                                    <button type='button' class="delete_question btn btn-sm btn-outline-danger" data-delete-id="${result["question_id"]}"><i class="far fa-trash-alt"></i> Delete</button>
+                                    <button type="button" class="delete_question btn btn-sm btn-outline-danger" data-delete-id="${result["question_id"]}"><i class="far fa-trash-alt"></i> Delete</button>
                                 </div>
                             </form>
                             <form action="/update_option_content" method="post" class="update_option_content">
@@ -227,7 +227,7 @@ $(document).ready(function(){
                                 <input type="hidden" name="option[id]" value="${result["option_id"]}">
                                 <div id="form_question_${result["question_id"]}_choice_div" class="input-group mb-3 type_multiple_choice">
                                     <input type="text" id="form_question_${result["question_id"]}_choice_${result["option_id"]}" name="option[content]" class="form-control option_content_text" placeholder="Choice Text" data-choice-id=${result["option_id"]}>
-                                    <button class="delete_choice btn btn-sm btn-outline-danger" data-delete-id="${result["option_id"]}"><i class="far fa-trash-alt"></i> Delete</button>
+                                    <button type="button" class="delete_choice btn btn-sm btn-outline-danger" data-delete-id="${result["option_id"]}"><i class="far fa-trash-alt"></i> Delete</button>
                                 </div>
                             </form>
                             <div id="form_question_${result["question_id"]}_add_choice_other_div">
@@ -236,7 +236,7 @@ $(document).ready(function(){
                         </div>
                         <div class="col-lg-3">
                             <form id="form_question_${result["question_id"]}_change_type" action="/update_question_type" method="patch">
-                                <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
+                                <input type="hidden" name="authenticity_token" value="${auth_token}">
                                 <input type="hidden" name="_method" value="patch">
                                 <input type="hidden" name="form[question_id]" value="${result["question_id"]}">
                                 <select id="form_question_${result["question_id"]}_type" name="form[question_type]" class="form-select form_question_type" data-question-type-id="${result["question_id"]}">
@@ -310,7 +310,7 @@ $(document).ready(function(){
             
             form_question_choice += `
                 <input type="text" id="form_question_${question_number}_choice_${result["option_id"]}" name="option[content]" class="form-control option_content_text" placeholder="Choice Text" data-choice-id="${result["option_id"]}">
-                <button class="delete_choice btn btn-sm btn-outline-danger" data-delete-id="${question_number}"><i class="far fa-trash-alt"></i> Delete</button>
+                <button type="button" class="delete_choice btn btn-sm btn-outline-danger" data-delete-id="${question_number}"><i class="far fa-trash-alt"></i> Delete</button>
             `;
             
             if($(`#form_question_${question_number}_div .update_option_content`).last().length > 0){
@@ -343,7 +343,7 @@ $(document).ready(function(){
             <div id="form_question_${$(this).data("add-other-id")}_other_div" class="input-group mb-3">
                 <span class="input-group-text">Other...</span>
                 <input type="text" id="form_question_${question_counter}_choice_${choice_counter}" name="form[form_question_${question_counter}_choice_${choice_counter}]" class="form-control" readonly>
-                <button class="delete_other btn btn-sm btn-outline-danger" data-delete-id="${$(this).data("add-other-id")}"><i class="far fa-trash-alt"></i> Delete</button>
+                <button type="button" class="delete_other btn btn-sm btn-outline-danger" data-delete-id="${$(this).data("add-other-id")}"><i class="far fa-trash-alt"></i> Delete</button>
             </div>
         `);
 
@@ -357,10 +357,6 @@ $(document).ready(function(){
         form_id = $("#form_id").val();
         question_type_id = $(`#form_question_${question_id}_div`).data("question-type");
 
-        console.log(question_id);
-        console.log(form_id);
-        console.log(question_type_id);
-
         $.ajax({
             url: "/delete_question",
             type: "delete",
@@ -370,7 +366,7 @@ $(document).ready(function(){
                 $(`#form_question_${question_id}_div`).remove();;
             },
             error: function() { 
-                alert("Error!") 
+                alert("Error!")
             }
         });
     });
@@ -503,7 +499,7 @@ $(document).ready(function(){
                             <input type="hidden" name="question[id]" value="${result["question_id"]}">
                             <div id="form_question_${result["question_id"]}_question_div" class="input-group mb-3">
                                 <input type="text" id="form_question_${result["question_id"]}" data-question-id="${result["question_id"]}" name="question[content]" class="form-control form-control-lg question_content_text" placeholder="Question Text" value="${result["content"]}">
-                                <button class="delete_question btn btn-sm btn-outline-danger" data-delete-id="${result["question_id"]}"><i class="far fa-trash-alt"></i> Delete</button>
+                                <button type="button" class="delete_question btn btn-sm btn-outline-danger" data-delete-id="${result["question_id"]}"><i class="far fa-trash-alt"></i> Delete</button>
                             </div>
                         </form>
                         ${add_choice_other_content}

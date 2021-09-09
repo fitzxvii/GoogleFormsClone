@@ -120,8 +120,8 @@ class Form < ApplicationRecord
 
     # It returns the response if the update of question order is successful or not
     # Requires: form id and question id
-    # Owner: Fitz
     # Last Update date: Sept. 9, 2021
+    # Owner: Fitz, Updated By: Jovic Abengona
     def self.update_form_question_order form_id, question_id, action
         response = { :status => false }
 
@@ -134,10 +134,7 @@ class Form < ApplicationRecord
         if form_question_order.present?
             parsed_question_order = JSON.parse(form_question_order["question_order"])
 
-            (action == 0) ? parsed_question_order.delete(question_id) :
-                            parsed_question_order.push(question_id)
-            
-            puts parsed_question_order
+            action ? parsed_question_order.push(question_id.to_i) : parsed_question_order.delete(question_id.to_i)
 
             update_question_order = update_record([
                 'UPDATE forms
