@@ -159,7 +159,7 @@ $(document).ready(function(){
                                     <input type="hidden" name="_method" value="patch">
                                     <input type="hidden" name="question[id]" value="${question_id}">
                                     <div class="col-lg-11 w-25">
-                                        <input type="text" id="form[form_question_${question_id}_score]" name="question[score]" class="form-control score_text">
+                                        <input type="number" id="form[form_question_${question_id}_score]" name="question[score]" class="form-control score_text">
                                     </div>
                                 </form>
                             </div>
@@ -271,7 +271,7 @@ $(document).ready(function(){
                             <input type="hidden" name="_method" value="patch">
                             <input type="hidden" name="question[id]" value="${result["question_id"]}">
                             <div class="col-lg-11 w-25">
-                                <input type="text" id="form[form_question_${result["question_id"]}_score]" name="question[score]" class="form-control score_text">
+                                <input type="number" id="form[form_question_${result["question_id"]}_score]" name="question[score]" class="form-control score_text">
                             </div>
                         </form>
                     </div>
@@ -533,7 +533,7 @@ $(document).ready(function(){
                     <div id="form_question_${result["question_id"]}_score_div" class="row my-2 score_field">
                         <label for="form[form_question_${result["question_id"]}_score]" class="col-lg-1 col-form-label">Score: </label>
                         <div class="col-lg-11 w-25">
-                            <input type="text" id="form[form_question_${result["question_id"]}_score]" name="form[form_question_${result["question_id"]}_score]" class="form-control">
+                            <input type="number" id="form[form_question_${result["question_id"]}_score]" name="form[form_question_${result["question_id"]}_score]" class="form-control">
                         </div>
                     </div>
                 `);
@@ -543,7 +543,7 @@ $(document).ready(function(){
                     <div id="form_question_${result["question_id"]}_score_div" class="row my-2 score_field">
                         <label for="form[form_question_${result["question_id"]}_score]" class="col-lg-1 col-form-label">Score: </label>
                         <div class="col-lg-11 w-25">
-                            <input type="text" id="form[form_question_${result["question_id"]}_score]" name="form[form_question_${result["question_id"]}_score]" class="form-control">
+                            <input type="number" id="form[form_question_${result["question_id"]}_score]" name="form[form_question_${result["question_id"]}_score]" class="form-control">
                         </div>
                     </div>
                 `);
