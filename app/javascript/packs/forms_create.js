@@ -417,6 +417,7 @@ $(document).ready(function(){
     });
 
     // CHANGE QUESTION TYPE
+    // Last Update date: Sept. 9, 2021
     $(document).on("change", ".form_question_type", function(){
         is_quiz_mode = $("#quiz_mode_toggle").prop("checked");
         let add_choice_other_content;
@@ -532,9 +533,14 @@ $(document).ready(function(){
                 $(`#form_question_${result["question_id"]}_add_choice_other_div`).after(`
                     <div id="form_question_${result["question_id"]}_score_div" class="row my-2 score_field">
                         <label for="form[form_question_${result["question_id"]}_score]" class="col-lg-1 col-form-label">Score: </label>
-                        <div class="col-lg-11 w-25">
-                            <input type="text" id="form[form_question_${result["question_id"]}_score]" name="form[form_question_${result["question_id"]}_score]" class="form-control">
-                        </div>
+                        <form action="/update_score" method="post">
+                            <input type="hidden" name="authenticity_token" value="${auth_token}">
+                            <input type="hidden" name="_method" value="patch">
+                            <input type="hidden" name="question[id]" value="${result["question_id"]}">
+                            <div class="col-lg-11 w-25">
+                                <input type="text" id="form[form_question_${result["question_id"]}_score]" name="question[score]" class="form-control score_text" value="${result["score"]}">
+                            </div>
+                        </form>
                     </div>
                 `);
             }
@@ -542,9 +548,14 @@ $(document).ready(function(){
                 $(`#form_question_${result["question_id"]}_choice_div`).after(`
                     <div id="form_question_${result["question_id"]}_score_div" class="row my-2 score_field">
                         <label for="form[form_question_${result["question_id"]}_score]" class="col-lg-1 col-form-label">Score: </label>
-                        <div class="col-lg-11 w-25">
-                            <input type="text" id="form[form_question_${result["question_id"]}_score]" name="form[form_question_${result["question_id"]}_score]" class="form-control">
-                        </div>
+                        <form action="/update_score" method="post">
+                            <input type="hidden" name="authenticity_token" value="${auth_token}">
+                            <input type="hidden" name="_method" value="patch">
+                            <input type="hidden" name="question[id]" value="${result["question_id"]}">
+                            <div class="col-lg-11 w-25">
+                                <input type="text" id="form[form_question_${result["question_id"]}_score]" name="question[score]" class="form-control score_text" value="${result["score"]}">
+                            </div>
+                        </form>
                     </div>
                 `);
             }

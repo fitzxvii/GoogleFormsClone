@@ -72,7 +72,7 @@ class Question < ApplicationRecord
     end
 
     # It returns status if update is successful or not
-    # Last Updated: September 8, 2021
+    # Last Updated: September 9, 2021
     # Owner: Fitz, Updated By: Jovic Abengona
     def self.update_question_type form_params
         response = { :status => false, :question_id => form_params[:question_id] }
@@ -83,11 +83,12 @@ class Question < ApplicationRecord
         ])
 
         if update_question_type == 1
-            get_question_content = query_record(["SELECT content FROM questions WHERE id = ?", form_params[:question_id]])
+            get_question_data = query_record(["SELECT content, score FROM questions WHERE id = ?", form_params[:question_id]])
 
             delete_options = Option.delete_options_by_question_id form_params[:question_id]
 
-            response[:content] = get_question_content["content"] if get_question_content
+            response[:content] = get_question_data["content"] if get_question_data
+            response[:score] = get_question_data["score"] if get_question_data
             response[:status] = true if delete_options[:status]
         end
 
