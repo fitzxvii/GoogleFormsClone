@@ -197,7 +197,13 @@ $(document).ready(function(){
         return false;
     });
 
-    // ADD QUESTION
+    /**
+    *   DOCU: This will send a get request to add a new question in default format
+    *   If return is false, an error message will be displayed
+    *   Triggered:   $("#add_question_btn").click()
+    *   Last Updated Date: September 9, 2021
+    *   @author Jovic Abengona | Updated By: Fitz
+    */
     $("#add_question_btn").click(function(){
         is_quiz_mode = $("#quiz_mode_toggle").prop("checked");
 
@@ -212,7 +218,7 @@ $(document).ready(function(){
                                 <input type="hidden" name="question[id]" value="${result["question_id"]}">
                                 <div id="form_question_${result["question_id"]}_question_div" class="input-group mb-3">
                                     <input type="text" id="form_question_${result["question_id"]}" data-question-id="${result["question_id"]}" name="question[content]" class="form-control form-control-lg question_content_text" placeholder="Question Text">
-                                    <button class="delete_question btn btn-sm btn-outline-danger" data-delete-id="${result["question_id"]}"><i class="far fa-trash-alt"></i> Delete</button>
+                                    <button type='button' class="delete_question btn btn-sm btn-outline-danger" data-delete-id="${result["question_id"]}"><i class="far fa-trash-alt"></i> Delete</button>
                                 </div>
                             </form>
                             <form action="/update_option_content" method="post" class="update_option_content">
@@ -229,12 +235,17 @@ $(document).ready(function(){
                             </div>
                         </div>
                         <div class="col-lg-3">
-                            <select id="form_question_${result["question_id"]}_type" name="form[question_type]" class="form-select form_question_type" data-question-type-id="${result["question_id"]}">
-                                <option value="1" selected>Multiple Choice</option>
-                                <option value="2">Checkboxes</option>
-                                <option value="3">Short Answer</option>
-                                <option value="4">Paragraph</option>
-                            </select>
+                            <form id="form_question_${result["question_id"]}_change_type" action="/update_question_type" method="patch">
+                                <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
+                                <input type="hidden" name="_method" value="patch">
+                                <input type="hidden" name="form[question_id]" value="${result["question_id"]}">
+                                <select id="form_question_${result["question_id"]}_type" name="form[question_type]" class="form-select form_question_type" data-question-type-id="${result["question_id"]}">
+                                    <option value="1" selected>Multiple Choice</option>
+                                    <option value="2">Checkboxes</option>
+                                    <option value="3">Short Answer</option>
+                                    <option value="4">Paragraph</option>
+                                </select>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -364,8 +375,12 @@ $(document).ready(function(){
         });
     });
 
-    // DELETE CHOICE
-    // Last Update date: September 7, 2021
+    /**
+    *   DOCU: This will delete the option selected by the user
+    *   Triggered: on("click", ".delete_choice")
+    *   Last Updated Date: September 7, 2021
+    *   @author Fitz
+    */
     $(document).on("click", ".delete_choice", function(){
         option_id = $(this).data("delete-id");
         option_div = $(this).parent().parent();

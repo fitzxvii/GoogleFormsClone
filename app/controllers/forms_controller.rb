@@ -131,6 +131,13 @@ class FormsController < ApplicationController
         render json: Question.delete_question(question_params)
     end
 
+    # DOCU: (PATCH) /update_score
+    # Triggered by: Changing Score input text box
+    # Owner: Fitz
+    def update_score
+        
+    end
+
     # DOCU: (POST) /form/rename/:id
 	# Validate form_data then rename form title
 	# Triggered by: Sending POST request to /form/rename/:id
