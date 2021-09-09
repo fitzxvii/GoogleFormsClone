@@ -191,20 +191,29 @@ class Form < ApplicationRecord
         validate_form = true if !form_data["title"].nil? && !form_data["description"].nil? && form_data["question_order"] != "[]"
 
         if validate_form
-            questions_data = query_records(["SELECT question_type, content, correct_option_id, score
-                                                    FROM questions
-                                                    WHERE form_id = ?", id])
+            questions_data = query_records(["SELECT q.question_type, q.content AS 'question_content', q.correct_option_id, q.score, o.content AS 'option_content'
+                                                FROM questions AS q
+                                                LEFT JOIN options AS o ON o.question_id = q.id
+                                                WHERE q.form_id =?", id])
+
             questions_data.each do |question|
                 if form_data["form_type"] === 0
-                    puts "NOT QUIZ"
+                    if question["question_type"] === 1 || question["question_type"] === 2
+                        if !question["question_content"].nil? && !question["option_content"].nil?
+                            validate_question = true
+                        else
+                            validate_question = false
+                            break
+                        end
+                    end
                 else
                     puts "QUIZ"
                 end
-                
             end
-        else
-            response[:status] = true
         end
+
+        response[:status] = true if validate_form && validate_question
+
         # publish_form = update_record(["UPDATE forms SET status = 1, updated_at = NOW() WHERE id = ? AND user_id = ?", id, user_id])
         
         # if publish_form
