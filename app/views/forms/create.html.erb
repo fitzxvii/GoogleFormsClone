@@ -106,7 +106,6 @@
             <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
             <input type="hidden" name="_method" value="patch">
             <input type="hidden" name="form[id]" value="<%= @form_data["id"] %>">
-            <input type="hidden" name="form[code]" value="<%= @form_data["code"] %>">
 
             <% if @form_data['status'] === 0 %>
                 <div class="mb-3">
