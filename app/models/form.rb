@@ -249,6 +249,22 @@ class Form < ApplicationRecord
 
         return response
     end
+
+    def self.get_result(id, user_id)
+        response = { :status => false, :code => nil }
+        publish_form = update_record(["UPDATE forms SET status = 2, updated_at = NOW() WHERE id = ? AND user_id = ?", id, user_id])
+
+        if publish_form
+            get_form = self.get_form(id)
+
+            response[:status] = true
+            response[:code] = get_form["code"]
+        else
+            response[:status] = false
+        end
+
+        return response
+    end
     
     # Delete form
     # Require: id, user_id

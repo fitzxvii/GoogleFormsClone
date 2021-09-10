@@ -31,7 +31,7 @@
                             <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
                             <input type="hidden" name="_method" value="patch">
                             <input type="hidden" name="form[id]" value="<%= form["id"] %>">
-                            <h5 id="form_title_<%= form["id"] %>" class="<% if form["status"] === 0 %>card-title<% end %> text-success"><%= form["title"] %><% if form["status"] === 1 %><span class="badge rounded-pill bg-success float-end">Published</span><% end %></h5>
+                            <h5 id="form_title_<%= form["id"] %>" class="<% if form["status"] === 0 %>card-title<% end %> text-success"><%= form["title"] %><% if form["status"] === 1 %><span class="badge rounded-pill bg-success float-end">Published</span><% elsif form["status"] === 2 %><span class="badge rounded-pill bg-danger float-end">Finished</span><% end %></h5>
                         </form>
                         <p id="form_details_<%= form["id"] %>" class="card-text text-muted small">Opened last <%= form["updated_at"].strftime("%B %d, %Y | %I:%M %p") %></p>
                     </div>

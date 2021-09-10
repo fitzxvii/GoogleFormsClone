@@ -14,7 +14,7 @@ Rails.application.routes.draw do
   get "/dashboard" => "forms#dashboard"
   #get "/dashboard/create" => "forms#create"
   get "/form" => "forms#view"
-  get "/form/result" => "forms#result"
+  get "/form/:code/result" => "forms#result"
   get "/form/answer" => "forms#answer"
 
   get "/create_form" => "forms#create_form"
@@ -41,5 +41,6 @@ Rails.application.routes.draw do
 
   patch "/form/rename" => "forms#rename_form"
   patch "/form/publish" => "forms#publish_form"
+  patch "/form/get_result" => "forms#get_result"
   delete "/form/delete" => "forms#delete"
 end

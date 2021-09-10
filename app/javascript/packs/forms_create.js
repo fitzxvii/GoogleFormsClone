@@ -12,7 +12,7 @@ $(document).ready(function(){
     */
     $("#sortable").sortable({
         update: function(){
-            $("#update_question_order_error").remove();
+            $(".form_alert_message").remove();
 
             $.post(
                 $("#update_question_order_form").attr("action"), 
@@ -22,7 +22,7 @@ $(document).ready(function(){
                         $(window).scrollTop(0);
 
                         $("#breadcrumbs").after(`
-                            <div id="update_question_order_error" class="alert alert-danger" role="alert">
+                            <div class="form_alert_message alert alert-danger" role="alert">
                                 <i class="fas fa-times-circle"></i> An Error Occured!
                             </div>
                         `);
@@ -30,7 +30,6 @@ $(document).ready(function(){
             });
         }
     });
-    $("#sortable").disableSelection();
 
     $("#create_form, .update_option_content").submit(function(e){
         e.preventDefault();
@@ -136,7 +135,7 @@ $(document).ready(function(){
         let modal_body;
         let modal_footer;
 
-        $("#quiz_mode_toggle_error").remove();
+        $(".form_alert_message").remove();
 
         $.post("/form/quiz_mode_toggle", { form_id: $(this).data("form-id"), quiz_mode_toggle: is_quiz_mode }, function(result){
             if(result["status"]){
@@ -217,7 +216,7 @@ $(document).ready(function(){
             }
             else{
                 $("#breadcrumbs").after(`
-                    <div id="quiz_mode_toggle_error" class="alert alert-danger" role="alert">
+                    <div class="form_alert_message alert alert-danger" role="alert">
                         <i class="fas fa-times-circle"></i> An Error Occured!
                     </div>
                 `);
@@ -618,47 +617,69 @@ $(document).ready(function(){
         return false;
     });
   
-    $("#publish_form").submit(function(e){
+    $("#form_main_action").submit(function(e){
         e.preventDefault();
 
         let status;
         let message;
         let icon;
 
-        $("#publish_form_error").remove();
+        $(".form_alert_message").remove();
         
-        $.post($(this).attr("action"), $(this).serialize(), function(result){
-            if(result["status"]){
-                status  = "success";
-                message = "Form has been published!";
-                icon    = "check";
+        if($(this).attr("action") === "/form/publish"){
+            $.post($(this).attr("action"), $(this).serialize(), function(result){
+                if(result["status"]){
+                    $("#form_main_action").attr("action", "/form/get_result")
 
-                $("#sortable").sortable("disable");
-                $(".question_div").removeClass("col-lg-9");
-                $(".question_div").addClass("col-lg-12");
-                $("input[type=text], input[type=number], textarea").prop("readonly", true);
-                $("input[type=checkbox]").prop("disabled", true);
-                $(".delete_question, .delete_choice, .add_choice_other_div, .question_type_div, #add_question_btn_div, #delete_form_btn_div").remove();
-                $("#form_publish_end_div").html(`
-                    <button type="submit" class="btn btn-sm btn-secondary w-100 p-3"><i class="fas fa-save"></i> Get Results</button>
+                    status  = "success";
+                    message = "Form has been published!";
+                    icon    = "check";
+
+                    $("#sortable").sortable("disable");
+                    $(".question_div").removeClass("col-lg-9");
+                    $(".question_div").addClass("col-lg-12");
+                    $("input[type=text], input[type=number], textarea").prop("readonly", true);
+                    $("input[type=checkbox]").prop("disabled", true);
+                    $(".delete_question, .delete_choice, .add_choice_other_div, .question_type_div, #add_question_btn_div, #delete_form_btn_div").remove();
+                    $("#form_main_btn_div").html(`
+                        <button type="submit" class="btn btn-sm btn-success w-100 p-3"><i class="fas fa-save"></i> Get Results</button>
+                    `);
+                }
+                else{
+                    status  = "danger";
+                    message = "Unable to publish form!";
+                    icon    = "times";
+                }
+
+                $(window).scrollTop(0);
+
+                $("#breadcrumbs").after(`
+                    <div class="form_alert_message alert alert-${status}" role="alert">
+                        <i class="fas fa-${icon}-circle"></i> ${message}
+                    </div>
                 `);
-            }
-            else{
-                status  = "danger";
-                message = "Unable to publish form!";
-                icon    = "times";
-            }
+            });
 
-            $(window).scrollTop(0);
+            return false;
+        }
+        else if($(this).attr("action") === "/form/get_result"){
+            $.post($(this).attr("action"), $(this).serialize(), function(result){
+                if(result["status"]){
+                    window.location.href = `http://localhost:3000/form/${result["code"]}/result`;
+                }
+                else{
+                    $(window).scrollTop(0);
 
-            $("#breadcrumbs").after(`
-                <div id="publish_form_error" class="alert alert-${status}" role="alert">
-                    <i class="fas fa-${icon}-circle"></i> ${message}
-                </div>
-            `);
-        });
+                    $("#breadcrumbs").after(`
+                        <div class="form_alert_message alert alert-danger" role="alert">
+                            <i class="fas fa-times-circle"></i> Error Getting Results!
+                        </div>
+                    `);
+                }
+            });
 
-        return false;
+            return false;
+        }
     })
 
     // CKECKBOX FOR CHOOSING CORRECT ANSWER

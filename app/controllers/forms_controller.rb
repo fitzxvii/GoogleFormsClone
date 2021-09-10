@@ -24,7 +24,9 @@ class FormsController < ApplicationController
         @all_options = Option.collect_options_per_quetions JSON.parse(@form_data['question_order'])
 
         if @form_data["status"] === 1
-            @form_action = "end"
+            @form_action = "get_result"
+        elsif @form_data["status"] === 2
+            @form_action = "show_result"
         end
     end
 
@@ -187,6 +189,12 @@ class FormsController < ApplicationController
         form_data = params.require(:form).permit(:id)
 
         render json: Form.publish_form(form_data[:id], current_user["id"])
+    end
+
+    def get_result
+        form_data = params.require(:form).permit(:id)
+
+        render json: Form.get_result(form_data[:id], current_user["id"])
     end
 
     # DOCU: (POST) /form/delete/:id
