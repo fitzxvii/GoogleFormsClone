@@ -29,11 +29,12 @@ class Question < ApplicationRecord
         ])
     end
 
+    # Require: hash data with form id
     # It returns a response if addition is successful or not
     # Owner: Fitz
-    def self.add_new_question form_id
+    def self.add_new_question form
         response = { :status => false }
-        new_question = self.insert_default_question form_id
+        new_question = self.insert_default_question form['id']
 
         if new_question.present?
             response[:question_id] = new_question
@@ -43,7 +44,7 @@ class Question < ApplicationRecord
             if new_option[:status] && new_option[:option_id].present?
                 response[:option_id] = new_option[:option_id]
 
-                form_order_update = Form.update_form_question_order(form_id, new_question, true)
+                form_order_update = Form.update_form_question_order(form['id'], new_question, true)
 
                 response[:status] = true if form_order_update[:status]
             end
@@ -182,7 +183,7 @@ class Question < ApplicationRecord
         # Owner: Fitz 
         def self.insert_default_question form_id
             insert_record([
-                'INSERT INTO questions (form_id, question_type, content, correct_option_id, score, created_at, updated_at)
+                'INSERT INTO questions (form_id, question_type, content, correct_option_ids, score, created_at, updated_at)
                 VALUES(?, 1, NULL, "[]", 0, NOW(), NOW());', form_id
             ])
         end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_09_09_123945) do
+ActiveRecord::Schema.define(version: 2021_09_10_023339) do
 
   create_table "answers", charset: "utf8mb4", force: :cascade do |t|
     t.bigint "user_id", null: false
@@ -42,6 +42,7 @@ ActiveRecord::Schema.define(version: 2021_09_09_123945) do
 
   create_table "options", charset: "utf8mb4", force: :cascade do |t|
     t.bigint "question_id", null: false
+    t.integer "is_others"
     t.string "content"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false

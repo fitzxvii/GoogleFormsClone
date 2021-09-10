@@ -35,22 +35,35 @@
                             </form>          
                             <% @all_options.each do |option| %>
                               <% if question['id'] == option["question_id"] %>
-                                <form action="/update_option_content" method="post" class="update_option_content">
-                                    <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
-                                    <input type="hidden" name="_method" value="patch">
-                                    <input type="hidden" name="option[id]" value="<%= option['id'] %>">
-                                    <div id="form_question_<%= question['id'] %>_choice_div" class="input-group mb-3 type_multiple_choice">
+                               <% if option["is_others"] == 0 %>
+                                    <form action="/update_option_content" method="post" class="update_option_content">
+                                        <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
+                                        <input type="hidden" name="_method" value="patch">
+                                        <input type="hidden" name="option[id]" value="<%= option['id'] %>">
+                                        <div id="form_question_<%= question['id'] %>_choice_div" class="input-group mb-3 type_multiple_choice">
+                                            <% if @form_data["form_type"] === 1 %>
+                                                <div class="input-group-text form_question_choice_answer">
+                                                    <input name="correct_answer_question<%= question['id'] %>[]" class="form-check-input mt-0" type="checkbox" value="<%= option['id'] %>" <% if !JSON.parse(question['correct_option_ids']).nil? && JSON.parse(question['correct_option_ids']).include?(option['id'])%> checked <% end %> >
+                                                </div>
+                                            <% end %>
+                                                <input type="text" id="form_question_<%= question['id'] %>_choice_<%= option['id'] %>" name="option[content]" class="form-control option_content_text" placeholder="Choice Text" data-choice-id="<%= option['id'] %>" value="<%= option['content'] %>" <% if @form_data['status'] === 1 %> readonly <% end %>>
+                                            <% if @form_data['status'] === 0 %>
+                                                <button type="button" class="delete_choice btn btn-sm btn-outline-danger" data-delete-id="<%= option['id'] %>"><i class="far fa-trash-alt"></i> Delete</button>
+                                            <% end %>
+                                        </div>
+                                    </form>
+                                <% else %>
+                                    <div id="form_question_<%= question['id'] %>_other_div" class="input-group mb-3 type_others_choice">
                                         <% if @form_data["form_type"] === 1 %>
                                             <div class="input-group-text form_question_choice_answer">
                                                 <input name="correct_answer_question<%= question['id'] %>[]" class="form-check-input mt-0" type="checkbox" value="<%= option['id'] %>" <% if !JSON.parse(question['correct_option_ids']).nil? && JSON.parse(question['correct_option_ids']).include?(option['id'])%> checked <% end %> >
                                             </div>
                                         <% end %>
-                                            <input type="text" id="form_question_<%= question['id'] %>_choice_<%= option['id'] %>" name="option[content]" class="form-control option_content_text" placeholder="Choice Text" data-choice-id="<%= option['id'] %>" value="<%= option['content'] %>" <% if @form_data['status'] === 1 %> readonly <% end %>>
-                                        <% if @form_data['status'] === 0 %>
-                                            <button type="button" class="delete_choice btn btn-sm btn-outline-danger" data-delete-id="<%= option['id'] %>"><i class="far fa-trash-alt"></i> Delete</button>
-                                        <% end %>
+                                        <span id="form_question_<%= question['id'] %>_choice_<%= option['id'] %>" class="input-group-text" data-choice-id="<%= option['id'] %>" >Other...</span>
+                                        <input type="text" id="form_question_<%= question['id'] %>_choice_<%= option['id'] %>}" class="form-control" readonly>
+                                        <button type="button" class="delete_other btn btn-sm btn-outline-danger" data-delete-id="<%= option['id'] %>"><i class="far fa-trash-alt"></i> Delete</button>
                                     </div>
-                                </form>
+                                <% end %>
                               <% end %>
                             <% end %>
                             <% if @form_data['status'] === 0 && (question['question_type'] === 1 || question['question_type'] === 2) %>
@@ -100,9 +113,14 @@
             <% end %>
         </div>
         <% if @form_data['status'] === 0 %>
-            <div id="add_question_btn_div" class="mb-3">
-                <button type="button" id="add_question_btn" class="btn btn-sm btn-outline-success w-100 p-2" data-form-id=<%= @form_data['id'] if @form_data.present? %>><i class="fas fa-plus"></i> Add Question</button>
-            </div>
+            <form action="/add_question" method="post">
+                <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
+                <input type="hidden" name="_method" value="patch">
+                <input type="hidden" name="form[id]" value="<%= @form_data['id'] %>">
+                <div id="add_question_btn_div" class="mb-3">
+                    <button type="submit" id="add_question_btn" class="btn btn-sm btn-outline-success w-100 p-2" ><i class="fas fa-plus"></i> Add Question </button>
+                </div>
+            </form>
         <% end %>
 
         <form action="/form/<%= @form_action %>" id="publish_form" method="POST">

@@ -20,8 +20,10 @@ Rails.application.routes.draw do
   get "/create_form" => "forms#create_form"
   get "/f/:code" => "forms#create"
   get "/f/:code/preview" => "forms#preview"
-  get "/add_question/:form_id" => "forms#add_question"
+  patch "/add_question" => "forms#add_question"
   get "/add_option/:question_id" => "forms#add_option"
+  get "/add_others_option/:question_id" => "forms#add_others_option"
+
   patch "/update_question_type" => "forms#update_question_type"
   patch "/update_form_title_and_description" => "forms#update_form_title_and_description"
 
