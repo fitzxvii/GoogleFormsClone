@@ -401,7 +401,7 @@ $(document).ready(function(){
                 <div id="form_question_${question_id}_other_div" class="input-group mb-3">
                     <span class="input-group-text">Other...</span>
                     <input type="text" id="form_question_${question_id}_choice_${result["option_id"]}" name="form[form_question_${question_counter}_choice_${result["option_id"]}]" class="form-control" readonly>
-                    <button type="button" class="delete_other btn btn-sm btn-outline-danger" data-delete-id="${result["option_id"]}"><i class="far fa-trash-alt"></i> Delete</button>
+                    <button type="button" class="delete_other btn btn-sm btn-outline-danger" data-question-id="${question_id}" data-delete-id="${result["option_id"]}"><i class="far fa-trash-alt"></i> Delete</button>
                 </div>
             `);
 
@@ -470,6 +470,8 @@ $(document).ready(function(){
     $(document).on("click", ".delete_other", function(){
         option_id = $(this).data("delete-id");
         question_id = $(this).data("question-id")
+
+        console.log(question_id);
 
         $.ajax({
             url: "/delete_option",
