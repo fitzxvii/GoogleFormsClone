@@ -185,7 +185,7 @@ class Form < ApplicationRecord
         if update_form_type
             if form_type = 0 
                 reset_question_score = update_record([
-                    "UPDATE questions SET score = 0, correct_option_ids = '[]' 
+                    "UPDATE questions SET score = 0, correct_option_ids = '[]', updated_at = NOW()
                     WHERE form_id = ? AND question_type IN (1, 2);", form_id])
 
                 status = true if reset_question_score.present?

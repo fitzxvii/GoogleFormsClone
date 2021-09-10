@@ -69,7 +69,18 @@
                                             <input type="text" id="form_question_<%= question['id'] %>_choice_<%= option['id'] %>}" class="form-control" readonly>
                                             <button type="button" class="delete_other btn btn-sm btn-outline-danger" data-delete-id="<%= option['id'] %>"><i class="far fa-trash-alt"></i> Delete</button>
                                         </div>
-                                    <% end %>
+                                    </form>
+                                <% else %>
+                                    <div id="form_question_<%= question['id'] %>_other_div" class="input-group mb-3 type_others_choice">
+                                        <% if @form_data["form_type"] === 1 %>
+                                            <div class="input-group-text form_question_choice_answer">
+                                                <input name="correct_answer_question<%= question['id'] %>[]" class="form-check-input mt-0" type="checkbox" value="<%= option['id'] %>" <% if !JSON.parse(question['correct_option_ids']).nil? && JSON.parse(question['correct_option_ids']).include?(option['id'])%> checked <% end %> >
+                                            </div>
+                                        <% end %>
+                                        <span id="form_question_<%= question['id'] %>_choice_<%= option['id'] %>" class="input-group-text" data-choice-id="<%= option['id'] %>" >Other...</span>
+                                        <input type="text" id="form_question_<%= question['id'] %>_choice_<%= option['id'] %>}" class="form-control" readonly>
+                                        <button type="button" class="delete_other btn btn-sm btn-outline-danger" data-question-id="<%= question['id'] %>" data-delete-id="<%= option['id'] %>"><i class="far fa-trash-alt"></i> Delete</button>
+                                    </div>
                                 <% end %>
                             <% end %>
                             <% if @form_data['status'] === 0 && (question['question_type'] === 1 || question['question_type'] === 2) %>

@@ -385,8 +385,12 @@ $(document).ready(function(){
         return false;
     });
 
-    // ADD OTHER
-    // Last Update date: September 10, 2021
+     /**
+    *   DOCU: This will add a new 'Others' option for multiple choices or checkboxes type questions 
+    *   Triggered: on("click", ".add_other")
+    *   Last Updated Date: September 10, 2021
+    *   @author Jovic Abengona | Updated by: Fitz
+    */
     $(document).on("click", ".add_other", function(){
         choice_counter += 1;
         question_id = $(this).data("add-other-id")
@@ -457,10 +461,29 @@ $(document).ready(function(){
 
     });
 
-    // DELETE OTHER
+    /**
+    *   DOCU: This will delete the others option selected by the user
+    *   Triggered: on("click", ".delete_other")
+    *   Last Updated Date: September 10, 2021
+    *   @author Jovic Abengona | Updated by: Fitz
+    */
     $(document).on("click", ".delete_other", function(){
-        $(`#form_question_${$(this).data("delete-id")}_other_div`).remove();
-        $(`#form_question_${$(this).data("delete-id")}_add_other_div`).show();
+        option_id = $(this).data("delete-id");
+        question_id = $(this).data("question-id")
+
+        $.ajax({
+            url: "/delete_option",
+            type: "delete",
+            dataType: "json",
+            data: { "id": option_id },
+            success: function(data) { 
+                $(`#form_question_${question_id}_other_div`).remove();
+                $(`#form_question_${question_id}_add_other_div`).show();
+            },
+            error: function() { 
+                alert("Error!") 
+            }
+        })
     });
 
     // CHANGE QUESTION TYPE
