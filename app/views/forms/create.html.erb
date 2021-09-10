@@ -6,12 +6,6 @@
                 <li class="breadcrumb-item active" aria-current="page">Create Form</li>
             </ol>
         </nav>
-        <% if flash[:publish_message] %>
-            <div class="alert alert-<%= flash[:publish_message]["alert_type"] %>" role="alert">
-                <i class="fas fa-<%= flash[:publish_message]["icon"] %>-circle"></i> <%= flash[:publish_message]["message"] %>
-            </div>
-        <% end %>
-
         <form action="/update_form_title_and_description" id="update_form_title_and_description" method="post">
             <input id="auth_token" type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
             <input type="hidden" name="_method" value="patch">
@@ -27,7 +21,7 @@
             <% @questions.each do |question| %>
                 <div id="form_question_<%= question['id'] %>_div" class="mb-3 p-4 border border-success rounded form_question" data-question-type="<%= question['question_type'] %>">
                     <div class="row">
-                        <div class="col-lg-<% if @form_data['status'] === 0 %>9<% elsif @form_data['status'] === 1%>12<% end %>">
+                        <div class="question_div col-lg-<% if @form_data['status'] === 0 %>9<% elsif @form_data['status'] === 1%>12<% end %>">
                             <form id="question_<%= question['id'] %>_form" action="/update_question_content" method="post">
                                 <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
                                 <input type="hidden" name="_method" value="patch">
@@ -60,12 +54,16 @@
                               <% end %>
                             <% end %>
                             <% if @form_data['status'] === 0 && (question['question_type'] === 1 || question['question_type'] === 2) %>
-                                <div id="form_question_<%= question['id'] %>_add_choice_other_div">
+                                <div id="form_question_<%= question['id'] %>_add_choice_other_div" class="add_choice_other_div">
                                     <a id="form_question_<%= question['id'] %>_add_choice" class="add_choice text-decoration-none text-success" data-add-choice-id="<%= question['id'] %>">Add Choice</a> <span id="form_question_<%= question['id'] %>_add_other_div">or <a id="form_question_<%= question['id'] %>_add_other" class="add_other text-decoration-none text-success" data-add-other-id="<%= question['id'] %>">"Other"</a></span>
                                 </div>
-                            <% else %>
+                            <% elsif @form_data['status'] === 0 && (question['question_type'] === 3 || question['question_type'] === 4) %>
                                 <div id="form_question_<%= question['id'] %>_choice_div" class="input-group mb-3">
-                                    <input type="text" id="form_question_<%= question['id'] %>_choice_1" name="form[form_question_<%= question['id'] %>_choice_1]" class="form-control" placeholder="Choice Text" readonly>
+                                    <input type="text" id="form_question_<%= question['id'] %>_choice_1" name="form[form_question_<%= question['id'] %>_choice_1]" class="form-control" placeholder="Answer" readonly>
+                                </div>
+                            <% elsif @form_data['status'] === 1 && (question['question_type'] === 3 || question['question_type'] === 4) %>
+                                <div id="form_question_<%= question['id'] %>_choice_div" class="input-group mb-3">
+                                    <input type="text" id="form_question_<%= question['id'] %>_choice_1" name="form[form_question_<%= question['id'] %>_choice_1]" class="form-control" placeholder="Answer" readonly>
                                 </div>
                             <% end %>
                             <% if @form_data["form_type"] === 1 %>
@@ -83,7 +81,7 @@
                             <% end %>
                         </div>
                         <% if @form_data['status'] === 0 %>
-                            <div class="col-lg-3">
+                            <div class="col-lg-3 question_type_div">
                                 <form id="form_question_<%= question['id'] %>_change_type" action="/update_question_type" method="patch">
                                     <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
                                     <input type="hidden" name="_method" value="patch">
@@ -102,8 +100,8 @@
             <% end %>
         </div>
         <% if @form_data['status'] === 0 %>
-            <div class="mb-3">
-                 <button type="button" id="add_question_btn" class="btn btn-sm btn-outline-success w-100 p-2" data-form-id=<%= @form_data['id'] if @form_data.present? %>><i class="fas fa-plus"></i> Add Question</button>
+            <div id="add_question_btn_div" class="mb-3">
+                <button type="button" id="add_question_btn" class="btn btn-sm btn-outline-success w-100 p-2" data-form-id=<%= @form_data['id'] if @form_data.present? %>><i class="fas fa-plus"></i> Add Question</button>
             </div>
         <% end %>
 
@@ -113,18 +111,18 @@
             <input type="hidden" name="form[id]" value="<%= @form_data["id"] %>">
 
             <% if @form_data['status'] === 0 %>
-                <div class="mb-3">
+                <div id="form_publish_end_div" class="mb-3">
                     <button type="submit" class="btn btn-sm btn-success w-100 p-3"><i class="fas fa-paper-plane"></i> Publish Form</button>
                 </div>
             <% elsif @form_data['status'] === 1 %>
-                <div class="mb-3">
+                <div id="form_publish_end_div" class="mb-3">
                     <button type="submit" class="btn btn-sm btn-secondary w-100 p-3"><i class="fas fa-save"></i> Get Results</button>
                 </div>
             <% end %>
         </form>
         <% if @form_data['status'] === 0 %>
-            <div class="mb-5">
-                <button type="button" id="add_question_btn" class="btn btn-sm btn-outline-danger w-100 p-2" data-bs-toggle="modal" data-bs-target="#delete_modal"><i class="far fa-trash-alt"></i> Delete Form</button>
+            <div id="delete_form_btn_div" class="mb-5">
+                <button type="button" class="btn btn-sm btn-outline-danger w-100 p-2" data-bs-toggle="modal" data-bs-target="#delete_modal"><i class="far fa-trash-alt"></i> Delete Form</button>
             </div>
         <% end %>
     </div>

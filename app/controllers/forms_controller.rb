@@ -173,18 +173,6 @@ class FormsController < ApplicationController
         form_data = params.require(:form).permit(:id)
 
         render json: Form.publish_form(form_data[:id], current_user["id"])
-
-        # form_data = params.require(:form).permit(:id, :code)
-
-        # status = Form.publish_form(form_data[:id], current_user["id"])
-
-        # if status
-        #     flash[:publish_message] = { :alert_type => "success", :message => "Form has been published!", :icon => "check" }
-        # else
-        #     flash[:publish_message] = { :alert_type => "danger", :message => "Unable to publish form!", :icon => "times" }
-        # end
-
-        # redirect_to "/f/#{form_data[:code]}"
     end
 
     # DOCU: (POST) /form/delete/:id

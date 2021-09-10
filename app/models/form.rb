@@ -209,20 +209,23 @@ class Form < ApplicationRecord
                         end
                     end
                 else
-                    puts "QUIZ"
+                    if question["question_type"] === 1 || question["question_type"] === 2
+                        if !question["question_content"].nil? && !question["option_content"].nil? && question["correct_option_id"] != "[]" && question["score"] === 0
+                            validate_question = true
+                        else
+                            validate_question = false
+                            break
+                        end
+                    end
                 end
             end
         end
 
-        response[:status] = true if validate_form && validate_question
+        if validate_form && validate_question
+            publish_form = update_record(["UPDATE forms SET status = 1, updated_at = NOW() WHERE id = ? AND user_id = ?", id, user_id])
+        end
 
-        # publish_form = update_record(["UPDATE forms SET status = 1, updated_at = NOW() WHERE id = ? AND user_id = ?", id, user_id])
-        
-        # if publish_form
-        #     status = true
-        # else
-        #     status = false
-        # end
+        response[:status] = true if validate_form && validate_question && publish_form
 
         return response
     end

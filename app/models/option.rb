@@ -9,7 +9,7 @@ class Option < ApplicationRecord
 
         new_option = insert_record([
             'INSERT INTO options (question_id, content, created_at, updated_at)
-            VALUES(?, "New Option", NOW(), NOW());', question_id
+            VALUES(?, NULL, NOW(), NOW());', question_id
         ])
 
         if new_option.present?
