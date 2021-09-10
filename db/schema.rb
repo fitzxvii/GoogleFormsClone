@@ -12,7 +12,7 @@
 
 ActiveRecord::Schema.define(version: 2021_09_09_123945) do
 
-  create_table "answers", charset: "utf8mb4", force: :cascade do |t|
+  create_table "answers", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.bigint "form_id", null: false
     t.bigint "question_id", null: false
@@ -26,7 +26,7 @@ ActiveRecord::Schema.define(version: 2021_09_09_123945) do
     t.index ["user_id"], name: "index_answers_on_user_id"
   end
 
-  create_table "forms", charset: "utf8mb4", force: :cascade do |t|
+  create_table "forms", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "code"
     t.integer "form_type"
     t.string "title"
@@ -36,11 +36,10 @@ ActiveRecord::Schema.define(version: 2021_09_09_123945) do
     t.bigint "user_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["code"], name: "form_code_index", unique: true
     t.index ["user_id"], name: "index_forms_on_user_id"
   end
 
-  create_table "options", charset: "utf8mb4", force: :cascade do |t|
+  create_table "options", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "question_id", null: false
     t.string "content"
     t.datetime "created_at", precision: 6, null: false
@@ -48,7 +47,7 @@ ActiveRecord::Schema.define(version: 2021_09_09_123945) do
     t.index ["question_id"], name: "index_options_on_question_id"
   end
 
-  create_table "questions", charset: "utf8mb4", force: :cascade do |t|
+  create_table "questions", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "form_id", null: false
     t.integer "question_type"
     t.string "content"
@@ -59,21 +58,20 @@ ActiveRecord::Schema.define(version: 2021_09_09_123945) do
     t.index ["form_id"], name: "index_questions_on_form_id"
   end
 
-  create_table "users", charset: "utf8mb4", force: :cascade do |t|
+  create_table "users", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "first_name"
     t.string "last_name"
     t.string "email"
     t.string "password"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["email"], name: "email_index", unique: true
   end
 
-  add_foreign_key "answers", "forms"
-  add_foreign_key "answers", "options"
-  add_foreign_key "answers", "questions"
-  add_foreign_key "answers", "users"
-  add_foreign_key "forms", "users"
-  add_foreign_key "options", "questions"
-  add_foreign_key "questions", "forms"
+  add_foreign_key "answers", "forms", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "answers", "options", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "answers", "questions", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "answers", "users", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "forms", "users", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "options", "questions", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "questions", "forms", on_update: :cascade, on_delete: :cascade
 end

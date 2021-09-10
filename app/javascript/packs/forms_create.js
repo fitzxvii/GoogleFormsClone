@@ -4,7 +4,32 @@ $(document).ready(function(){
     let question_counter = 1;
     let choice_counter = 1;
 
-    $("#sortable").sortable();
+    /**
+    *   DOCU: This will send an HTTP request to update the question order of the form
+    *   Triggered: Sorting the question div
+    *   Last Updated Date: September 10, 2021
+    *   @author Fitz, Updated By: Jovic Abengona
+    */
+    $("#sortable").sortable({
+        update: function(){
+            $("#update_question_order_error").remove();
+
+            $.post(
+                $("#update_question_order_form").attr("action"), 
+                $("#update_question_order_form").serialize() + "&question_ids=" + $("#sortable").sortable("serialize").match(/\d+/g),
+                function(result){
+                    if(!result){
+                        $(window).scrollTop(0);
+
+                        $("#breadcrumbs").after(`
+                            <div id="update_question_order_error" class="alert alert-danger" role="alert">
+                                <i class="fas fa-times-circle"></i> An Error Occured!
+                            </div>
+                        `);
+                    }
+            });
+        }
+    });
     $("#sortable").disableSelection();
 
     $("#create_form, .update_option_content").submit(function(e){
@@ -611,7 +636,8 @@ $(document).ready(function(){
                 $("#sortable").sortable("disable");
                 $(".question_div").removeClass("col-lg-9");
                 $(".question_div").addClass("col-lg-12");
-                $("input, textarea").prop("readonly", true);
+                $("input[type=text], input[type=number], textarea").prop("readonly", true);
+                $("input[type=checkbox]").prop("disabled", true);
                 $(".delete_question, .delete_choice, .add_choice_other_div, .question_type_div, #add_question_btn_div, #delete_form_btn_div").remove();
                 $("#form_publish_end_div").html(`
                     <button type="submit" class="btn btn-sm btn-secondary w-100 p-3"><i class="fas fa-save"></i> Get Results</button>

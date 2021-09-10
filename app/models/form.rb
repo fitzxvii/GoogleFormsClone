@@ -91,6 +91,26 @@ class Form < ApplicationRecord
         return { :status => status, :errors => errors, :form_data => return_form_data }
     end
 
+    # Convert each element of array to int
+    # then Update question order
+    # Require: user_id, id, question_ids
+    # Returns: Boolean data depending on the result of update_record query helper
+    # Last Updated: September 10, 2021
+    # Owner: Jovic Abengona
+    def self.update_question_order(user_id, id, question_ids)
+        question_order = question_ids.map(&:to_i)
+
+        update_question_order = update_record(["UPDATE forms SET question_order = ?, updated_at = NOW() WHERE id = ? AND user_id = ?", "#{question_order}", id, user_id])
+
+        if update_question_order
+            status = true
+        else
+            status = false
+        end
+
+        return status
+    end
+
     # Check if title and description is present
     # then Update form title and/or description
     # Require: user_id, and form_data containing :id, :title, and :description
@@ -193,7 +213,7 @@ class Form < ApplicationRecord
         validate_form = true if !form_data["title"].nil? && !form_data["description"].nil? && form_data["question_order"] != "[]"
 
         if validate_form
-            questions_data = query_records(["SELECT q.question_type, q.content AS 'question_content', q.correct_option_id, q.score, o.content AS 'option_content'
+            questions_data = query_records(["SELECT q.question_type, q.content AS 'question_content', q.correct_option_ids, q.score, o.content AS 'option_content'
                                                 FROM questions AS q
                                                 LEFT JOIN options AS o ON o.question_id = q.id
                                                 WHERE q.form_id =?", id])
@@ -210,7 +230,7 @@ class Form < ApplicationRecord
                     end
                 else
                     if question["question_type"] === 1 || question["question_type"] === 2
-                        if !question["question_content"].nil? && !question["option_content"].nil? && question["correct_option_id"] != "[]" && question["score"] === 0
+                        if !question["question_content"].nil? && !question["option_content"].nil? && question["correct_option_ids"] != "[]" && question["score"] != 0
                             validate_question = true
                         else
                             validate_question = false

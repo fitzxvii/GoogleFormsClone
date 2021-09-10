@@ -6,6 +6,11 @@
                 <li class="breadcrumb-item active" aria-current="page">Create Form</li>
             </ol>
         </nav>
+        <form action="/form/update_question_order" id="update_question_order_form" method="post">
+            <input id="auth_token" type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
+            <input type="hidden" name="_method" value="patch">
+            <input id="form_id" type="hidden" name="form[id]" value="<%= @form_data['id'] %>">
+        </form>
         <form action="/update_form_title_and_description" id="update_form_title_and_description" method="post">
             <input id="auth_token" type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
             <input type="hidden" name="_method" value="patch">

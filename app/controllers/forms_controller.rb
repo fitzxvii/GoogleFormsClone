@@ -60,6 +60,20 @@ class FormsController < ApplicationController
         end     
     end
 
+    # DOCU: (PATCH) /form/update_question_order
+	# Update question_order of form
+	# Triggered by: sending a PATCH request to /form/update_question_order
+    # Requires: current_user["id"], form_params[:id], and question_ids
+    # Returns: Output of update_question_order (true or false)
+    # Last Updated: September 10, 2021
+    # Owner: Jovic Abengona
+    def update_question_order
+        form_params = params.require(:form).permit(:id)
+        question_ids = params[:question_ids].split(",")
+
+        render json: Form.update_question_order(current_user["id"], form_params[:id], question_ids)
+    end
+
     # DOCU: (GET) /add_question/:form_id
     # Add a new question in form, update question order of the form, and render it to user
     # Triggered by: Clicking add question

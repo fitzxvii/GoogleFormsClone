@@ -22,6 +22,8 @@ Rails.application.routes.draw do
   get "/f/:code/preview" => "forms#preview"
   get "/add_question/:form_id" => "forms#add_question"
   get "/add_option/:question_id" => "forms#add_option"
+
+  patch "/form/update_question_order" => "forms#update_question_order"
   patch "/update_question_type" => "forms#update_question_type"
   patch "/update_form_title_and_description" => "forms#update_form_title_and_description"
 
