@@ -81,7 +81,9 @@ class FormsController < ApplicationController
     # Triggered by: Clicking add question
     # Owner: Fitz 
     def add_question
-        render json: Question.add_new_question(params[:form_id])
+        form_param = params.require(:form).permit(:id)
+
+        render json: Question.add_new_question(form_param)
     end
 
     # DOCU: (GET) /add_option/:question_id
@@ -90,6 +92,14 @@ class FormsController < ApplicationController
     # Owner: Fitz
     def add_option
         render json: Option.create_default_option(params[:question_id])
+    end
+
+    # DOCU: (GET) /add_others_option/:question_id
+    # Add a new Others option 
+    # Triggered by: Clicking on add others
+    # Owner: Fitz
+    def add_others_option
+        render json: Option.add_others_option(params[:question_id])
     end
 
     # DOCU: (PATCH) /update_form_title_and_description

@@ -124,7 +124,7 @@ $(document).ready(function(){
     *   then send a post request to update form_type. 
     *   If return is false, input field will have a style to indicate an error
     *   Triggered: $("#quiz_mode_toggle").change(function()
-    *   Last Updated Date: September 9, 2021
+    *   Last Updated Date: September 10, 2021
     *   @author Jovic Abengona | Updated by: Fitz
     */
     $("#quiz_mode_toggle").change(function(){
@@ -149,27 +149,37 @@ $(document).ready(function(){
                     `;
                     modal_footer = "<button type='button' class='btn btn-success' data-bs-dismiss='modal'>Okay</button>";
 
-                    var x = 1;
-                    var y = 1;
-
                     $(".type_multiple_choice input").each(function(){
+                        question_id = $(this).attr("id").match(/\d+/g)[0];
+                        console.log(question_id);
+
                         $(this).before(`
                             <div class="input-group-text form_question_choice_answer">
-                                <input name="form_question_${$(this).attr("data-choice-id")}_choice_${x}_quiz" class="form-check-input mt-0" type="checkbox">
+                                <input name="correct_answer_question${question_id}[]" class="form-check-input mt-0" type="checkbox" value="${$(this).attr("data-choice-id")}">
                             </div>
                         `);
-
-                        x++;
                     });
 
                     $(".type_checkbox input").each(function(){
-                        $(this).before(`
+                        question_id = $(this).attr("id").match(/\d+/g)[0];
+                        console.log(question_id);
+
+                         $(this).before(`
                             <div class="input-group-text form_question_choice_answer">
-                                <input name="form_question_${$(this).attr("data-choice-id")}_choice_${y}_quiz" class="form-check-input mt-0" type="checkbox">
+                                <input name="correct_answer_question${question_id}[]" class="form-check-input mt-0" type="checkbox" value="${$(this).attr("data-choice-id")}">
                             </div>
                         `);
+                    });
 
-                        y++;
+                    $(".type_others_choice span").each(function(){
+                        question_id = $(this).attr("id").match(/(\d+)/)[0];
+                        console.log(question_id);
+                        
+                        $(this).before(`
+                            <div class="input-group-text form_question_choice_answer">
+                                <input name="correct_answer_question${question_id}[]" class="form-check-input mt-0" type="checkbox" value="${$(this).attr("data-choice-id")}">
+                            </div>
+                        `);
                     });
                     
                     $(".form_question").each(function(){
@@ -227,7 +237,7 @@ $(document).ready(function(){
     });
 
     /**
-    *   DOCU: This will send a get request to add a new question in default format
+    *   DOCU: This will send a post request to add a new question in default format
     *   If return is false, an error message will be displayed
     *   Triggered: $("#add_question_btn").click()
     *   Last Updated Date: September 9, 2021
@@ -235,8 +245,9 @@ $(document).ready(function(){
     */
     $("#add_question_btn").click(function(){
         is_quiz_mode = $("#quiz_mode_toggle").prop("checked");
+        form_div = $(this).parent().parent();
 
-        $.get(`/add_question/${$(this).data("form-id")}`, function(result) {
+        $.post(form_div.attr("action"), form_div.serialize(), function(result) {
             $("#sortable").append(`
                 <div id="form_question_${result["question_id"]}_div" class="mb-3 p-4 border border-success rounded form_question" data-question-type="${result["question_id"]}">
                     <div class="row">
@@ -375,23 +386,30 @@ $(document).ready(function(){
     });
 
     // ADD OTHER
+    // Last Update date: September 10, 2021
     $(document).on("click", ".add_other", function(){
         choice_counter += 1;
+        question_id = $(this).data("add-other-id")
+        
+        $.get(`/add_others_option/${question_id}`, function(result) {
+            console.log(result);
+            $(`#form_question_${question_id}_add_choice`).before(`
+                <div id="form_question_${question_id}_other_div" class="input-group mb-3">
+                    <span class="input-group-text">Other...</span>
+                    <input type="text" id="form_question_${question_id}_choice_${result["option_id"]}" name="form[form_question_${question_counter}_choice_${result["option_id"]}]" class="form-control" readonly>
+                    <button type="button" class="delete_other btn btn-sm btn-outline-danger" data-delete-id="${result["option_id"]}"><i class="far fa-trash-alt"></i> Delete</button>
+                </div>
+            `);
 
-        $(`#form_question_${$(this).data("add-other-id")}_add_choice`).before(`
-            <div id="form_question_${$(this).data("add-other-id")}_other_div" class="input-group mb-3">
-                <span class="input-group-text">Other...</span>
-                <input type="text" id="form_question_${question_counter}_choice_${choice_counter}" name="form[form_question_${question_counter}_choice_${choice_counter}]" class="form-control" readonly>
-                <button type="button" class="delete_other btn btn-sm btn-outline-danger" data-delete-id="${$(this).data("add-other-id")}"><i class="far fa-trash-alt"></i> Delete</button>
-            </div>
-        `);
+            $(`#form_question_${question_id}_add_other_div`).hide();
+        }, 'json');
 
-        $(`#form_question_${$(this).data("add-other-id")}_add_other_div`).hide();
+        return false;
     });
 
     /**
     *   DOCU: This will delete the question selected by the user
-    *   Triggered: on("click", ".delete_choice")
+    *   Triggered: on("click", ".delete_question")
     *   Last Updated Date: September 9, 2021
     *   @author Jovic Abengona | Updated by: Fitz
     */

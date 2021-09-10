@@ -8,8 +8,8 @@ class Option < ApplicationRecord
         response = { :status => false }
 
         new_option = insert_record([
-            'INSERT INTO options (question_id, content, created_at, updated_at)
-            VALUES(?, NULL, NOW(), NOW());', question_id
+            'INSERT INTO options (question_id, is_others, content, created_at, updated_at)
+            VALUES(?, 0, NULL, NOW(), NOW());', question_id
         ])
 
         if new_option.present?
@@ -78,4 +78,25 @@ class Option < ApplicationRecord
 
         return response
     end
+
+    # To add others option on a question
+    # Require: Question ID
+    # It returns a response if insert others option is successful or not
+    # Owner: Fitz
+    def self.add_others_option question_id
+        response = { :status => false }
+
+        new_others_option = insert_record([
+            'INSERT INTO options (question_id, is_others, content, created_at, updated_at)
+            VALUES(?, 1, NULL, NOW(), NOW());', question_id
+        ])
+        
+        if new_others_option.present?
+            response[:status] = true 
+            response[:option_id] = new_others_option
+        end
+        
+        return response
+    end
+
 end
