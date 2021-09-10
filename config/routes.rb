@@ -35,6 +35,7 @@ Rails.application.routes.draw do
 
   post "/form/quiz_mode_toggle" => "forms#quiz_mode_toggle"
   patch "/update_score" => "forms#update_score"
+  patch "/update_correct_answer" => "forms#update_correct_answer"
 
   patch "/form/rename" => "forms#rename_form"
   patch "/form/publish" => "forms#publish_form"

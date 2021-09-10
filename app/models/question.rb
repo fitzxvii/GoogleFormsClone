@@ -138,6 +138,45 @@ class Question < ApplicationRecord
         return response
     end 
 
+    # It returns status if update correct option is successful or not
+    # Owner: Fitz
+    def self.update_correct_option question_params
+        response = { :status => false }
+        option_id = question_params[:option_id].to_i
+
+        question_data = query_record([
+            "SELECT correct_option_ids 
+            FROM questions
+            WHERE id = ?;", question_params[:question_id]
+        ])
+
+        if question_data.present?
+            if !question_data["correct_option_ids"].nil?       
+                parsed_correct_options = JSON.parse(question_data["correct_option_ids"]);
+
+                if(question_params[:question_type_id].to_i == 1)
+                    (parsed_correct_options[0] != option_id) ? parsed_correct_options[0] = option_id : 
+                                                                parsed_correct_options.pop()
+                else
+                    (parsed_correct_options.include?(option_id)) ? parsed_correct_options.delete(option_id) :
+                                                                   parsed_correct_options.push(option_id)
+                end
+                 
+            else
+                parsed_correct_options = [option_id]
+            end
+        end
+        updated_question = update_record([
+            'UPDATE questions 
+            SET correct_option_ids = ?
+            WHERE id = ?;', "#{parsed_correct_options}", question_params[:question_id]
+        ])   
+
+        response[:status] = true if updated_question.present?
+
+        return response
+    end
+
     private
         # To insert new question in the database
         # Owner: Fitz 

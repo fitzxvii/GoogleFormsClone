@@ -48,7 +48,7 @@
                                     <div id="form_question_<%= question['id'] %>_choice_div" class="input-group mb-3 type_multiple_choice">
                                         <% if @form_data["form_type"] === 1 %>
                                             <div class="input-group-text form_question_choice_answer">
-                                                <input name="form[form_question_<%= question['id'] %>_choice_<%= option['id'] %>_quiz]" class="form-check-input mt-0" type="checkbox">
+                                                <input name="correct_answer_question<%= question['id'] %>[]" class="form-check-input mt-0" type="checkbox" value="<%= option['id'] %>" <% if !JSON.parse(question['correct_option_ids']).nil? && JSON.parse(question['correct_option_ids']).include?(option['id'])%> checked <% end %> >
                                             </div>
                                         <% end %>
                                             <input type="text" id="form_question_<%= question['id'] %>_choice_<%= option['id'] %>" name="option[content]" class="form-control option_content_text" placeholder="Choice Text" data-choice-id="<%= option['id'] %>" value="<%= option['content'] %>" <% if @form_data['status'] === 1 %> readonly <% end %>>
