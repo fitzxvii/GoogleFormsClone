@@ -259,7 +259,7 @@ $(document).ready(function(){
             if(is_quiz_mode){
                 $(`#form_question_${result["question_id"]}_choice_div`).prepend(`
                     <div class="input-group-text form_question_choice_answer">
-                        <input name="form_question_${result["question_id"]}_choice_${result["option_id"]}_quiz" class="form-check-input mt-0" type="checkbox">
+                        <input name="correct_answer_question${result["question_id"]}[]" class="form-check-input mt-0" type="checkbox" value="${result["option_id"]}">
                     </div>
                 `);
 
@@ -281,7 +281,12 @@ $(document).ready(function(){
         return false;
     });
 
-    // ADD CHOICE
+    /**
+    *   DOCU: This will add a new option for multiple choices or checkboxes type questions 
+    *   Triggered: on("click", ".add_choice")
+    *   Last Updated Date: September 9, 2021
+    *   @author Jovic Abengona | Updated by: Fitz
+    */
     $(document).on("click", ".add_choice", function(){
         is_quiz_mode = $("#quiz_mode_toggle").prop("checked");
         let element;
@@ -294,7 +299,7 @@ $(document).ready(function(){
             if(is_quiz_mode){
                 form_question_choice += `
                     <div class="input-group-text form_question_choice_answer">
-                        <input name="form_question_${question_number}_choice_${result["option_id"]}_quiz" class="form-check-input mt-0" type="checkbox">
+                        <input name="correct_answer_question${question_number}[]" class="form-check-input mt-0" type="checkbox" value="${result["option_id"]}">
                     </div>
                 `;
             }
@@ -320,7 +325,7 @@ $(document).ready(function(){
             
             form_question_choice += `
                 <input type="text" id="form_question_${question_number}_choice_${result["option_id"]}" name="option[content]" class="form-control option_content_text" placeholder="Choice Text" data-choice-id="${result["option_id"]}">
-                <button type="button" class="delete_choice btn btn-sm btn-outline-danger" data-delete-id="${question_number}"><i class="far fa-trash-alt"></i> Delete</button>
+                <button type="button" class="delete_choice btn btn-sm btn-outline-danger" data-delete-id="${result["option_id"]}"><i class="far fa-trash-alt"></i> Delete</button>
             `;
             
             if($(`#form_question_${question_number}_div .update_option_content`).last().length > 0){
@@ -525,16 +530,21 @@ $(document).ready(function(){
             if(is_quiz_mode && (select_question_type.val() === "1" || select_question_type.val() === "2")){
                 $(`#form_question_${result["question_id"]}_choice_div`).prepend(`
                     <div class="input-group-text form_question_choice_answer">
-                        <input name="form_question_${result["question_id"]}_choice_${choice_counter}_quiz" class="form-check-input mt-0" type="checkbox">
+                        <input name="correct_answer_question${result["question_id"]}[]" class="form-check-input mt-0" type="checkbox" value="${result["option_id"]}">
                     </div>
                 `);
     
                 $(`#form_question_${result["question_id"]}_add_choice_other_div`).after(`
                     <div id="form_question_${result["question_id"]}_score_div" class="row my-2 score_field">
                         <label for="form[form_question_${result["question_id"]}_score]" class="col-lg-1 col-form-label">Score: </label>
-                        <div class="col-lg-11 w-25">
-                            <input type="number" id="form[form_question_${result["question_id"]}_score]" name="form[form_question_${result["question_id"]}_score]" class="form-control">
-                        </div>
+                        <form action="/update_score" method="post">
+                            <input type="hidden" name="authenticity_token" value="${auth_token}">
+                            <input type="hidden" name="_method" value="patch">
+                            <input type="hidden" name="question[id]" value="${result["question_id"]}">
+                            <div class="col-lg-11 w-25">
+                                <input type="text" id="form[form_question_${result["question_id"]}_score]" name="question[score]" class="form-control score_text" value="${result["score"]}">
+                            </div>
+                        </form>
                     </div>
                 `);
             }
@@ -542,9 +552,14 @@ $(document).ready(function(){
                 $(`#form_question_${result["question_id"]}_choice_div`).after(`
                     <div id="form_question_${result["question_id"]}_score_div" class="row my-2 score_field">
                         <label for="form[form_question_${result["question_id"]}_score]" class="col-lg-1 col-form-label">Score: </label>
-                        <div class="col-lg-11 w-25">
-                            <input type="number" id="form[form_question_${result["question_id"]}_score]" name="form[form_question_${result["question_id"]}_score]" class="form-control">
-                        </div>
+                        <form action="/update_score" method="post">
+                            <input type="hidden" name="authenticity_token" value="${auth_token}">
+                            <input type="hidden" name="_method" value="patch">
+                            <input type="hidden" name="question[id]" value="${result["question_id"]}">
+                            <div class="col-lg-11 w-25">
+                                <input type="text" id="form[form_question_${result["question_id"]}_score]" name="question[score]" class="form-control score_text" value="${result["score"]}">
+                            </div>
+                        </form>
                     </div>
                 `);
             }
@@ -619,4 +634,26 @@ $(document).ready(function(){
 
         return false;
     })
+
+    // CKECKBOX FOR CHOOSING CORRECT ANSWER
+    $(document).on("change", 'input[type="checkbox"]', function() {
+        var question_id = this.name.match(/(\d+)/)[0];
+        var question_type_id = $(`#form_question_${question_id}_div`).data('question-type');
+        var option_id = $(this).val();
+
+        if(question_type_id == "1") {
+            $('input[name="' + this.name + '"]').not(this).prop('checked', false);
+        }
+
+        $.ajax({
+            url: "/update_correct_answer",
+            type: "patch",
+            dataType: "json",
+            data: { "question_id": question_id, "question_type_id": question_type_id, "option_id": option_id },
+            error: function() { 
+                alert("Error!") 
+            }
+        });
+    });
+
 });

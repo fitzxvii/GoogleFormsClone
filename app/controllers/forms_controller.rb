@@ -140,6 +140,15 @@ class FormsController < ApplicationController
         render json: Question.update_score(question_params)
     end
 
+    # DOCU: (PATCH) /update_correct_answer
+    # Triggered by: Clicking on the checkbox for choosing the correct answer
+    # Owner: Fitz
+    def update_correct_answer
+        question_params = params.permit(:question_id, :question_type_id, :option_id)
+        
+        render json: Question.update_correct_option(question_params)
+    end
+
     # DOCU: (POST) /form/rename/:id
 	# Validate form_data then rename form title
 	# Triggered by: Sending POST request to /form/rename/:id
