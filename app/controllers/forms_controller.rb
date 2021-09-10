@@ -22,6 +22,7 @@ class FormsController < ApplicationController
         @form_data = Form.get_form_by_code current_user["id"], params[:code]
         @questions = Question.get_questions_by_ids @form_data['id'], JSON.parse(@form_data['question_order'])
         @all_options = Option.collect_options_per_quetions JSON.parse(@form_data['question_order'])
+        @has_other = false
 
         if @form_data["status"] === 1
             @form_action = "get_result"

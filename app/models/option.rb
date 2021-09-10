@@ -24,8 +24,7 @@ class Option < ApplicationRecord
     # Owner: Fitz
     def self.collect_options_per_quetions question_ids
         return query_records([
-            'SELECT * FROM options WHERE question_id IN (?)
-            ORDER BY is_others ASC;', question_ids
+            'SELECT * FROM options WHERE question_id IN (?) ORDER BY is_others ASC;', question_ids
         ])
     end
 
