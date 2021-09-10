@@ -207,7 +207,14 @@ class Form < ApplicationRecord
                         end
                     end
                 else
-                    puts "QUIZ"
+                    if question["question_type"] === 1 || question["question_type"] === 2
+                        if !question["question_content"].nil? && !question["option_content"].nil? && question["correct_option_id"] != "[]" && question["score"] === 0
+                            validate_question = true
+                        else
+                            validate_question = false
+                            break
+                        end
+                    end
                 end
             end
         end

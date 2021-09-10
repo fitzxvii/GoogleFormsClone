@@ -142,8 +142,8 @@ class Question < ApplicationRecord
         # Owner: Fitz 
         def self.insert_default_question form_id
             insert_record([
-                'INSERT INTO questions (form_id, question_type, content, created_at, updated_at)
-                VALUES(?, 1, NULL, NOW(), NOW());', form_id
+                'INSERT INTO questions (form_id, question_type, content, correct_option_id, score, created_at, updated_at)
+                VALUES(?, 1, NULL, "[]", 0, NOW(), NOW());', form_id
             ])
         end
 end
