@@ -24,7 +24,9 @@ class FormsController < ApplicationController
         @all_options = Option.collect_options_per_quetions JSON.parse(@form_data['question_order'])
 
         if @form_data["status"] === 1
-            @form_action = "end"
+            @form_action = "get_result"
+        elsif @form_data["status"] === 2
+            @form_action = "show_result"
         end
     end
 
@@ -60,7 +62,21 @@ class FormsController < ApplicationController
         end     
     end
 
-    # DOCU: (PATCH) /add_question
+    # DOCU: (PATCH) /form/update_question_order
+	# Update question_order of form
+	# Triggered by: sending a PATCH request to /form/update_question_order
+    # Requires: current_user["id"], form_params[:id], and question_ids
+    # Returns: Output of update_question_order (true or false)
+    # Last Updated: September 10, 2021
+    # Owner: Jovic Abengona
+    def update_question_order
+        form_params = params.require(:form).permit(:id)
+        question_ids = params[:question_ids].split(",")
+
+        render json: Form.update_question_order(current_user["id"], form_params[:id], question_ids)
+    end
+
+    # DOCU: (GET) /add_question/:form_id
     # Add a new question in form, update question order of the form, and render it to user
     # Triggered by: Clicking add question
     # Owner: Fitz 
@@ -183,6 +199,12 @@ class FormsController < ApplicationController
         form_data = params.require(:form).permit(:id)
 
         render json: Form.publish_form(form_data[:id], current_user["id"])
+    end
+
+    def get_result
+        form_data = params.require(:form).permit(:id)
+
+        render json: Form.get_result(form_data[:id], current_user["id"])
     end
 
     # DOCU: (POST) /form/delete/:id

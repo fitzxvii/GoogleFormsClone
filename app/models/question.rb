@@ -180,7 +180,8 @@ class Question < ApplicationRecord
 
     private
         # To insert new question in the database
-        # Owner: Fitz 
+        # Last Updated: September 10, 2021
+        # Owner: Fitz, Updated By: Jovic Abengona
         def self.insert_default_question form_id
             insert_record([
                 'INSERT INTO questions (form_id, question_type, content, correct_option_ids, score, created_at, updated_at)
