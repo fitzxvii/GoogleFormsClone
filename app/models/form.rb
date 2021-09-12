@@ -202,8 +202,8 @@ class Form < ApplicationRecord
     # Update form status
     # Require: id, user_id
     # Returns: status which contains a Boolean value
-    # Last Updated: September 6, 2021
-    # Owner: Jovic Abengona
+    # Last Updated: September 11, 2021
+    # Owner: Jovic Abengona | Updated By: Fitz
     def self.publish_form(id, user_id)
         response = { :status => false }
         validate_form = false
@@ -213,7 +213,7 @@ class Form < ApplicationRecord
         validate_form = true if !form_data["title"].nil? && !form_data["description"].nil? && form_data["question_order"] != "[]"
 
         if validate_form
-            questions_data = query_records(["SELECT q.question_type, q.content AS 'question_content', q.correct_option_ids, q.score, o.content AS 'option_content'
+            questions_data = query_records(["SELECT q.question_type, q.content AS 'question_content', q.correct_option_ids, q.score, o.content AS 'option_content', o.is_others AS 'others_option'
                                                 FROM questions AS q
                                                 LEFT JOIN options AS o ON o.question_id = q.id
                                                 WHERE q.form_id =?", id])
@@ -221,7 +221,16 @@ class Form < ApplicationRecord
             questions_data.each do |question|
                 if form_data["form_type"] === 0
                     if question["question_type"] === 1 || question["question_type"] === 2
-                        if !question["question_content"].nil? && !question["option_content"].nil?
+                        if question["others_option"] == 1 && !question["question_content"].nil?
+                            validate_question = true
+                        elsif question["others_option"] == 0 && !question["question_content"].nil? && !question["option_content"].nil?
+                            validate_question = true
+                        else
+                            validate_question = false
+                            break
+                        end
+                    elsif question["question_type"] === 3 || question["question_type"] === 4
+                        if !question["question_content"].nil?
                             validate_question = true
                         else
                             validate_question = false
@@ -230,7 +239,16 @@ class Form < ApplicationRecord
                     end
                 else
                     if question["question_type"] === 1 || question["question_type"] === 2
-                        if !question["question_content"].nil? && !question["option_content"].nil? && question["correct_option_ids"] != "[]" && question["score"] != 0
+                        if question["others_option"] == 0 && !question["question_content"].nil? && !question["option_content"].nil? && question["correct_option_ids"] != "[]" && question["score"] != 0
+                            validate_question = true
+                        elsif question["others_option"] == 1 && !question["question_content"].nil? && question["correct_option_ids"] != "[]" && question["score"] != 0
+                            validate_question = true
+                        else
+                            validate_question = false
+                            break
+                        end
+                    elsif question["question_type"] === 3 || question["question_type"] === 4
+                        if !question["question_content"].nil? && question["score"] != 0
                             validate_question = true
                         else
                             validate_question = false
