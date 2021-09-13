@@ -488,7 +488,11 @@ $(document).ready(function(){
         })
     });
 
-    // CHANGE QUESTION TYPE
+    /**
+     * DOCU: This will send a post request to update type of a question
+     * Triggered: .on("change", ".form_question_type")
+     * @author Jovic Abengona | Updated by: Fitz
+     */
     $(document).on("change", ".form_question_type", function(){
         is_quiz_mode = $("#quiz_mode_toggle").prop("checked");
         let add_choice_other_content;
@@ -638,7 +642,7 @@ $(document).ready(function(){
     });
 
     /**
-     * This will send a post request to update score of a question
+     * DOCU: This will send a post request to update score of a question
      * If the result is false, input field will change style indication the input is invalid
      * Triggered: .on("change", ".score_text")
      * @author Fitz
@@ -725,7 +729,13 @@ $(document).ready(function(){
         }
     })
 
-    // CKECKBOX FOR CHOOSING CORRECT ANSWER
+    
+    /**
+     * DOCU: This will send a post request to update correct answer of a question
+     * If the result is false, It will alert an Error message
+     * Triggered: .on("change", 'input[type="checkbox"])
+     * @author Fitz
+     */
     $(document).on("change", 'input[type="checkbox"]', function() {
         var question_id = this.name.match(/(\d+)/)[0];
         var question_type_id = $(`#form_question_${question_id}_div`).data('question-type');
