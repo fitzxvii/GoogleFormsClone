@@ -15,19 +15,23 @@ class FormsController < ApplicationController
     # Triggered by: create_form method or updating a form
     # Requires: current user logged in and the form code
     # Returns: Form data, question data by form id and question order, and options per question
-    # Last Update date: September 6, 2021
+    # Last Update date: September 13, 2021
     # Owner: Fitz, Updated By: Jovic Abengona
     def create
-        @form_action = "publish"
         @form_data = Form.get_form_by_code current_user["id"], params[:code]
-        @questions = Question.get_questions_by_ids @form_data['id'], JSON.parse(@form_data['question_order'])
-        @all_options = Option.collect_options_per_quetions JSON.parse(@form_data['question_order'])
-        @has_other = false
+        if @form_data.nil?
+            redirect_to "/dashboard"
+        else
+            @questions = Question.get_questions_by_ids @form_data['id'], JSON.parse(@form_data['question_order'])
+            @all_options = Option.collect_options_per_quetions JSON.parse(@form_data['question_order'])
+            @form_action = "publish"
+            @has_other = false
 
-        if @form_data["status"] === 1
-            @form_action = "get_result"
-        elsif @form_data["status"] === 2
-            @form_action = "show_result"
+            if @form_data["status"] === STATUS_PUBLISHED
+                @form_action = "get_result"
+            elsif @form_data["status"] === STATUS_FINISHED
+                @form_action = "show_result"
+            end
         end
     end
 
@@ -245,9 +249,13 @@ class FormsController < ApplicationController
     # Returns: Form data
     # Owner: Fitz
     def answer
-        @form_data = Form.get_form_by_code(current_user["id"], params[:code])
-        @questions = Question.get_questions_by_ids(@form_data['id'], JSON.parse(@form_data['question_order']))
-        @all_options = Option.collect_options_per_quetions(JSON.parse(@form_data['question_order']))
+        @form_data = Form.get_published_form(params[:code])
+        if @form_data.nil?
+            redirect_to "/dashboard"
+        else
+            @questions = Question.get_questions_by_ids(@form_data['id'], JSON.parse(@form_data['question_order']))
+            @all_options = Option.collect_options_per_quetions(JSON.parse(@form_data['question_order']))
+        end
     end
 
     # DOCU: (POST) /submit_form

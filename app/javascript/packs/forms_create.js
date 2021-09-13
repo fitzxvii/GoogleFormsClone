@@ -4,6 +4,28 @@ $(document).ready(function(){
     let question_counter = 1;
     let choice_counter = 1;
 
+    $(document).on("keypress", "input[type=text], textarea", function(){
+        $(this).removeClass("is-invalid");
+    });
+
+    $(document).on("click", ".copy_form_link", function(){
+        let default_message = $("#answer_form_link_label").text();
+        $("#answer_form_link").select();
+        document.execCommand("copy");
+
+        $("#answer_form_link_label").fadeOut("fast", function(){
+            $(this).addClass("text-success");
+            $(this).text("Copied to clipboard!");
+        }).fadeIn("fast");
+     
+        setTimeout(function(){
+            $("#answer_form_link_label").fadeOut("fast", function(){
+            $(this).removeClass("text-success");
+                $(this).text(default_message);
+            }).fadeIn("fast");
+        }, 2000);
+    });
+
     /**
     *   DOCU: This will send an HTTP request to update the question order of the form
     *   Triggered: Sorting the question div
@@ -677,10 +699,13 @@ $(document).ready(function(){
         let message;
         let icon;
 
+        $(".form_error").remove();
         $(".form_alert_message").remove();
+        $("input[type=text], textarea").removeClass("is-invalid");
         
         if($(this).attr("action") === "/form/publish"){
             $.post($(this).attr("action"), $(this).serialize(), function(result){
+                console.log(result);
                 if(result["status"]){
                     $("#form_main_action").attr("action", "/form/get_result")
 
@@ -697,12 +722,34 @@ $(document).ready(function(){
                     $("#form_main_btn_div").html(`
                         <button type="submit" class="btn btn-sm btn-success w-100 p-3"><i class="fas fa-save"></i> Get Results</button>
                     `);
+
+                    $("#update_question_order_form").before(`
+                        <div class="alert alert-success">
+                            <label id="answer_form_link_label" for="answer_form_link" class="form-label fw-bold">Send this link to your respondents!</label>
+                            <div id="answer_form_link_div" class="input-group mb-3">
+                                <input type="text" id="answer_form_link" class="form-control" value="http://localhost:3000/f/${result["code"]}" readonly>
+                                <button type="button" class="copy_form_link btn btn-sm btn-success"><i class="far fa-copy"></i></i> Copy</button>
+                            </div>
+                        </div>
+                    `);
                 }
                 else{
                     status  = "danger";
                     message = "Unable to publish form!";
                     icon    = "times";
                 }
+
+                if($("#description").val() === ""){
+                    $(this).addClass("is-invalid");
+                }
+
+                $("input[type=text").each(function(){
+                    let element = $(this);
+
+                    if(element.val() === "" && !element.prop("readonly")){
+                        element.addClass("is-invalid");
+                    }
+                });
 
                 $(window).scrollTop(0);
 

@@ -9,7 +9,7 @@ class Option < ApplicationRecord
 
         new_option = insert_record([
             'INSERT INTO options (question_id, is_others, content, created_at, updated_at)
-            VALUES(?, 0, NULL, NOW(), NOW());', question_id
+            VALUES(?, ?, NULL, NOW(), NOW());', question_id, OPTION_NOT_OTHER
         ])
 
         if new_option.present?
@@ -89,7 +89,7 @@ class Option < ApplicationRecord
 
         new_others_option = insert_record([
             'INSERT INTO options (question_id, is_others, content, created_at, updated_at)
-            VALUES(?, 1, "Other", NOW(), NOW());', question_id
+            VALUES(?, ?, "Other", NOW(), NOW());', question_id, OPTION_OTHER
         ])
         
         if new_others_option.present?

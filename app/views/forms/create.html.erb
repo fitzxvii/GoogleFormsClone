@@ -6,6 +6,15 @@
                 <li class="breadcrumb-item active" aria-current="page">Create Form</li>
             </ol>
         </nav>
+        <% if @form_data['status'] === STATUS_PUBLISHED %>
+            <div class="alert alert-success">
+                <label id="answer_form_link_label" for="answer_form_link" class="form-label fw-bold">Send this link to your respondents!</label>
+                <div id="answer_form_link_div" class="input-group mb-3">
+                    <input type="text" id="answer_form_link" class="form-control" value="http://localhost:3000/f/<%= @form_data['code'] %>" readonly>
+                    <button type="button" class="copy_form_link btn btn-sm btn-success"><i class="far fa-copy"></i></i> Copy</button>
+                </div>
+            </div>
+        <% end %>
         <form action="/form/update_question_order" id="update_question_order_form" method="post">
             <input id="auth_token" type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
             <input type="hidden" name="_method" value="patch">
@@ -16,50 +25,50 @@
             <input type="hidden" name="_method" value="patch">
             <input id="form_id" type="hidden" name="form[id]" value="<%= @form_data['id'] %>">
             <div class="mb-3">
-                <input type="text" name="form[title]" id="title" class="form-control" placeholder="Form Title" value="<%= @form_data['title'] if @form_data.present? %>" <% if @form_data['status'] === 0 %> autofocus <% elsif @form_data['status'] === 1 || @form_data['status'] === 2 %> readonly <% end %>>
+                <input type="text" name="form[title]" id="title" class="form-control" placeholder="Form Title" value="<%= @form_data['title'] if @form_data.present? %>" <% if @form_data['status'] === STATUS_UNPUBLISHED %> autofocus <% elsif @form_data['status'] === STATUS_PUBLISHED || @form_data['status'] === STATUS_FINISHED %> readonly <% end %>>
             </div>
             <div class="mb-3">
-                <textarea id="description" class="form-control" name="form[description]" rows="3" placeholder="Form Description" <% if @form_data['status'] === 1 || @form_data['status'] === 2 %> readonly <% end %>><%= @form_data['description'] if @form_data.present? %></textarea>
+                <textarea id="description" class="form-control" name="form[description]" rows="3" placeholder="Form Description" <% if @form_data['status'] === STATUS_PUBLISHED || @form_data['status'] === STATUS_FINISHED %> readonly <% end %>><%= @form_data['description'] if @form_data.present? %></textarea>
             </div>
         </form>
-        <div <% if @form_data['status'] === 0 %>id="sortable"<% end %>>
+        <div <% if @form_data['status'] === STATUS_UNPUBLISHED %>id="sortable"<% end %>>
             <% @questions.each do |question| %>
                 <% 
-                    if question['question_type'] === 1 
+                    if question['question_type'] === QUESTION_MULTIPLE_CHOICE 
                         question_type = "multiple_choice"
-                    elsif question['question_type'] === 2
+                    elsif question['question_type'] === QUESTION_CHECKBOX
                         question_type = "checkbox"
                     end
                 %>
                 <div id="form_question_<%= question['id'] %>_div" class="mb-3 p-4 border border-success rounded form_question" data-question-type="<%= question['question_type'] %>">
                     <div class="row">
-                        <div class="question_div col-lg-<% if @form_data['status'] === 0 %>9<% elsif @form_data['status'] === 1 || @form_data['status'] === 2 %>12<% end %>">
+                        <div class="question_div col-lg-<% if @form_data['status'] === STATUS_UNPUBLISHED %>9<% elsif @form_data['status'] === STATUS_PUBLISHED || @form_data['status'] === STATUS_FINISHED %>12<% end %>">
                             <form id="question_<%= question['id'] %>_form" action="/update_question_content" method="post">
                                 <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
                                 <input type="hidden" name="_method" value="patch">
                                 <input type="hidden" name="question[id]" value="<%= question['id'] %>">
                                 <div id="form_question_<%= question['id'] %>_question_div" class="input-group mb-3">
-                                    <input type="text" id="form_question_<%= question['id'] %>" data-question-id="<%= question['id'] %>" name="question[content]" class="form-control form-control-lg question_content_text" placeholder="Question Text" value="<%= question['content'] %>" <% if @form_data['status'] === 1 || @form_data['status'] === 2 %> readonly <% end %>>
-                                    <% if @form_data['status'] === 0 %>
+                                    <input type="text" id="form_question_<%= question['id'] %>" data-question-id="<%= question['id'] %>" name="question[content]" class="form-control form-control-lg question_content_text" placeholder="Question Text" value="<%= question['content'] %>" <% if @form_data['status'] === STATUS_PUBLISHED || @form_data['status'] === STATUS_FINISHED %> readonly <% end %>>
+                                    <% if @form_data['status'] === STATUS_UNPUBLISHED %>
                                         <button type="button" class="delete_question btn btn-sm btn-outline-danger" data-delete-id="<%= question['id'] %>"><i class="far fa-trash-alt"></i> Delete</button>
                                     <% end %>
                                 </div>
                             </form>          
                             <% @all_options.each do |option| %>
                                 <% if question['id'] == option["question_id"] %>
-                                    <% if option["is_others"] === 0 %>
+                                    <% if option["is_others"] === OPTION_NOT_OTHER %>
                                         <form action="/update_option_content" method="post" class="update_option_content">
                                             <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
                                             <input type="hidden" name="_method" value="patch">
                                             <input type="hidden" name="option[id]" value="<%= option['id'] %>">
                                             <div id="form_question_<%= question['id'] %>_choice_div" class="input-group mb-3 type_<%= question_type %>">
-                                                <% if @form_data["form_type"] === 1 %>
+                                                <% if @form_data["form_type"] === TYPE_QUIZ %>
                                                     <div class="input-group-text form_question_choice_answer">
                                                         <input name="correct_answer_question<%= question['id'] %>[]" class="form-check-input mt-0" type="checkbox" value="<%= option['id'] %>" <% if !JSON.parse(question['correct_option_ids']).nil? && JSON.parse(question['correct_option_ids']).include?(option['id'])%> checked <% end %> >
                                                     </div>
                                                 <% end %>
-                                                    <input type="text" id="form_question_<%= question['id'] %>_choice_<%= option['id'] %>" name="option[content]" class="form-control option_content_text" placeholder="Choice Text" data-choice-id="<%= option['id'] %>" value="<%= option['content'] %>" <% if @form_data['status'] === 1 %> readonly <% end %>>
-                                                <% if @form_data['status'] === 0 %>
+                                                    <input type="text" id="form_question_<%= question['id'] %>_choice_<%= option['id'] %>" name="option[content]" class="form-control option_content_text" placeholder="Choice Text" data-choice-id="<%= option['id'] %>" value="<%= option['content'] %>" <% if @form_data['status'] === STATUS_PUBLISHED || @form_data['status'] === STATUS_FINISHED %> readonly <% end %>>
+                                                <% if @form_data['status'] === STATUS_UNPUBLISHED %>
                                                     <button type="button" class="delete_choice btn btn-sm btn-outline-danger" data-delete-id="<%= option['id'] %>"><i class="far fa-trash-alt"></i> Delete</button>
                                                 <% end %>
                                             </div>
@@ -69,27 +78,27 @@
                                         <div id="form_question_<%= question['id'] %>_other_div" class="input-group mb-3 type_others_choice">
                                             <span id="form_question_<%= question['id'] %>_choice_<%= option['id'] %>" class="input-group-text" data-choice-id="<%= option['id'] %>" >Other...</span>
                                             <input type="text" id="form_question_<%= question['id'] %>_choice_<%= option['id'] %>}" class="form-control" readonly>
-                                            <% if @form_data['status'] === 0 %>
+                                            <% if @form_data['status'] === STATUS_UNPUBLISHED %>
                                                 <button type="button" class="delete_other btn btn-sm btn-outline-danger" data-question-id="<%= question['id'] %>" data-delete-id="<%= option['id'] %>"><i class="far fa-trash-alt"></i> Delete</button>
                                             <% end %>
                                         </div>
                                     <% end %>
                                 <% end %>
                             <% end %>
-                            <% if @form_data['status'] === 0 && (question['question_type'] === 1 || question['question_type'] === 2) %>
+                            <% if @form_data['status'] === STATUS_UNPUBLISHED && (question['question_type'] === QUESTION_MULTIPLE_CHOICE || question['question_type'] === QUESTION_CHECKBOX) %>
                                 <div id="form_question_<%= question['id'] %>_add_choice_other_div" class="add_choice_other_div">
                                     <a id="form_question_<%= question['id'] %>_add_choice" class="add_choice text-decoration-none text-success" data-add-choice-id="<%= question['id'] %>">Add Choice</a> <% if !@has_other %><span id="form_question_<%= question['id'] %>_add_other_div">or <a id="form_question_<%= question['id'] %>_add_other" class="add_other text-decoration-none text-success" data-add-other-id="<%= question['id'] %>">"Other"</a></span><% end %>
                                 </div>
-                            <% elsif @form_data['status'] === 0 && (question['question_type'] === 3 || question['question_type'] === 4) %>
+                            <% elsif @form_data['status'] === STATUS_UNPUBLISHED && (question['question_type'] === QUESTION_SHORT_ANSWER || question['question_type'] === QUESTION_PARAGRAPH) %>
                                 <div id="form_question_<%= question['id'] %>_choice_div" class="input-group mb-3">
                                     <input type="text" id="form_question_<%= question['id'] %>_choice_1" name="form[form_question_<%= question['id'] %>_choice_1]" class="form-control" placeholder="Answer" readonly>
                                 </div>
-                            <% elsif (@form_data['status'] === 1 || @form_data['status'] === 2) && (question['question_type'] === 3 || question['question_type'] === 4) %>
+                            <% elsif (@form_data['status'] === STATUS_PUBLISHED || @form_data['status'] === STATUS_FINISHED) && (question['question_type'] === QUESTION_SHORT_ANSWER || question['question_type'] === QUESTION_PARAGRAPH) %>
                                 <div id="form_question_<%= question['id'] %>_choice_div" class="input-group mb-3">
                                     <input type="text" id="form_question_<%= question['id'] %>_choice_1" name="form[form_question_<%= question['id'] %>_choice_1]" class="form-control" placeholder="Answer" readonly>
                                 </div>
                             <% end %>
-                            <% if @form_data["form_type"] === 1 %>
+                            <% if @form_data["form_type"] === TYPE_QUIZ %>
                                 <div id="form_question_<%= question['id'] %>_score_div" class="row my-2 score_field">
                                     <label for="form[form_question_<%= question['id'] %>_score]" class="col-lg-1 col-form-label">Score: </label>
                                     <form action="/update_score" method="post">
@@ -97,23 +106,23 @@
                                         <input type="hidden" name="_method" value="patch">
                                         <input type="hidden" name="question[id]" value="<%= question['id'] %>">
                                         <div class="col-lg-11 w-25">
-                                            <input type="number" id="form[form_question_<%= question['id'] %>_score]" name="question[score]" value="<%= question['score'] %>" class="form-control score_text" <% if @form_data['status'] === 1 || @form_data['status'] === 2 %> readonly <% end %>>
+                                            <input type="number" id="form[form_question_<%= question['id'] %>_score]" name="question[score]" value="<%= question['score'] %>" class="form-control score_text" <% if @form_data['status'] === STATUS_PUBLISHED || @form_data['status'] === STATUS_FINISHED %> readonly <% end %>>
                                         </div>
                                     </form>
                                 </div>
                             <% end %>
                         </div>
-                        <% if @form_data['status'] === 0 %>
+                        <% if @form_data['status'] === STATUS_UNPUBLISHED %>
                             <div class="col-lg-3 question_type_div">
                                 <form id="form_question_<%= question['id'] %>_change_type" action="/update_question_type" method="patch">
                                     <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
                                     <input type="hidden" name="_method" value="patch">
                                     <input type="hidden" name="form[question_id]" value="<%= question['id'] %>">
                                     <select id="form_question_<%= question['id'] %>_type" name="form[question_type]" class="form-select form_question_type" data-question-type-id="<%= question['id'] %>">
-                                        <option value="1" <% if question['question_type'] === 1 %> selected <% end %>>Multiple Choice</option>
-                                        <option value="2" <% if question['question_type'] === 2 %> selected <% end %>>Checkboxes</option>
-                                        <option value="3" <% if question['question_type'] === 3 %> selected <% end %>>Short Answer</option>
-                                        <option value="4" <% if question['question_type'] === 4 %> selected <% end %>>Paragraph</option>
+                                        <option value="1" <% if question['question_type'] === QUESTION_MULTIPLE_CHOICE %> selected <% end %>>Multiple Choice</option>
+                                        <option value="2" <% if question['question_type'] === QUESTION_CHECKBOX %> selected <% end %>>Checkboxes</option>
+                                        <option value="3" <% if question['question_type'] === QUESTION_SHORT_ANSWER %> selected <% end %>>Short Answer</option>
+                                        <option value="4" <% if question['question_type'] === QUESTION_PARAGRAPH %> selected <% end %>>Paragraph</option>
                                     </select>
                                 </form>
                             </div>
@@ -123,7 +132,7 @@
                 <% @has_other = false %>
             <% end %>
         </div>
-        <% if @form_data['status'] === 0 %>
+        <% if @form_data['status'] === STATUS_UNPUBLISHED %>
             <form action="/add_question" method="post">
                 <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
                 <input type="hidden" name="_method" value="patch">
@@ -139,21 +148,21 @@
             <input type="hidden" name="_method" value="patch">
             <input type="hidden" name="form[id]" value="<%= @form_data["id"] %>">
 
-            <% if @form_data['status'] === 0 %>
+            <% if @form_data['status'] === STATUS_UNPUBLISHED %>
                 <div id="form_main_btn_div" class="mb-3">
                     <button type="submit" class="btn btn-sm btn-success w-100 p-3"><i class="fas fa-paper-plane"></i> Publish Form</button>
                 </div>
-            <% elsif @form_data['status'] === 1 %>
+            <% elsif @form_data['status'] === STATUS_PUBLISHED %>
                 <div id="form_main_btn_div" class="mb-3">
                     <button type="submit" class="btn btn-sm btn-success w-100 p-3"><i class="fas fa-save"></i> Get Results</button>
                 </div>
-            <% elsif @form_data['status'] === 2 %>
+            <% elsif @form_data['status'] === STATUS_FINISHED %>
                 <div id="form_main_btn_div" class="mb-3">
                     <a href="/form/<%= @form_data['code'] %>/result" class="btn btn-sm btn-success w-100 p-3"><i class="fas fa-save"></i> Show Results</a>
                 </div>
             <% end %>
         </form>
-        <% if @form_data['status'] === 0 %>
+        <% if @form_data['status'] === STATUS_UNPUBLISHED %>
             <div id="delete_form_btn_div" class="mb-5">
                 <button type="button" class="btn btn-sm btn-outline-danger w-100 p-2" data-bs-toggle="modal" data-bs-target="#delete_modal"><i class="far fa-trash-alt"></i> Delete Form</button>
             </div>

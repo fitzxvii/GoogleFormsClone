@@ -16,7 +16,7 @@ class Form < ApplicationRecord
     # Insert a new default form 
     # Require: user_id
     # Returns: status and new form id
-    # Last Updated: September 6, 2021
+    # Last Updated: September 13, 2021
     # Owner: Fitz, Updated by: Jovic Abengona
     def self.create_form(current_user)
         response = { :status => false }
@@ -24,7 +24,7 @@ class Form < ApplicationRecord
 
         new_form = insert_record([
             "INSERT INTO forms (user_id, code, form_type, title, description, status, created_at, updated_at)
-            VALUES(?, ?, 0, 'Untitled Form', 'Form Description', 0, NOW(), NOW());", current_user, code
+            VALUES(?, ?, ?, 'Untitled Form', 'Form Description', ?, NOW(), NOW());", current_user, code, TYPE_NOT_QUIZ, STATUS_UNPUBLISHED
         ])
 
         if new_form.present?
@@ -59,6 +59,19 @@ class Form < ApplicationRecord
             'SELECT id, user_id, code, form_type, title, description, status, question_order
             FROM forms
             WHERE user_id = ? AND code = ?;', user_id, code
+        ])
+    end
+
+    # Get form data of published form
+    # Require: code
+    # Returns: a Hash data containing form details
+    # Last Updated: September 13, 2021
+    # Owner:  Jovic Abengona
+    def self.get_published_form(code)
+        return query_record([
+            'SELECT id, user_id, code, form_type, title, description, status, question_order
+            FROM forms
+            WHERE code = ? AND status = ?', code, STATUS_PUBLISHED
         ])
     end
     
@@ -126,8 +139,7 @@ class Form < ApplicationRecord
         status = new_form_data.valid?
 
         if status
-            update_form = update_record(["UPDATE forms 
-                                            SET title = ?, description = ?, updated_at = NOW() WHERE id = ? AND user_id = ?", 
+            update_form = update_record(["UPDATE forms SET title = ?, description = ?, updated_at = NOW() WHERE id = ? AND user_id = ?", 
                                             form_data[:title], form_data[:description], form_data[:id], user_id])
 
             status = true if update_form
@@ -185,8 +197,8 @@ class Form < ApplicationRecord
         if update_form_type
             if form_type = 0 
                 reset_question_score = update_record([
-                    "UPDATE questions SET score = 0, correct_option_ids = '[]', updated_at = NOW()
-                    WHERE form_id = ? AND question_type IN (1, 2);", form_id])
+                    "UPDATE questions SET score = ?, correct_option_ids = '[]', updated_at = NOW()
+                    WHERE form_id = ?;", DEFAULT_SCORE, form_id])
 
                 status = true if reset_question_score.present?
             else
@@ -205,7 +217,7 @@ class Form < ApplicationRecord
     # Last Updated: September 13, 2021
     # Owner: Jovic Abengona | Updated By: Fitz
     def self.publish_form(id, user_id)
-        response = { :status => false }
+        response = { :status => false, :code => nil }
         validate_form = false
         validate_question = false
         form_data = Form.get_form(id)
@@ -216,7 +228,7 @@ class Form < ApplicationRecord
             questions_data = query_records(["SELECT q.question_type, q.content AS 'question_content', q.correct_option_ids, q.score, o.content AS 'option_content', o.is_others AS 'others_option'
                                                 FROM questions AS q
                                                 LEFT JOIN options AS o ON o.question_id = q.id
-                                                WHERE q.form_id =?", id])
+                                                WHERE q.form_id = ?", id])
 
             questions_data.each do |question|
                 if form_data["form_type"] === 0
@@ -256,10 +268,13 @@ class Form < ApplicationRecord
         end
 
         if validate_form && validate_question
-            publish_form = update_record(["UPDATE forms SET status = 1, updated_at = NOW() WHERE id = ? AND user_id = ?", id, user_id])
+            publish_form = update_record(["UPDATE forms SET status = ?, updated_at = NOW() WHERE id = ? AND user_id = ?", STATUS_PUBLISHED, id, user_id])
         end
 
-        response[:status] = true if validate_form && validate_question && publish_form
+        if validate_form && validate_question && publish_form
+            response[:status] = true 
+            response[:code] = form_data["code"]
+        end
 
         return response
     end
@@ -271,7 +286,7 @@ class Form < ApplicationRecord
     # Owner: Updated by: Jovic Abengona
     def self.get_result(id, user_id)
         response = { :status => false, :code => nil }
-        get_result = update_record(["UPDATE forms SET status = 2, updated_at = NOW() WHERE id = ? AND user_id = ?", id, user_id])
+        get_result = update_record(["UPDATE forms SET status = ?, updated_at = NOW() WHERE id = ? AND user_id = ?", STATUS_FINISHED, id, user_id])
 
         if get_result
             get_form = self.get_form(id)

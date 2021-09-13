@@ -37,9 +37,9 @@
             <div class="collapse navbar-collapse" id="navbarNav">
               <% if params['action'] === 'create' %>
                 <a href="/f/<%= @form_data['code'] %>/preview" class="text-decoration-none btn btn-sm"><i class="far fa-eye"></i> Preview</a>
-                <% if @form_data['status'] === 0 %>
+                <% if @form_data['status'] === STATUS_UNPUBLISHED %>
                   <div class="form-check form-switch me-2">
-                    <input name="quiz_mode_toggle" class="form-check-input bg-success" type="checkbox" id="quiz_mode_toggle" data-form-id="<%= @form_data['id'] %>" <% if @form_data['form_type'] === 1 %> checked <% end %>>
+                    <input name="quiz_mode_toggle" class="form-check-input bg-success" type="checkbox" id="quiz_mode_toggle" data-form-id="<%= @form_data['id'] %>" <% if @form_data['form_type'] === STATUS_PUBLISHED %> checked <% end %>>
                     <label class="form-check-label small" for="quiz_mode_toggle">Quiz Mode</label>
                   </div>
                 <% end %>
