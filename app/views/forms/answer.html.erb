@@ -15,7 +15,7 @@
                         <div class="row">
                             <div class="col-lg-12">
                                 <div id="form_question_<%= question['id'] %>_question_div" class="mb-3">
-                                    <h4><%= index + 1 %>. <%= question['content'] %></h4>
+                                    <h4><%= index + 1 %>. <%= question['content'] %> <% if question['score'] != 0 && !question['score'].nil? %>  (<%= question['score'] %> points) <% end %> </h4>
                                 </div>
                                 <% if question['question_type'] === 1 || question['question_type'] === 2 %>
                                 <%
@@ -40,7 +40,6 @@
                                         <% end %>
                                     <% end %>
                                 <% elsif question['question_type'] === 3 || question['question_type'] === 4%>
-                                    <input type="hidden" name="form_answer_<%= question['id'] %>[]" value="<%= question['id'] %>">
                                     <textarea class="form-control" rows="3" name="form_answer_<%= question['id'] %>[]"></textarea>
                                 <% end %>
                                 <% if @form_data['form_type'] === 1 %>
@@ -54,6 +53,23 @@
                 <% end %>
                 <button type="submit" class="btn btn-sm btn-success w-100 p-3 mb-4"><i class="fas fa-paper-plane"></i> Submit </button>
             </form>
+        </div>
+    </div>
+</div>
+
+<!-- MESSAGE MODAL -->
+<div class="modal fade" id="message_modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="message_label" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-light">
+                <h5 class="modal-title" id="message_label"></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+            </div>
+            <div class="modal-footer bg-light">
+                
+            </div>
         </div>
     </div>
 </div>
