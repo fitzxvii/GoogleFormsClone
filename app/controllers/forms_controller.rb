@@ -16,7 +16,7 @@ class FormsController < ApplicationController
     # Requires: current user logged in and the form code
     # Returns: Form data, question data by form id and question order, and options per question
     # Last Update date: September 6, 2021
-    # Owner: Fitz, Updated By: Jovic Abengoa
+    # Owner: Fitz, Updated By: Jovic Abengona
     def create
         @form_action = "publish"
         @form_data = Form.get_form_by_code current_user["id"], params[:code]
@@ -202,6 +202,13 @@ class FormsController < ApplicationController
         render json: Form.publish_form(form_data[:id], current_user["id"])
     end
 
+    # DOCU: (PATCH) /form/get_result
+	# Update form status then return Hash data
+	# Triggered by: Sending PATCH request to /form/get_result
+    # Requires: form_data[:id], current_user["id"]
+    # Returns: Hash data containing :status, and :code
+    # Last Updated: September 13, 2021
+    # Owner: Jovic Abengona
     def get_result
         form_data = params.require(:form).permit(:id)
 

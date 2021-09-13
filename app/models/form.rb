@@ -202,7 +202,7 @@ class Form < ApplicationRecord
     # Update form status
     # Require: id, user_id
     # Returns: status which contains a Boolean value
-    # Last Updated: September 11, 2021
+    # Last Updated: September 13, 2021
     # Owner: Jovic Abengona | Updated By: Fitz
     def self.publish_form(id, user_id)
         response = { :status => false }
@@ -221,9 +221,7 @@ class Form < ApplicationRecord
             questions_data.each do |question|
                 if form_data["form_type"] === 0
                     if question["question_type"] === 1 || question["question_type"] === 2
-                        if question["others_option"] == 1 && !question["question_content"].nil?
-                            validate_question = true
-                        elsif question["others_option"] == 0 && !question["question_content"].nil? && !question["option_content"].nil?
+                        if !question["question_content"].nil? && !question["option_content"].nil?
                             validate_question = true
                         else
                             validate_question = false
@@ -239,9 +237,7 @@ class Form < ApplicationRecord
                     end
                 else
                     if question["question_type"] === 1 || question["question_type"] === 2
-                        if question["others_option"] == 0 && !question["question_content"].nil? && !question["option_content"].nil? && question["correct_option_ids"] != "[]" && question["score"] != 0
-                            validate_question = true
-                        elsif question["others_option"] == 1 && !question["question_content"].nil? && question["correct_option_ids"] != "[]" && question["score"] != 0
+                        if !question["question_content"].nil? && !question["option_content"].nil? && question["correct_option_ids"] != "[]" && question["score"] != 0
                             validate_question = true
                         else
                             validate_question = false
@@ -268,11 +264,16 @@ class Form < ApplicationRecord
         return response
     end
 
+    # Get results of form
+    # Require: id, user_id
+    # Returns: status which contains :status and :code
+    # Last Updated: September 6, 2021
+    # Owner: Updated by: Jovic Abengona
     def self.get_result(id, user_id)
         response = { :status => false, :code => nil }
-        publish_form = update_record(["UPDATE forms SET status = 2, updated_at = NOW() WHERE id = ? AND user_id = ?", id, user_id])
+        get_result = update_record(["UPDATE forms SET status = 2, updated_at = NOW() WHERE id = ? AND user_id = ?", id, user_id])
 
-        if publish_form
+        if get_result
             get_form = self.get_form(id)
 
             response[:status] = true

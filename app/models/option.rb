@@ -82,13 +82,14 @@ class Option < ApplicationRecord
     # To add others option on a question
     # Require: Question ID
     # It returns a response if insert others option is successful or not
-    # Owner: Fitz
+    # Last Updated: September 13, 2021
+    # Owner: Fitz, Updated By: Jovic Abengona
     def self.add_others_option question_id
         response = { :status => false }
 
         new_others_option = insert_record([
             'INSERT INTO options (question_id, is_others, content, created_at, updated_at)
-            VALUES(?, 1, NULL, NOW(), NOW());', question_id
+            VALUES(?, 1, "Other", NOW(), NOW());', question_id
         ])
         
         if new_others_option.present?
