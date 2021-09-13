@@ -25,7 +25,7 @@
         <% @forms.each do |form| %>
             <div class="col-lg-3 mb-4">
                 <div class="card">
-                    <a href="/f/<%= form["code"] %>"><div class="text-center text-success fs-1 p-5 bg-light"><i class="fas fa-list-ol"></i></div></a>
+                    <a href="/f/<%= form["code"] %>/create"><div class="text-center text-success fs-1 p-5 bg-light"><i class="fas fa-list-ol"></i></div></a>
                     <div class="card-body">
                         <form action="/form/rename" method="POST" class="rename_form">
                             <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">

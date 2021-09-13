@@ -12,13 +12,11 @@ Rails.application.routes.draw do
 
   # FORMS ROUTES
   get "/dashboard" => "forms#dashboard"
-  #get "/dashboard/create" => "forms#create"
-  get "/form" => "forms#view"
   get "/form/:code/result" => "forms#result"
-  get "/form/answer" => "forms#answer"
+  get "/f/:code" => "forms#answer"
 
   get "/create_form" => "forms#create_form"
-  get "/f/:code" => "forms#create"
+  get "/f/:code/create" => "forms#create"
   get "/f/:code/preview" => "forms#preview"
   get "/add_option/:question_id" => "forms#add_option"
   get "/add_others_option/:question_id" => "forms#add_others_option"
@@ -44,4 +42,6 @@ Rails.application.routes.draw do
   patch "/form/publish" => "forms#publish_form"
   patch "/form/get_result" => "forms#get_result"
   delete "/form/delete" => "forms#delete"
+
+  post "/submit_form" => "forms#submit_form"
 end

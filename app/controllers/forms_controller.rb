@@ -10,7 +10,7 @@ class FormsController < ApplicationController
         @forms = Form.get_forms(current_user["id"])
     end
 
-    # DOCU: (GET) /f/:code
+    # DOCU: (GET) /f/:code/create
     # Get form data based on current user and form code
     # Triggered by: create_form method or updating a form
     # Requires: current user logged in and the form code
@@ -59,7 +59,7 @@ class FormsController < ApplicationController
         new_form = Form.create_form(current_user["id"])
 
         if new_form[:status] 
-            return redirect_to "/f/#{new_form[:form_code]}"
+            return redirect_to "/f/#{new_form[:form_code]}/create"
         end     
     end
 
@@ -229,13 +229,29 @@ class FormsController < ApplicationController
         redirect_to "/"
     end
 
-    def view
-    end
-
     def result
     end
 
+    # DOCU: (GET) /f/:code
+    # Access Form for answering
+    # Requires: Form code and current user
+    # Returns: Form data
+    # Owner: Fitz
     def answer
-        render "view"
+        @form_data = Form.get_form_by_code(current_user["id"], params[:code])
+        @questions = Question.get_questions_by_ids(@form_data['id'], JSON.parse(@form_data['question_order']))
+        @all_options = Option.collect_options_per_quetions(JSON.parse(@form_data['question_order']))
+    end
+
+    # DOCU: (POST) /submit_form
+    # Submit Form answered by current User
+    # Requires: Form code and current user
+    # Returns: Status if successful or not
+    # Owner: Fitz
+    def submit_form
+        answers_params = params.permit!
+
+        puts answers_params
+        render json: Answer.insert_answers(answers_params, current_user["id"])
     end
 end
