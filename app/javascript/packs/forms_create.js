@@ -170,17 +170,6 @@ $(document).ready(function(){
                             </div>
                         `);
                     });
-
-                    $(".type_others_choice span").each(function(){
-                        question_id = $(this).attr("id").match(/(\d+)/)[0];
-                        console.log(question_id);
-                        
-                        $(this).before(`
-                            <div class="input-group-text form_question_choice_answer">
-                                <input name="correct_answer_question${question_id}[]" class="form-check-input mt-0" type="checkbox" value="${$(this).attr("data-choice-id")}">
-                            </div>
-                        `);
-                    });
                     
                     $(".form_question").each(function(){
                         var question_id = $(this).attr("id").match(/\d+/)[0]
@@ -488,150 +477,171 @@ $(document).ready(function(){
         })
     });
 
-    // CHANGE QUESTION TYPE
+    /**
+    *   DOCU: This will change the question type. It will delete added options of the question as well.
+    *   Triggered: on("change", ".form_question_type", function()
+    *   Last Updated Date: September 13, 2021
+    *   @author Fitz, Updated By: Jovic Abengona
+    */
     $(document).on("change", ".form_question_type", function(){
         is_quiz_mode = $("#quiz_mode_toggle").prop("checked");
         let add_choice_other_content;
         let question_type_content;
+        let question_content = "";
         let question_type;
+
+        $(".form_alert_message").remove();
 
         select_question_type = $(this);
         form_div = $(`#form_question_${select_question_type.data("question-type-id")}_change_type`);
   
         $(`#form_question_${select_question_type.data("question-type-id")}_div`).attr("data-question-type", `${select_question_type.val()}`);
         
-        $.post(form_div.attr('action'), form_div.serialize(), function(result) {
-            console.log(result);
-
-            if(select_question_type.val() === "1" || select_question_type.val() === "2"){
-                if(select_question_type.val() === "1"){
-                    question_type = "multiple_choice";
-                    question_type_content_options = `
-                        <option value="1" selected>Multiple Choice</option>
-                        <option value="2">Checkboxes</option>
-                    `;
-                }
-                else{
-                    question_type = "checkbox";
-                    question_type_content_options = `
-                        <option value="1">Multiple Choice</option>
-                        <option value="2" selected>Checkboxes</option>
-                    `;
+        $.post(form_div.attr('action'), form_div.serialize(), function(result){
+            if(result["status"]){
+                if(result["content"] != null){
+                    question_content = result["content"]
                 }
 
-                question_type_content = `
-                    <div class="col-lg-3 question_type_div">
-                        <form id="form_question_${result["question_id"]}_change_type" action="/update_question_type" method="patch">
-                            <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
-                            <input type="hidden" name="_method" value="patch">
-                            <input type="hidden" name="form[question_id]" value="${result["question_id"]}">
-                            <select id="form_question_${result["question_id"]}_type" name="form[question_type]" class="form-select form_question_type" data-question-type-id="${select_question_type.data("question-type-id")}">
-                                ${question_type_content_options}
-                                <option value="3">Short Answer</option>
-                                <option value="4">Paragraph</option>
-                            </select>
-                        </form>    
-                    </div>
-                `;
-                
-                add_choice_other_content = `
-                    <div id="form_question_${result["question_id"]}_add_choice_other_div" class="add_choice_other_div">
-                        <a id="form_question_${result["question_id"]}_add_choice" class="add_choice text-decoration-none text-success" data-add-choice-id="${result["question_id"]}">Add Choice</a> <span id="form_question_${result["question_id"]}_add_other_div">or <a id="form_question_${result["question_id"]}_add_other" class="add_other text-decoration-none text-success" data-add-other-id="${result["question_id"]}">"Other"</a></span>
-                    </div>
-                `;
-            }
-            else if(select_question_type.val() === "3" || select_question_type.val() === "4"){
-                add_choice_other_content = `
-                    <div id="form_question_${result["question_id"]}_choice_div" class="input-group mb-3">
-                        <input type="text" id="form_question_${result["question_id"]}_choice_1" name="form[form_question_${result["question_id"]}_choice_1]" class="form-control" placeholder="Choice Text" readonly>
-                    </div>
-                `;
-    
-                if(select_question_type.val() === "3"){
-                    question_type_content_options = `
-                        <option value="3" selected>Short Answer</option>
-                        <option value="4">Paragraph</option>
-                    `;
-                }
-                else{
-                    question_type_content_options = `
-                        <option value="3">Short Answer</option>
-                        <option value="4" selected>Paragraph</option>
-                    `;
-                }
+                if(select_question_type.val() === "1" || select_question_type.val() === "2"){
+                    if(select_question_type.val() === "1"){
+                        question_type = "multiple_choice";
+                        question_type_content_options = `
+                            <option value="1" selected>Multiple Choice</option>
+                            <option value="2">Checkboxes</option>
+                        `;
+                    }
+                    else{
+                        question_type = "checkbox";
+                        question_type_content_options = `
+                            <option value="1">Multiple Choice</option>
+                            <option value="2" selected>Checkboxes</option>
+                        `;
+                    }
 
-                question_type_content = `
-                    <div class="col-lg-3 question_type_div">
-                        <form id="form_question_${result["question_id"]}_change_type" action="/update_question_type" method="patch">
-                            <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
-                            <input type="hidden" name="_method" value="patch">
-                            <input type="hidden" name="form[question_id]" value="${result["question_id"]}">
-                            <select id="form_question_${result["question_id"]}_type" name="form[question_type]" class="form-select form_question_type" data-question-type-id="${result["question_id"]}">
-                                <option value="1">Multiple Choice</option>
-                                <option value="2">Checkboxes</option>
-                                ${question_type_content_options}
-                            </select>
-                        </form>  
-                    </div>
-                `;
-            }
-    
-            $(`#form_question_${result["question_id"]}_div`).html(`
-                <div class="row">
-                    <div class="col-lg-9">
-                        <form id="question_${result["question_id"]}_form" action="/update_question_content" method="post">
-                            <input type="hidden" name="authenticity_token" value="${auth_token}">
-                            <input type="hidden" name="_method" value="patch">
-                            <input type="hidden" name="question[id]" value="${result["question_id"]}">
-                            <div id="form_question_${result["question_id"]}_question_div" class="input-group mb-3">
-                                <input type="text" id="form_question_${result["question_id"]}" data-question-id="${result["question_id"]}" name="question[content]" class="form-control form-control-lg question_content_text" placeholder="Question Text" value="${result["content"]}">
-                                <button type="button" class="delete_question btn btn-sm btn-outline-danger" data-delete-id="${result["question_id"]}"><i class="far fa-trash-alt"></i> Delete</button>
-                            </div>
-                        </form>
-                        ${add_choice_other_content}
-                    </div>
-                    ${question_type_content}
-                </div>
-            `);
-    
-            if(is_quiz_mode && (select_question_type.val() === "1" || select_question_type.val() === "2")){
-                $(`#form_question_${result["question_id"]}_choice_div`).prepend(`
-                    <div class="input-group-text form_question_choice_answer">
-                        <input name="correct_answer_question${result["question_id"]}[]" class="form-check-input mt-0" type="checkbox" value="${result["option_id"]}">
+                    question_type_content = `
+                        <div class="col-lg-3 question_type_div">
+                            <form id="form_question_${result["question_id"]}_change_type" action="/update_question_type" method="patch">
+                                <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
+                                <input type="hidden" name="_method" value="patch">
+                                <input type="hidden" name="form[question_id]" value="${result["question_id"]}">
+                                <select id="form_question_${result["question_id"]}_type" name="form[question_type]" class="form-select form_question_type" data-question-type-id="${select_question_type.data("question-type-id")}">
+                                    ${question_type_content_options}
+                                    <option value="3">Short Answer</option>
+                                    <option value="4">Paragraph</option>
+                                </select>
+                            </form>    
+                        </div>
+                    `;
+                    
+                    add_choice_other_content = `
+                        <div id="form_question_${result["question_id"]}_add_choice_other_div" class="add_choice_other_div">
+                            <a id="form_question_${result["question_id"]}_add_choice" class="add_choice text-decoration-none text-success" data-add-choice-id="${result["question_id"]}">Add Choice</a> <span id="form_question_${result["question_id"]}_add_other_div">or <a id="form_question_${result["question_id"]}_add_other" class="add_other text-decoration-none text-success" data-add-other-id="${result["question_id"]}">"Other"</a></span>
+                        </div>
+                    `;
+                }
+                else if(select_question_type.val() === "3" || select_question_type.val() === "4"){
+                    add_choice_other_content = `
+                        <div id="form_question_${result["question_id"]}_choice_div" class="input-group mb-3">
+                            <input type="text" id="form_question_${result["question_id"]}_choice_1" name="form[form_question_${result["question_id"]}_choice_1]" class="form-control" placeholder="Answer" readonly>
+                        </div>
+                    `;
+        
+                    if(select_question_type.val() === "3"){
+                        question_type_content_options = `
+                            <option value="3" selected>Short Answer</option>
+                            <option value="4">Paragraph</option>
+                        `;
+                    }
+                    else{
+                        question_type_content_options = `
+                            <option value="3">Short Answer</option>
+                            <option value="4" selected>Paragraph</option>
+                        `;
+                    }
+
+                    question_type_content = `
+                        <div class="col-lg-3 question_type_div">
+                            <form id="form_question_${result["question_id"]}_change_type" action="/update_question_type" method="patch">
+                                <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
+                                <input type="hidden" name="_method" value="patch">
+                                <input type="hidden" name="form[question_id]" value="${result["question_id"]}">
+                                <select id="form_question_${result["question_id"]}_type" name="form[question_type]" class="form-select form_question_type" data-question-type-id="${result["question_id"]}">
+                                    <option value="1">Multiple Choice</option>
+                                    <option value="2">Checkboxes</option>
+                                    ${question_type_content_options}
+                                </select>
+                            </form>  
+                        </div>
+                    `;
+                }
+        
+                $(`#form_question_${result["question_id"]}_div`).html(`
+                    <div class="row">
+                        <div class="question_div col-lg-9">
+                            <form id="question_${result["question_id"]}_form" action="/update_question_content" method="post">
+                                <input type="hidden" name="authenticity_token" value="${auth_token}">
+                                <input type="hidden" name="_method" value="patch">
+                                <input type="hidden" name="question[id]" value="${result["question_id"]}">
+                                <div id="form_question_${result["question_id"]}_question_div" class="input-group mb-3">
+                                    <input type="text" id="form_question_${result["question_id"]}" data-question-id="${result["question_id"]}" name="question[content]" class="form-control form-control-lg question_content_text" placeholder="Question Text" value="${question_content}">
+                                    <button type="button" class="delete_question btn btn-sm btn-outline-danger" data-delete-id="${result["question_id"]}"><i class="far fa-trash-alt"></i> Delete</button>
+                                </div>
+                            </form>
+                            ${add_choice_other_content}
+                        </div>
+                        ${question_type_content}
                     </div>
                 `);
-    
-                $(`#form_question_${result["question_id"]}_add_choice_other_div`).after(`
-                    <div id="form_question_${result["question_id"]}_score_div" class="row my-2 score_field">
-                        <label for="form[form_question_${result["question_id"]}_score]" class="col-lg-1 col-form-label">Score: </label>
-                        <form action="/update_score" method="post">
-                            <input type="hidden" name="authenticity_token" value="${auth_token}">
-                            <input type="hidden" name="_method" value="patch">
-                            <input type="hidden" name="question[id]" value="${result["question_id"]}">
-                            <div class="col-lg-11 w-25">
-                                <input type="text" id="form[form_question_${result["question_id"]}_score]" name="question[score]" class="form-control score_text" value="${result["score"]}">
-                            </div>
-                        </form>
+        
+                if(is_quiz_mode && (select_question_type.val() === "1" || select_question_type.val() === "2")){
+                    $(`#form_question_${result["question_id"]}_choice_div`).prepend(`
+                        <div class="input-group-text form_question_choice_answer">
+                            <input name="correct_answer_question${result["question_id"]}[]" class="form-check-input mt-0" type="checkbox" value="${result["option_id"]}">
+                        </div>
+                    `);
+        
+                    $(`#form_question_${result["question_id"]}_add_choice_other_div`).after(`
+                        <div id="form_question_${result["question_id"]}_score_div" class="row my-2 score_field">
+                            <label for="form[form_question_${result["question_id"]}_score]" class="col-lg-1 col-form-label">Score: </label>
+                            <form action="/update_score" method="post">
+                                <input type="hidden" name="authenticity_token" value="${auth_token}">
+                                <input type="hidden" name="_method" value="patch">
+                                <input type="hidden" name="question[id]" value="${result["question_id"]}">
+                                <div class="col-lg-11 w-25">
+                                    <input type="text" id="form[form_question_${result["question_id"]}_score]" name="question[score]" class="form-control score_text" value="${result["score"]}">
+                                </div>
+                            </form>
+                        </div>
+                    `);
+                }
+                else if(is_quiz_mode && (select_question_type.val() === "3" || select_question_type.val() === "4")){
+                    $(`#form_question_${result["question_id"]}_choice_div`).after(`
+                        <div id="form_question_${result["question_id"]}_score_div" class="row my-2 score_field">
+                            <label for="form[form_question_${result["question_id"]}_score]" class="col-lg-1 col-form-label">Score: </label>
+                            <form action="/update_score" method="post">
+                                <input type="hidden" name="authenticity_token" value="${auth_token}">
+                                <input type="hidden" name="_method" value="patch">
+                                <input type="hidden" name="question[id]" value="${result["question_id"]}">
+                                <div class="col-lg-11 w-25">
+                                    <input type="text" id="form[form_question_${result["question_id"]}_score]" name="question[score]" class="form-control score_text" value="${result["score"]}">
+                                </div>
+                            </form>
+                        </div>
+                    `);
+                }
+        
+                $(`#form_question_${select_question_type.data("question-type-id")}_div`).attr("id", `form_question_${select_question_type.data("question-type-id")}_div`);
+            }
+            else{
+                $(window).scrollTop(0);
+
+                $("#breadcrumbs").after(`
+                    <div class="form_alert_message alert alert-danger" role="alert">
+                        <i class="fas fa-times-circle"></i> Error Changing Question Type!
                     </div>
                 `);
             }
-            else if(is_quiz_mode && (select_question_type.val() === "3" || select_question_type.val() === "4")){
-                $(`#form_question_${result["question_id"]}_choice_div`).after(`
-                    <div id="form_question_${result["question_id"]}_score_div" class="row my-2 score_field">
-                        <label for="form[form_question_${result["question_id"]}_score]" class="col-lg-1 col-form-label">Score: </label>
-                        <form action="/update_score" method="post">
-                            <input type="hidden" name="authenticity_token" value="${auth_token}">
-                            <input type="hidden" name="_method" value="patch">
-                            <input type="hidden" name="question[id]" value="${result["question_id"]}">
-                            <div class="col-lg-11 w-25">
-                                <input type="text" id="form[form_question_${result["question_id"]}_score]" name="question[score]" class="form-control score_text" value="${result["score"]}">
-                            </div>
-                        </form>
-                    </div>
-                `);
-            }
-    
-            $(`#form_question_${select_question_type.data("question-type-id")}_div`).attr("id", `form_question_${select_question_type.data("question-type-id")}_div`);
         }, 'json');
        
         return false;
@@ -683,7 +693,7 @@ $(document).ready(function(){
                     $(".question_div").addClass("col-lg-12");
                     $("input[type=text], input[type=number], textarea").prop("readonly", true);
                     $("input[type=checkbox]").prop("disabled", true);
-                    $(".delete_question, .delete_choice, .add_choice_other_div, .question_type_div, #add_question_btn_div, #delete_form_btn_div").remove();
+                    $(".delete_question, .delete_choice, .delete_other, .add_choice_other_div, .question_type_div, #add_question_btn_div, #delete_form_btn_div").remove();
                     $("#form_main_btn_div").html(`
                         <button type="submit" class="btn btn-sm btn-success w-100 p-3"><i class="fas fa-save"></i> Get Results</button>
                     `);
