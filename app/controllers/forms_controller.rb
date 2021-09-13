@@ -236,7 +236,13 @@ class FormsController < ApplicationController
         redirect_to "/"
     end
 
+    # DOCU: (GET) /f/:code/results
+    # Access Form results
+    # Requires: Form code and current user
+    # Returns: Answers data
+    # Owner: Fitz
     def result
+        @results_data = Answer.get_results(params[:code], current_user["id"])
     end
 
     # DOCU: (GET) /f/:code
@@ -258,7 +264,6 @@ class FormsController < ApplicationController
     def submit_form
         answers_params = params.permit!
 
-        puts answers_params
         render json: Answer.insert_answers(answers_params, current_user["id"])
     end
 end

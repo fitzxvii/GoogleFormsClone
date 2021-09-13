@@ -301,7 +301,19 @@ class Form < ApplicationRecord
 
         return status
     end
-  
+    
+    # Get question order by form code
+    # Require: form code
+    # Returns: Question order of the form
+    # Owner: Fitz
+    def self.get_question_order_by_code form_code
+        select_order_by_code = query_record([
+            "SELECT question_order FROM forms WHERE code = ?;", form_code
+        ])
+
+        return select_order_by_code["question_order"] if select_order_by_code.present?
+    end
+
     private
         # Generate code of form with length of 10
         # Owner: Fitz
